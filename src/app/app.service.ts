@@ -74,7 +74,7 @@ export class AppService {
      * @tothink there are a few different ways we could handle these profiles: files, loaded in code directly, database, etc
      */
     public static loadProfile() {
-        const fullPath = __dirname + '/../../profiles/profile.json';
+        const fullPath = process.cwd() + '/profiles/profile.json';
         const profileString = readFileSync(fullPath).toString();
         if (!profileString) {
             throw new Error('Failed to load profile');

@@ -182,7 +182,7 @@ export class IssuerService {
      * TODO better error handling
      */
     private getCredDefAndSchemaData(credDefProfilePath: string): any {
-        const prefix = __dirname + '/../../profiles/';
+        const prefix = process.cwd() + '/profiles/';
         const credDefProfileString = readFileSync(prefix + credDefProfilePath).toString();
         if (!credDefProfileString) {
             throw new Error(`Failed to load profile ${credDefProfilePath}`);
