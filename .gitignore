@@ -1,5 +1,4 @@
 # so that this file isn't accidently checked in
-.npmrc
 .idea
 # Logs
 logs
@@ -109,7 +108,6 @@ dist
 # Other
 .DS_Store
 .idea
-.npmrc
 
 # Other repos
 aries-guardianship-agency
