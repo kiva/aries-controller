@@ -8,6 +8,21 @@
     "type": "git",
     "url": "git+https://github.com/kiva/protocol-aries.git"
   },
+  "keywords": [
+    "kiva",
+    "protocol",
+    "SSI",
+    "hyperledger"
+  ],
+  "author": "protocol-services",
+  "main": "dist/main.js",
+  "types": "main.d.ts",
+  "files": [
+    "*"
+  ],
+  "publishConfig": {
+    "registry": "http://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
