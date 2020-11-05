@@ -66,7 +66,7 @@ export class AppService {
             SwaggerModule.setup('api-docs', app, document);
         }
 
-        // await AppService.loadProfile();
+        await AppService.loadProfile();
     }
 
     /**
