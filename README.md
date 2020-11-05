@@ -1,10 +1,18 @@
-# Controller
+# Aries Controller
 
 This it the generic code that can be used in all controller implementations.
-Currently we're following a module where the controller code forms the base of the app, and the implementation
-code is loaded in via directory paths specified in env variables. In the near future we will probably flip this
-model so that each implementation will contain it's own app setup code, and the generic code will be brought in
-module by module using npm.
+This is published as a npm package. Specific controllers can then pull in each module as needed.
 
-
-
+# Notes
+- The developer is expected to bump the package.json version for each PR. When the PR is merged to master it will automatically publish a new package to npm
+- For local development you may not want to publish an npm package until you're sure things work. You can use npm link for this:
+  ```
+  npm run build
+  cp package.json dist/package.json
+  npm link
+  ```
+  And then in the folder you want to pull in the latest local code
+  ```
+  npm link aries-controller
+  ```
+  This will link the aries-controller dependency code to the node_modules in the other repo
