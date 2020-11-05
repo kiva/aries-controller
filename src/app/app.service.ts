@@ -66,7 +66,7 @@ export class AppService {
             SwaggerModule.setup('api-docs', app, document);
         }
 
-        // await AppService.loadProfile();
+        await AppService.loadProfile();
     }
 
     /**
@@ -74,7 +74,7 @@ export class AppService {
      * @tothink there are a few different ways we could handle these profiles: files, loaded in code directly, database, etc
      */
     public static loadProfile() {
-        const fullPath = __dirname + '/' + process.env.PROFILES_PATH + 'profile.json';
+        const fullPath = process.cwd() + '/profiles/profile.json';
         const profileString = readFileSync(fullPath).toString();
         if (!profileString) {
             throw new Error('Failed to load profile');
