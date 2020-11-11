@@ -18,8 +18,8 @@ export class AgentService {
         // One option is for this controller (at self url) to manage all the interactions,
         //   which would require a lot of overlap with the agency controller
         // The simpler option for right now is to use the agency's controller and specify a specific policy (eg issuer, verifier, etc)
-        // const controllerUrl = process.env.SELF_URL + '/v1/controller';
         const controllerUrl = null;
+        // const controllerUrl = process.env.SELF_URL + '/v1/controller';
         return await this.agentCaller.spinUpAgent(
             process.env.WALLET_ID,
             process.env.WALLET_KEY,
