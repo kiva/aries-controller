@@ -1,30 +1,25 @@
-FROM node:carbon-alpine as controller
-WORKDIR /tmp/
-COPY package.json package-lock.json tsconfig.json ./
-RUN npm install
-COPY src/ src/
-RUN npm run build
-
 FROM node:carbon-alpine as node_modules
 WORKDIR /tmp/
-COPY demo/package.json demo/package-lock.json ./demo/
-COPY --from=controller /tmp/dist ./dist/
-RUN cd demo
+COPY demo/package.json demo/package-lock.json ./
 RUN npm install --production
 
 FROM node:carbon-alpine as dist
 WORKDIR /tmp/
-COPY demo/package.json demo/package-lock.json demo/tsconfig.json ./demo/
-COPY --from=controller /tmp/dist ./dist/
-RUN cd demo
+# Build aries-controller dependency
+COPY package.json package-lock.json tsconfig.json ./
 RUN npm install
-COPY demo/src/ ./demo/src/
+COPY src/ src/
 RUN npm run build
+# Build demo
+COPY demo/package.json demo/package-lock.json demo/tsconfig.json ./demo/
+RUN cd demo && npm install
+COPY demo/src/ ./demo/src/
+RUN cd demo && npm run build
 
 FROM node:carbon-alpine
 WORKDIR /www
-COPY --from=node_modules /tmp/demo/node_modules ./node_modules/
-COPY --from=controller /tmp/dist ./node_modules/aries-controller/
+COPY --from=node_modules /tmp/node_modules ./node_modules/
+COPY --from=dist /tmp/dist ../dist/
 COPY --from=dist /tmp/demo/dist ./
 COPY demo/profiles/ ./profiles/
 RUN adduser -S app
