@@ -42,6 +42,7 @@ jobs:
       - run:
           name: Start docker compose and wait for readiness
           command: |
+            cd demo
             docker-compose -f docker-compose.ci.yml build
             docker-compose -f docker-compose.ci.yml up -d
             sleep 20
@@ -57,12 +58,12 @@ jobs:
       - run:
           name: Setup integration tests
           command: |
-            cd integration_tests
+            cd demo
             npm install
       - run:
-          name: Running full integration tests
+          name: Running demo integration tests
           command: |
-            cd integration_tests
+            cd demo
             if ! npm run test ; then
               echo "Tests failed. Server logs:";
               cd ..
