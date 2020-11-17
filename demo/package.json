@@ -38,17 +38,17 @@
     },
     "jest": {
         "globals": {
-          "factories": {}
+            "factories": {}
         },
         "moduleFileExtensions": [
-          "js",
-          "json",
-          "ts"
+            "js",
+            "json",
+            "ts"
         ],
         "rootDir": "test",
         "testRegex": ".e2e-spec.ts$",
         "transform": {
-          "^.+\\.(t|j)s$": "ts-jest"
+            "^.+\\.(t|j)s$": "ts-jest"
         },
         "coverageDirectory": "../coverage",
         "testEnvironment": "node"

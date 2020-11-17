@@ -1,6 +1,5 @@
 version: 2.1
-orbs:
-  node: circleci/node@1.1.6
+
 jobs:
   build-test-publish:
     executor:
@@ -71,12 +70,19 @@ jobs:
               exit 1;
             fi
 workflows:
-    build-test-publish-deploy:
-      jobs:
-        - build-test-publish
-        - integration-test:
-          requires:
-            - build-test-publish
-          filters: # run for all branches AND tags
-            tags:
-              only: /.*/
+  build-test-deploy:
+    jobs:
+      - build-test-publish:
+        filters: # run for all branches AND tags
+          tags:
+            only: /.*/
+      - integration-test:
+        requires:
+          - build-test-publish
+        filters: # run for all branches AND tags
+          tags:
+            only: /.*/
+
+orbs:
+  node: circleci/node@1.1.6
+  docker: circleci/docker@1.3.0
