@@ -50,7 +50,7 @@ jobs:
       - run:
           name: Run setup scripts
           command: |
-            if ! docker exec -it demo-controller node /www/scripts/demo.setup.js ; then
+            if ! docker exec -it demo-controller node /www/scripts/setup.demo.js ; then
               echo "Setup failed. Server logs:";
               docker-compose -f docker-compose.ci.yml logs;
               exit 1;
@@ -87,3 +87,4 @@ workflows:
 orbs:
   node: circleci/node@1.1.6
   docker: circleci/docker@1.3.0
+  
