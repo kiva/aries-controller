@@ -73,15 +73,15 @@ workflows:
   build-test-deploy:
     jobs:
       - build-test-publish:
-        filters: # run for all branches AND tags
-          tags:
-            only: /.*/
+          filters: # run for all branches AND tags
+            tags:
+              only: /.*/
       - integration-test:
-        requires:
-          - build-test-publish
-        filters: # run for all branches AND tags
-          tags:
-            only: /.*/
+          requires:
+            - build-test-publish
+          filters: # run for all branches AND tags
+            tags:
+              only: /.*/
 
 orbs:
   node: circleci/node@1.1.6
