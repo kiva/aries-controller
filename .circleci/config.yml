@@ -18,6 +18,58 @@ jobs:
                 if [ "$CIRCLE_BRANCH" == "main" ] && [ "$CD_SKIP" != "1" ]; then
                     ./publish.sh
                 fi
+
+  integration-test:
+    machine:
+      docker_layer_caching: true
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run:
+          name: Setup shell environment
+          command: |
+            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run:
+          name: Setup node
+          command: |
+              nvm install v8.17.0
+              node -v
+              nvm alias default v8.17.0
+      - run:
+          name: Setup demo
+          command: |
+            cp demo/dummy.env demo/.env
+
+      - run:
+          name: Start docker compose and wait for readiness
+          command: |
+            docker-compose -f docker-compose.ci.yml build
+            docker-compose -f docker-compose.ci.yml up -d
+            sleep 20
+            docker-compose -f docker-compose.ci.yml logs
+      - run:
+          name: Run setup scripts
+          command: |
+            if ! docker exec -it demo-controller node /www/scripts/demo.setup.js ; then
+              echo "Setup failed. Server logs:";
+              docker-compose -f docker-compose.ci.yml logs;
+              exit 1;
+            fi
+      - run:
+          name: Setup integration tests
+          command: |
+            cd integration_tests
+            npm install
+      - run:
+          name: Running full integration tests
+          command: |
+            cd integration_tests
+            if ! npm run test ; then
+              echo "Tests failed. Server logs:";
+              cd ..
+              docker-compose -f docker-compose.ci.yml logs;
+              exit 1;
+            fi
 workflows:
     build-and-test:
       jobs:

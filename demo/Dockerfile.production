@@ -1,20 +1,29 @@
-FROM node:carbon-alpine as node_modules
-WORKDIR /tmp/
-COPY package.json package-lock.json ./
-RUN npm install --production
-
-FROM node:carbon-alpine as dist
+FROM node:carbon-alpine as controller
 WORKDIR /tmp/
 COPY package.json package-lock.json tsconfig.json ./
 RUN npm install
 COPY src/ src/
 RUN npm run build
 
+FROM node:carbon-alpine as node_modules
+WORKDIR /tmp/
+COPY demo/package.json demo/package-lock.json ./
+RUN npm install --production
+
+FROM node:carbon-alpine as dist
+WORKDIR /tmp/
+COPY demo/package.json demo/package-lock.json demo/tsconfig.json ./
+COPY --from=controller /tmp/dist /dist
+RUN npm install
+COPY demo/src/ src/
+RUN npm run build
+
 FROM node:carbon-alpine
 WORKDIR /www
 COPY --from=node_modules /tmp/node_modules ./node_modules
+COPY --from=controller /tmp/dist ./node_modules/aries-controller
 COPY --from=dist /tmp/dist ./
-COPY profiles/ profiles/
+COPY demo/profiles/ profiles/
 RUN adduser -S app
 USER app
 CMD ["node", "main.js"]
