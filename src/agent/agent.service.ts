@@ -15,11 +15,8 @@ export class AgentService {
      * TODO we could add some error handling/retry logic here if the agent doesn't spin up correctly the first time
      */
     public async init(): Promise<any> {
-        // One option is for this controller (at self url) to manage all the interactions,
-        //   which would require a lot of overlap with the agency controller
-        // The simpler option for right now is to use the agency's controller and specify a specific policy (eg issuer, verifier, etc)
-        const controllerUrl = null;
-        // const controllerUrl = process.env.SELF_URL + '/v1/controller';
+        // setup agent to use the webhook and governance policy handler built in
+        const controllerUrl = process.env.SELF_URL + '/v1/controller';
         return await this.agentCaller.spinUpAgent(
             process.env.WALLET_ID,
             process.env.WALLET_KEY,
