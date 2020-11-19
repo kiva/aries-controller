@@ -1,8 +1,19 @@
 import { Get, Controller, Post, Param, Body } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ProtocolValidationPipe } from 'protocol-common/protocol.validation.pipe';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
 import { VerifierService } from '../verifier/verifier.service';
+import { ConnectionGetResDto } from './dtos/connection.get.res.dto';
+import { ConnectionPostResDto } from './dtos/connection.post.res.dto';
+import { GuardianOnboardPostReqDto } from './dtos/guardian.onboard.post.req.dto';
+import { GuardianOnboardPostResDto } from './dtos/guardian.onboard.post.res.dto';
+import { GuardianVerifyPostReqDto } from './dtos/guardian.verify.post.req.dto';
+import { IssuePostReqDto } from './dtos/issue.post.req.dto';
+import { IssuePostResDto } from './dtos/issue.post.res.dto';
+import { VerifyGetResDto } from './dtos/verify.get.res.dto';
+import { VerifyPostReqDto } from './dtos/verify.post.req.dto';
+import { VerifyPostResDto } from './dtos/verify.post.res.dto';
 
 /**
  * Contains API routes that we want exposed to the front end
@@ -24,16 +35,18 @@ export class ApiController {
     /**
      * Create connection for mobile agent to receive
      */
+    @ApiResponse({ status: 201, type: ConnectionPostResDto })
     @Post('connection')
-    async createConnection(): Promise<any> {
+    async createConnection(): Promise<ConnectionPostResDto> {
         return await this.agentService.openConnection();
     }
 
     /**
      * Check status of connection
      */
+    @ApiResponse({ status: 200, type: ConnectionGetResDto })
     @Get('connection/:connectionId')
-    async checkConnection(@Param('connectionId') connectionId: string): Promise<any> {
+    async checkConnection(@Param('connectionId') connectionId: string): Promise<ConnectionGetResDto> {
         return await this.agentService.checkConnection(connectionId);
     }
 
@@ -41,17 +54,18 @@ export class ApiController {
      * Issue credential to connection
      * Expects: profile, connectionId, entityData
      */
+    @ApiResponse({ status: 201, type: IssuePostResDto })
     @Post('issue')
-    async registerMobile(@Body() body: any): Promise<any> {
+    async registerMobile(@Body(new ProtocolValidationPipe()) body: IssuePostReqDto): Promise<IssuePostResDto> {
         return await this.issuerService.issueCredential(body.profile, body.connectionId, body.entityData);
     }
-
 
     /**
      * Check status of credential being issued
      */
+    @ApiResponse({ status: 200, type: IssuePostResDto })
     @Get('issue/:credentialExchangeId')
-    async checkCredential(@Param('credentialExchangeId') credentialExchangeId: string): Promise<any> {
+    async checkCredential(@Param('credentialExchangeId') credentialExchangeId: string): Promise<IssuePostResDto> {
         return await this.issuerService.checkCredentialExchange(credentialExchangeId);
     }
 
@@ -59,16 +73,18 @@ export class ApiController {
      * Initiate proof exchange
      * Expects profile, connectionId
      */
+    @ApiResponse({ status: 201, type: VerifyPostResDto })
     @Post('verify')
-    public async verify(@Body() body: any): Promise<any> {
+    public async verify(@Body(new ProtocolValidationPipe()) body: VerifyPostReqDto): Promise<VerifyPostResDto> {
         return await this.verifierService.verify(body.profile, body.connectionId);
     }
 
     /**
      * Check status of presentation exchange
      */
+    @ApiResponse({ status: 200, type: VerifyGetResDto })
     @Get('verify/:presExId')
-    async checkPresEx(@Param('presExId') presExId: string): Promise<any> {
+    async checkPresEx(@Param('presExId') presExId: string): Promise<VerifyGetResDto> {
         return await this.verifierService.checkPresEx(presExId);
     }
 
@@ -76,8 +92,9 @@ export class ApiController {
      * Onboards an entity into the guardian system and issues them a credential
      * Expects: profile, guardianData, entityData
      */
+    @ApiResponse({ status: 201, type: GuardianOnboardPostResDto })
     @Post('guardian/onboard')
-    public async onboardEntity(@Body() body: any): Promise<any> {
+    public async onboardEntity(@Body(new ProtocolValidationPipe()) body: GuardianOnboardPostReqDto): Promise<GuardianOnboardPostResDto> {
         return await this.issuerService.onboardEntity(body.profile, body.guardianData, body.entityData);
     }
 
@@ -86,7 +103,7 @@ export class ApiController {
      * Expects profile, guardianData
      */
     @Post('guardian/verify')
-    public async escrowVerify(@Body() body: any): Promise<any> {
+    public async escrowVerify(@Body(new ProtocolValidationPipe()) body: GuardianVerifyPostReqDto): Promise<any> {
         // TODO eventually we should update all references and reverse the order here
         return await this.verifierService.escrowVerify(body.guardianData, body.profile);
     }
