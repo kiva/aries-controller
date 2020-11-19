@@ -75,7 +75,7 @@ export class IssuerService {
     /**
      * Issue a credential using a cred def profile path and some entity data which can be formatted to Aries attributes
      */
-    public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<string> {
+    public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
         const [credentialData, credDefAttributes] = this.getCredDefAndSchemaData(credDefProfilePath);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
         return await this.issueCredentialSend(credentialData, connectionId, attributes);

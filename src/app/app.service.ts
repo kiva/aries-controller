@@ -58,12 +58,12 @@ export class AppService {
         if (process.env.NODE_ENV === Constants.LOCAL) {
             // Set up internal documentation at /api
             const options = new DocumentBuilder()
-                .setTitle('Controllers')
-                .setDescription('Internal Documentation for the Steward/Issuer/Verifier Controllers')
+                .setTitle('Aries Controller')
+                .setDescription('Internal Documentation for the Aries Controller')
                 .setVersion('1.0')
                 .build();
             const document = SwaggerModule.createDocument(app, options);
-            SwaggerModule.setup('api-docs', app, document);
+            SwaggerModule.setup('api-docs', app, document, { customfavIcon: null });
         }
 
         await AppService.loadProfile();
