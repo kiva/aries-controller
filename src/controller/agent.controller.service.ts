@@ -1,11 +1,13 @@
 import { Injectable, HttpService, Inject, CACHE_MANAGER, CacheStore } from '@nestjs/common';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
+import { ProtocolException } from 'protocol-common/protocol.exception';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentGovernance } from './agent.governance';
 import { HandlersFactory } from './handler/handlers.factory';
 
 /**
- * TODO this needs to handle general requests that come from the agents for the controller to handle -
- * it should have some way of checking what it's behavior should be and respond accordingly
+ * Handler for ACAPY "webhook" endpoints, which allows agents to automatically respond to agent messages
+ * according to the governance policy setup.  See [../config/governance.json] for configurations.
  */
 @Injectable()
 export class AgentControllerService {
@@ -22,12 +24,19 @@ export class AgentControllerService {
     async handleRequest(route: string, topic: string, body: any) {
         const agentId: string = process.env.AGENT_ID || 'agent';
         const agent: any = await this.cache.get(agentId);
+        let adminApiKey = process.env.ADMIN_API_KEY;
+        if (undefined === adminApiKey && agent) {
+            adminApiKey = agent.adminApiKey;
+        }
+        if (undefined === adminApiKey) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_NODE_ENVIRONMENT, 'admin api key is missing from environment');
+        }
         const adminPort = (agent ? agent.adminApiPort : process.env.AGENT_ADMIN_PORT);
         // @tothink http/https?  should this be from the env?
         const agentUrl = `http://${agentId}:${adminPort}`;
 
         return await HandlersFactory.getHandler(this.agentGovernance, topic, this.http, this.cache)
-            .handlePost(agentUrl, agentId, agent.adminApiKey, route, topic, body);
+            .handlePost(agentUrl, agentId, adminApiKey, route, topic, body);
 
     }
 }
