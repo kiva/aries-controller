@@ -25,10 +25,10 @@ export class AgentControllerService {
         const agentId: string = process.env.AGENT_ID || 'agent';
         const agent: any = await this.cache.get(agentId);
         let adminApiKey = process.env.ADMIN_API_KEY;
-        if (undefined === adminApiKey && agent) {
+        if (!adminApiKey && agent) {
             adminApiKey = agent.adminApiKey;
         }
-        if (undefined === adminApiKey) {
+        if (!adminApiKey) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_NODE_ENVIRONMENT, 'admin api key is missing from environment');
         }
         const adminPort = (agent ? agent.adminApiPort : process.env.AGENT_ADMIN_PORT);
