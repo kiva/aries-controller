@@ -25,6 +25,10 @@ export class AgentControllerService {
         const agentId: string = process.env.AGENT_ID || 'agent';
         const agent: any = await this.cache.get(agentId);
         let adminApiKey = process.env.ADMIN_API_KEY;
+
+        // Sometimes the agent controller is used for a single agent and other times it serves in an agency
+        // capacity.  Because of this, adminApiKey may not be cached so we have to check env when its not in
+        // cache and we will error if environment isn't setup correctly.
         if (!adminApiKey && agent) {
             adminApiKey = agent.adminApiKey;
         }
