@@ -1,4 +1,4 @@
-import { IsObject, IsString } from 'class-validator';
+import { IsArray, IsObject, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class GuardianOnboardPostReqDto {
@@ -11,9 +11,9 @@ export class GuardianOnboardPostReqDto {
 
     @ApiProperty({
         type: Object,
-        description: `The guardian data to onboard the entity. Should include 'pluginType', 'filters' and 'params'`
+        description: `Array of guardian data to onboard the entity. Should include 'pluginType', 'filters' and 'params'`
     })
-    @IsObject() readonly guardianData: object[];
+    @IsArray() readonly guardianData: object[];
 
     @ApiProperty({
         type: Object,
