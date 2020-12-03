@@ -2,7 +2,6 @@ import { Injectable, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import {readFileSync} from 'fs';
 import { json } from 'body-parser';
 import { ProtocolExceptionFilter } from 'protocol-common/protocol.exception.filter';
 import { Logger } from 'protocol-common/logger';
@@ -13,6 +12,7 @@ import { Constants } from 'protocol-common/constants';
 import { HttpConstants } from 'protocol-common/http-context/http.constants';
 import { AgentService } from '../agent/agent.service';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { Services } from '../utility/services';
 
 /**
  * Sets up the app to support all the public gateway-like controllers, eg ratelimiting, etc
@@ -74,14 +74,7 @@ export class AppService {
      * @tothink there are a few different ways we could handle these profiles: files, loaded in code directly, database, etc
      */
     public static loadProfile() {
-        const fullPath = process.cwd() + '/profiles/profile.json';
-        const profileString = readFileSync(fullPath).toString();
-        if (!profileString) {
-            throw new Error('Failed to load profile');
-        }
-        const profileJson = JSON.parse(profileString);
-        const profile = {...profileJson.DEFAULT, ...profileJson[process.env.NODE_ENV]};
-
+        const profile = Services.getProfile('profile.json');
         for (const key of Object.keys(profile)) {
             process.env[key.toUpperCase()] = profile[key];
         }

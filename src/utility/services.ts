@@ -1,5 +1,6 @@
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { AgentCaller } from '../agent/agent.caller';
+import { readdirSync, readFileSync } from 'fs';
 
 export class Services {
 
@@ -23,5 +24,35 @@ export class Services {
         }
 
         return false;
+    }
+
+    /**
+     * Loads a specific profile by fileName
+     */
+    public static getProfile(fileName: string): any {
+        const profilesDir = process.cwd() + '/profiles/';
+        const file = readFileSync(profilesDir + fileName).toString();
+        if (!file) {
+            throw new Error(`Invalid json in ${fileName}`);
+        }
+        const fileData = JSON.parse(file);
+        if (fileData.DEFAULT) {
+            return {...fileData.DEFAULT, ...fileData[process.env.NODE_ENV]};
+        } else {
+            return fileData;
+        }
+    }
+
+    /**
+     * Loads all profiles and returns an key-value object of fileNames => files
+     */
+    public static getAllProfiles(): any {
+        const profilesDir = process.cwd() + '/profiles/';
+        const fileNames = readdirSync(profilesDir);
+        const files = {};
+        for (const fileName of fileNames) {
+            files[fileName] = Services.getProfile(fileName);
+        }
+        return files;
     }
 }

@@ -1,5 +1,4 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import {readFileSync} from 'fs';
 import { AxiosRequestConfig } from 'axios';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { Logger } from 'protocol-common/logger';
@@ -27,14 +26,7 @@ export class VerifierService {
     }
 
     public async verify(proofProfilePath: string, connectionId: string): Promise<any> {
-        const prefix = process.cwd() + '/profiles/';
-        const proofProfileString = readFileSync(prefix + proofProfilePath).toString();
-        if (!proofProfileString) {
-            throw new Error(`Failed to load profile ${proofProfileString}`);
-        }
-        const proofProfileJson = JSON.parse(proofProfileString);
-        const proofProfile = {...proofProfileJson.DEFAULT, ...proofProfileJson[process.env.NODE_ENV]};
-
+        const proofProfile = Services.getProfile(proofProfilePath);
         proofProfile.connection_id = connectionId;
         return await this.agentCaller.callAgent(
             process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'present-proof/send-request', null, proofProfile);

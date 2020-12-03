@@ -1,6 +1,6 @@
 {
   "name": "aries-controller",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Generic controller for aries agents",
   "license": "Apache-2.0",
   "type": "module",
@@ -27,13 +27,13 @@
     "build": "tsc",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "ts-node -r tsconfig-paths/register -r dotenv/config src/main.ts",
-    "start:debug": "nodemon --legacy-watch",
+    "start:debug": "NODE_ENV=LOCAL nodemon --legacy-watch",
     "prestart:prod": "rimraf dist && tsc",
     "start:prod": "node main.js",
     "start:hmr": "node server",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "lint:fix": "tslint -p tsconfig.json -c tslint.json --fix",
-    "test": "node -r dotenv/config node_modules/.bin/jest --runInBand"
+    "test": "NODE_ENV=LOCAL node -r dotenv/config node_modules/.bin/jest --runInBand"
   },
   "dependencies": {
     "@nestjs/common": "^7.4.2",

@@ -1,6 +1,7 @@
 import { Get, Controller, Post, Param, Body } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/protocol.validation.pipe';
+import { Services } from '../utility/services';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
 import { VerifierService } from '../verifier/verifier.service';
@@ -106,5 +107,13 @@ export class ApiController {
     public async escrowVerify(@Body(new ProtocolValidationPipe()) body: GuardianVerifyPostReqDto): Promise<any> {
         // TODO eventually we should update all references and reverse the order here
         return await this.verifierService.escrowVerify(body.guardianData, body.profile);
+    }
+
+    /**
+     * Returns all profiles indexed by profile name
+     */
+    @Get('profiles')
+    public getProfiles(): any {
+        return Services.getAllProfiles();
     }
 }
