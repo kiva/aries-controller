@@ -1,5 +1,4 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import { readFileSync } from 'fs';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
@@ -182,14 +181,7 @@ export class IssuerService {
      * TODO better error handling
      */
     private getCredDefAndSchemaData(credDefProfilePath: string): any {
-        const prefix = process.cwd() + '/profiles/';
-        const credDefProfileString = readFileSync(prefix + credDefProfilePath).toString();
-        if (!credDefProfileString) {
-            throw new Error(`Failed to load profile ${credDefProfilePath}`);
-        }
-        const credDefProfileJson = JSON.parse(credDefProfileString);
-        const credDefProfile = {...credDefProfileJson.DEFAULT, ...credDefProfileJson[process.env.NODE_ENV]};
-
+        const credDefProfile = Services.getProfile(credDefProfilePath);
         const attributes = credDefProfile.attributes;
         delete credDefProfile.attributes;
         delete credDefProfile.schema_profile;

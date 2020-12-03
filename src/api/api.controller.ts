@@ -1,6 +1,7 @@
 import { Get, Controller, Post, Param, Body } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/protocol.validation.pipe';
+import { Services } from '../utility/services';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
 import { VerifierService } from '../verifier/verifier.service';
@@ -108,8 +109,11 @@ export class ApiController {
         return await this.verifierService.escrowVerify(body.guardianData, body.profile);
     }
 
+    /**
+     * Returns all profiles indexed by profile name
+     */
     @Get('profiles')
     public getProfiles(): any {
-        return this.agentService.getProfiles();
+        return Services.getAllProfiles();
     }
 }
