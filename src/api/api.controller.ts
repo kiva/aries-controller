@@ -107,4 +107,9 @@ export class ApiController {
         // TODO eventually we should update all references and reverse the order here
         return await this.verifierService.escrowVerify(body.guardianData, body.profile);
     }
+
+    @Get('profiles')
+    public getProfiles(): any {
+        return this.agentService.getProfiles();
+    }
 }

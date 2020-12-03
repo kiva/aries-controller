@@ -1,5 +1,5 @@
 import { Injectable, HttpService } from '@nestjs/common';
-import {readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';

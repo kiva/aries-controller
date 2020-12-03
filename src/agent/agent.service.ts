@@ -1,5 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AgentCaller } from './agent.caller';
+import { readdirSync, readFileSync } from 'fs';
 
 /**
  * TODO abstract out a base service that includes things like making connections
@@ -73,5 +74,22 @@ export class AgentService {
             did,
         };
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'wallet/did/public', params);
+    }
+
+    public getProfiles() {
+        const profilesDir = process.cwd() + '/profiles/';
+        const fileNames = readdirSync(profilesDir);
+        const files = {};
+        for (const fileName of fileNames) {
+            const file = readFileSync(profilesDir + fileName).toString();
+            const fileData = JSON.parse(file);
+            if (fileData.DEFAULT) {
+                files[fileName] = {...fileData.DEFAULT, ...fileData[process.env.NODE_ENV]};
+            } else {
+                files[fileName] = fileData;
+            }
+        }
+        Logger.log(files);
+        return files;
     }
 }
