@@ -3,7 +3,7 @@
   "version": "1.0.9",
   "description": "Generic controller for aries agents",
   "license": "Apache-2.0",
-  "type": "module",
+  "type": "commonjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kiva/protocol-aries.git"
