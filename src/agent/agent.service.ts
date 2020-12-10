@@ -25,6 +25,7 @@ export class AgentService {
             controllerUrl,
             process.env.AGENT_ID,
             process.env.LABEL,
+            (process.env.USE_TAILS_SERVER === 'true'),
         );
     }
 

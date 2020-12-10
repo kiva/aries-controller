@@ -36,6 +36,7 @@ export class AgentCaller {
         controllerUrl?: string,
         agentId?: string,
         label?: string,
+        useTailsServer: boolean = false
     ): Promise<any> {
         const req: AxiosRequestConfig = {
             method: 'POST',
@@ -50,6 +51,7 @@ export class AgentCaller {
                 label,
                 ttl: 2147483, // This is the max ttl supported by setTimeout - TODO swap this to 0 when the agency is ready for it
                 autoConnect: false,
+                useTailsServer,
             }
         };
         Logger.log(`Spinning up agent ${agentId}`);
