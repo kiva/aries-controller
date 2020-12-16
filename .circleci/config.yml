@@ -16,6 +16,10 @@ jobs:
           if [ "$CIRCLE_BRANCH" == "main" ] && [ "$CD_SKIP" != "1" ]; then
               ./publish.sh
           fi
+      - run: |
+          if [ "$CIRCLE_BRANCH" != "main" ] && [ "$CD_SKIP" != "1" ]; then
+              ./publish.sh dev
+          fi
 workflows:
     build-and-test:
       jobs:
