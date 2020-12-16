@@ -198,12 +198,29 @@ export class IssuerService {
      * Makes a call to the agent to create a credential definition
      */
     public async createCredDef(schema_id: string, tag: string, support_revocation: boolean): Promise<any> {
-        const data = {
-            schema_id,
-            tag,
-            support_revocation,
-        };
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'credential-definitions', null, data);
+
+        if (support_revocation) {
+
+            const registry_size = 200;
+
+            const data = {
+                schema_id,
+                tag,
+                support_revocation,
+                registry_size
+            };
+
+            return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'credential-definitions', null, data);
+        } else {
+
+            const data = {
+                schema_id,
+                tag,
+                support_revocation,
+            };
+
+            return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'credential-definitions', null, data);
+        }
     }
 
     /**

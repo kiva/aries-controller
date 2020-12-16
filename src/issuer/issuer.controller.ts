@@ -20,4 +20,12 @@ export class IssuerController {
     public async createCredDef(@Body() body: any): Promise<any> {
         return await this.issuerService.createCredDef(body.schema_id, body.tag, body.support_revocation);
     }
+
+    /**
+     * Creates a credential definition with revocation passed on the passed in data
+     */
+    @Post('revocation-registry')
+    public async createRevReg(@Body() body: any): Promise<any> {
+        return await this.issuerService.createCredDef(body.schema_id, body.tag, true);
+    }
 }
