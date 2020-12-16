@@ -57,7 +57,7 @@ export class ApiController {
      */
     @ApiResponse({ status: 201, type: IssuePostResDto })
     @Post('issue')
-    async registerMobile(@Body(new ProtocolValidationPipe()) body: IssuePostReqDto): Promise<IssuePostResDto> {
+    async issueCredential(@Body(new ProtocolValidationPipe()) body: IssuePostReqDto): Promise<IssuePostResDto> {
         return await this.issuerService.issueCredential(body.profile, body.connectionId, body.entityData);
     }
 
@@ -87,6 +87,26 @@ export class ApiController {
     @Get('verify/:presExId')
     async checkPresEx(@Param('presExId') presExId: string): Promise<VerifyGetResDto> {
         return await this.verifierService.checkPresEx(presExId);
+    }
+
+    /**
+     * Enrolls in the key guardian without issuing a credential
+     * Expects an array of guardian data, and returns connection data
+     */
+    @ApiResponse({ status: 201, type: GuardianOnboardPostResDto })
+    @Post('guardian/enroll')
+    public async guardianEnroll(@Body(new ProtocolValidationPipe()) body: any): Promise<GuardianOnboardPostResDto> {
+        return await this.issuerService.enrollInKeyGuardian(body);
+    }
+
+    /**
+     * Issues a credential to an entity in guardianship
+     * Expects: profile, guardianData, entityData
+     */
+    @ApiResponse({ status: 201, type: GuardianOnboardPostResDto })
+    @Post('guardian/issue')
+    public async guardianIssue(@Body(new ProtocolValidationPipe()) body: any): Promise<GuardianOnboardPostResDto> {
+        return await this.issuerService.issueInGuardianship(body.profile, body.guardianData, body.entityData);
     }
 
     /**

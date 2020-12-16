@@ -37,6 +37,7 @@ export class AgentService {
         return data;
     }
 
+    // TODO update to accept a null alias (switch the order on acceptConnection)
     public async acceptConnection(alias: string, invitation: any): Promise<any> {
         const params = {
             alias
