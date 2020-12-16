@@ -76,7 +76,7 @@ export class IssuerService {
     /**
      * Given a previously enrolled entity, issues a credential after verifying with the key guardian
      */
-    public async issueInGuardianship(credDefProfilePath: string, guardianVerifyData: Array<any>, entityData: any): Promise<any> {
+    public async issueInGuardianship(credDefProfilePath: string, guardianVerifyData: any, entityData: any): Promise<any> {
         const keyGuardRes = await this.verifyWithKeyGuardian(guardianVerifyData);
         Logger.log('1. Verified with Key Guardian');
         if (!keyGuardRes.connectionData) {

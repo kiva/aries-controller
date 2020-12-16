@@ -15,6 +15,9 @@ import { IssuePostResDto } from './dtos/issue.post.res.dto';
 import { VerifyGetResDto } from './dtos/verify.get.res.dto';
 import { VerifyPostReqDto } from './dtos/verify.post.req.dto';
 import { VerifyPostResDto } from './dtos/verify.post.res.dto';
+import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
+import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
+import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
 
 /**
  * Contains API routes that we want exposed to the front end
@@ -93,10 +96,10 @@ export class ApiController {
      * Enrolls in the key guardian without issuing a credential
      * Expects an array of guardian data, and returns connection data
      */
-    @ApiResponse({ status: 201, type: GuardianOnboardPostResDto })
+    @ApiResponse({ status: 201, type: GuardianEnrollPostResDto })
     @Post('guardian/enroll')
-    public async guardianEnroll(@Body(new ProtocolValidationPipe()) body: any): Promise<GuardianOnboardPostResDto> {
-        return await this.issuerService.enrollInKeyGuardian(body);
+    public async guardianEnroll(@Body(new ProtocolValidationPipe()) body: GuardianEnrollPostReqDto): Promise<GuardianEnrollPostResDto> {
+        return await this.issuerService.enrollInKeyGuardian(body.guardianData);
     }
 
     /**
@@ -105,8 +108,8 @@ export class ApiController {
      */
     @ApiResponse({ status: 201, type: GuardianOnboardPostResDto })
     @Post('guardian/issue')
-    public async guardianIssue(@Body(new ProtocolValidationPipe()) body: any): Promise<GuardianOnboardPostResDto> {
-        return await this.issuerService.issueInGuardianship(body.profile, body.guardianData, body.entityData);
+    public async guardianIssue(@Body(new ProtocolValidationPipe()) body: GuardianIssuePostReqDto): Promise<GuardianOnboardPostResDto> {
+        return await this.issuerService.issueInGuardianship(body.profile, body.guardianVerifyData, body.entityData);
     }
 
     /**

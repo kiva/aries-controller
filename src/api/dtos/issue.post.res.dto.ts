@@ -1,4 +1,3 @@
-import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class IssuePostResDto {
@@ -7,12 +6,12 @@ export class IssuePostResDto {
         type: String,
         description: `The id of the credential exchange`
     })
-    @IsString() readonly credential_exchange_id: string;
+    readonly credential_exchange_id: string;
 
     @ApiProperty({
         type: String,
         description: `The state of the credential exchange. Note if the GET endpoint returns 404 that means the exchange has finished successfully and has been removed.`
     })
-    @IsString() readonly state: string;
+    readonly state: string;
 
 }
