@@ -1,4 +1,3 @@
-import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ConnectionGetResDto {
@@ -7,6 +6,6 @@ export class ConnectionGetResDto {
         type: String,
         description: `State values of 'active' or 'response' mean the connection is established. Other values indicate we're stilling waiting`
     })
-    @IsString() readonly state: string;
+    readonly state: string;
 
 }

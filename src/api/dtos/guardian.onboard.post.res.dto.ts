@@ -1,4 +1,3 @@
-import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class GuardianOnboardPostResDto {
@@ -7,6 +6,12 @@ export class GuardianOnboardPostResDto {
         type: String,
         description: 'The id of the newly onboarded agent'
     })
-    @IsString() readonly agentId: string;
+    readonly agentId: string;
+
+    @ApiProperty({
+        type: Object,
+        description: 'Data returned from the agent'
+    })
+    readonly agentData: any;
 
 }

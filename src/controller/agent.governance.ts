@@ -47,7 +47,7 @@ export class AgentGovernance {
                         Logger.warn(`policy ${key} is not valid, resetting to 'deny'.`);
                         this.policies[topic][key] = AgentGovernance.PERMISSION_DENY;
                     }
-                } catch {
+                } catch (e) {
                     Logger.warn(`Improperly specified key found ${key}...deleting`);
                 }
             }
