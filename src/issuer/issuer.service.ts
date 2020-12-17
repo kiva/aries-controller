@@ -199,13 +199,11 @@ export class IssuerService {
      */
     public async createCredDef(schema_id: string, tag: string, support_revocation: boolean, revocation_registry_size : number): Promise<any> {
 
-        const registry_size  = (revocation_registry_size > 0) ? revocation_registry_size : process.env.DEFAULT_REV_REG_SIZE;
-
         const data = {
             schema_id,
             tag,
             support_revocation,
-            registry_size
+            revocation_registry_size : support_revocation ? revocation_registry_size : process.env.DEFAULT_REV_REG_SIZE
         };
 
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'credential-definitions', null, data);
