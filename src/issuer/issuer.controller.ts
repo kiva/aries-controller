@@ -28,6 +28,4 @@ export class IssuerController {
     public async revoke(@Body() body: any): Promise<any> {
         return await this.issuerService.revokeCredential(body.cred_rev_id, body.rev_reg_id);
     }
-
-
 }
