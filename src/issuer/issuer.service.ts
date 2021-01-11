@@ -261,7 +261,7 @@ export class IssuerService {
     }
 
     /**
-     * The records return from aca-py have a lot of extra data that we don't need, this just includes the 
+     * The records return from aca-py have a lot of extra data that we don't need, this just includes the
      * Optional: new fields can easily be added if the front end needed
      *   eg right now we don't include photo since they're large, but it's available at: record.credential_offer_dict.credential_preview.offers~attach
      */
@@ -270,7 +270,7 @@ export class IssuerService {
         const attributes = record.credential_offer_dict.credential_preview.attributes;
         const attribObj = {};
         for (const attribute of attributes) {
-            attribObj[attribute.name] = attribute.value
+            attribObj[attribute.name] = attribute.value;
         }
         return {
             entityData: attribObj,
