@@ -236,15 +236,55 @@ export class IssuerService {
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `issue-credential/records/${credentialExchangeId}`);
     }
 
-
+    /**
+     * Revokes credential using the cred_rev_id and rev_reg_id
+     */
     public async revokeCredential(cred_rev_id : number, rev_reg_id : string): Promise<any> {
-
         const data = {
             cred_rev_id,
             rev_reg_id,
         };
-
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'issue-credential/revoke', data, null);
     }
 
+    /**
+     * Optional: not adding any filters now, but if there's a use case aca-py supports the following:
+     *   connection_id, role, state, thread_id
+     */
+    public async getAllRecords(): Promise<any> {
+        const records = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `issue-credential/records`);
+        const formatted = [];
+        for (const record of records.results) {
+            formatted.push(this.formatRecord(record));
+        }
+        return formatted;
+    }
+
+    /**
+     * The records return from aca-py have a lot of extra data that we don't need, this just includes the
+     * Optional: new fields can easily be added if the front end needed
+     *   eg right now we don't include photo since they're large, but it's available at: record.credential_offer_dict.credential_preview.offers~attach
+     */
+    private formatRecord(record: any) {
+        // Format aries' style attributes into easier to grok entityData
+        const attributes = record.credential_offer_dict.credential_preview.attributes;
+        const attribObj = {};
+        for (const attribute of attributes) {
+            attribObj[attribute.name] = attribute.value;
+        }
+        return {
+            entityData: attribObj,
+            connection_id: record.connection_id,
+            schema_id: record.schema_id,
+            credential_definition_id: record.credential_definition_id,
+            credential_exchange_id: record.credential_exchange_id,
+            state: record.state,
+            created_at: record.created_at,
+            thread_id: record.thread_id,
+            updated_at: record.updated_at,
+            revocation_id: record.revocation_id || null,
+            credential_id: record.credential_id || null,
+            revoc_reg_id: record.revoc_reg_id || null,
+        };
+    }
 }

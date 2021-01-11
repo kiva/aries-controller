@@ -139,4 +139,12 @@ export class ApiController {
     public getProfiles(): any {
         return Services.getAllProfiles();
     }
+
+    /**
+     * Gets all issued credential records
+     */
+    @Get('records')
+    public async getRecords(): Promise<any> {
+        return await this.issuerService.getAllRecords();
+    }
 }
