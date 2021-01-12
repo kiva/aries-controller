@@ -139,11 +139,6 @@ export class IssuerService {
         delete credDefProfile.attributes;
         delete credDefProfile.schema_profile;
         delete credDefProfile.tag;
-
-        // Allow for overriding cred def id if present (since cred def id is the most variable amongst environments)
-        if (process.env.CRED_DEF_ID) {
-            credDefProfile.cred_def_id = process.env.CRED_DEF_ID;
-        }
         return [credDefProfile, attributes];
     }
 
