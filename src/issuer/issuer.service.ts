@@ -6,6 +6,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { AgentCaller } from '../agent/agent.caller';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -28,7 +29,7 @@ export class IssuerService {
      * Issue a credential to existing connection using a cred def profile path and some entity data which can be formatted to Aries attributes
      */
     public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
-        const [credentialData, credDefAttributes] = this.getCredDefAndSchemaData(credDefProfilePath);
+        const [credentialData, credDefAttributes] = await this.getCredDefAndSchemaData(credDefProfilePath);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
         return await this.issueCredentialSend(credentialData, connectionId, attributes);
     }
@@ -133,18 +134,37 @@ export class IssuerService {
     /**
      * TODO better error handling
      */
-    private getCredDefAndSchemaData(credDefProfilePath: string): any {
+    private async getCredDefAndSchemaData(credDefProfilePath: string): Promise<any> {
         const credDefProfile = Services.getProfile(credDefProfilePath);
         const attributes = credDefProfile.attributes;
         delete credDefProfile.attributes;
         delete credDefProfile.schema_profile;
         delete credDefProfile.tag;
-
-        // Allow for overriding cred def id if present (since cred def id is the most variable amongst environments)
-        if (process.env.CRED_DEF_ID) {
-            credDefProfile.cred_def_id = process.env.CRED_DEF_ID;
-        }
+        credDefProfile.cred_def_id = await this.getCredDefId(credDefProfile.schema_id);
         return [credDefProfile, attributes];
+    }
+
+    /**
+     * The cred def id is unpredictable apriori so we need to fetch it directly from aca-py
+     * Note: there should only ever be one cred def id per schema id for a specific agent, we log a warning if this somehow isn't the case
+     * If the cred def id doesn't exist we throw an error because it means the agent isn't set up to issue credentials for this schema
+     * TODO a future improvement would be to cache this value
+     */
+    private async getCredDefId(schemaId: string): Promise<string> {
+        const params = {
+            schema_id: schemaId
+        };
+        const result = await this.agentCaller.callAgent(
+            process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', 'credential-definitions/created', params
+        );
+        if (!result.credential_definition_ids || result.credential_definition_ids.length === 0) {
+            // TODO add error code to ProtocolErrorCode
+            throw new ProtocolException('NoCredDefId', `No cred def id found for schema ${schemaId}`);
+        }
+        if (result.credential_definition_ids.length > 1) {
+            Logger.warn(`More than one cred def found for schema id ${schemaId}, this shouldn't happen`);
+        }
+        return result.credential_definition_ids[0];
     }
 
     // -- Key Guardian calls -- //
