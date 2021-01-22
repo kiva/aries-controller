@@ -147,4 +147,12 @@ export class ApiController {
     public async getRecords(): Promise<any> {
         return await this.issuerService.getAllRecords();
     }
+
+    /**
+     * Creates a credential definition with revocation passed on the passed in data
+     */
+    @Post('revoke')
+    public async revoke(@Body() body: any): Promise<any> {
+        return await this.issuerService.revokeCredential(body.credential_exchange_id, body.publish);
+    }
 }
