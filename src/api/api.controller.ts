@@ -148,7 +148,7 @@ export class ApiController {
         return await this.issuerService.getAllRecords();
     }
 
-     /**
+    /**
      * Creates a credential definition with revocation passed on the passed in data
      */
     @Post('revoke')
