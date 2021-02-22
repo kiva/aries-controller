@@ -46,7 +46,7 @@ export class AppService {
         app.useGlobalFilters(new ProtocolExceptionFilter());
         app.useGlobalInterceptors(new LoggingInterceptor());
 
-        app.use(traceware('controllers'));
+        app.use(traceware(process.env.SERVICE_NAME));
 
         // Default is 100 requests per minute
         app.use(rateLimit({
