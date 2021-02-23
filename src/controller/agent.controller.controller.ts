@@ -21,9 +21,9 @@ export class AgentControllerController {
         @Param('subroute') subroute: string,
         @Body() body: any
     ): Promise<any> {
-        Logger.log('----- GET WEB HOOK START -----');
-        Logger.log(`${route}/${subroute}`, body);
-        Logger.log('----- GET WEB HOOK END -----');
+        Logger.debug('----- GET WEB HOOK START -----');
+        Logger.debug(`${route}/${subroute}`, body);
+        Logger.debug('----- GET WEB HOOK END -----');
         return await this.agentControllerService.handleRequest(route, subroute, body);
     }
 
@@ -33,9 +33,9 @@ export class AgentControllerController {
         @Param('subroute') subroute: string,
         @Body() body: any
     ): Promise<any> {
-        Logger.log('----- POST WEB HOOK START -----');
-        Logger.log(`${route}/${subroute}`, body);
-        Logger.log('----- POST WEB HOOK END -----');
+        Logger.debug('----- POST WEB HOOK START -----');
+        Logger.debug(`${route}/${subroute}`, body);
+        Logger.debug('----- POST WEB HOOK END -----');
         return await this.agentControllerService.handleRequest(route, subroute, body);
     }
 

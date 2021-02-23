@@ -30,7 +30,7 @@ export class HandlersFactory {
             case 'revocation_registry':
                 return new RevocationRegistry(agentGovernance, http, cache);
             default:
-                Logger.warn(`unhandled topic ${topic}`);
+                Logger.debug(`unhandled topic ${topic}`);
                 break;
         }
         throw new ProtocolException('Agency', `No suitable handler found for topic ${topic}`);
