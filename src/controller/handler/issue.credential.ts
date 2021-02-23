@@ -142,7 +142,7 @@ export class IssueCredential implements IAgentResponseHandler {
             return res.data;
         }
 
-        Logger.info(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
+        Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
         return;
     }
 }
