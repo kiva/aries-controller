@@ -65,7 +65,6 @@ export class Connections implements IAgentResponseHandler {
         }
 
         const templatedCacheKey = `${agentId}-${body.state}-${body.initiator}`;
-        Logger.log('Received webhook: ', JSON.stringify(body));
 
         // this webhook message indicates an agent received an connection
         // invitation and we want to tell them to accept it, if the policy allows
@@ -110,7 +109,7 @@ export class Connections implements IAgentResponseHandler {
         }
 
 
-        Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
+        Logger.debug(`doing nothing for '${agentId}': route '${route}'; topic '${topic}'; rfc23_state '${body.rfc23_state}';`, body);
         return;
     }
 }
