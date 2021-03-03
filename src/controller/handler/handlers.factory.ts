@@ -8,7 +8,7 @@ import { AgentGovernance } from '../agent.governance';
 import { Proofs } from './proof';
 import { IssueCredential } from './issue.credential';
 import { ProblemReport } from './problem.report';
-import {RevocationRegistry } from './revocation.registry';
+import { DoNothing } from './do.nothing';
 
 /*
     @TODO we want to replace this factory with nestjs injection at some point
@@ -28,7 +28,8 @@ export class HandlersFactory {
             case 'problem_report':
                 return new ProblemReport(agentGovernance, http, cache);
             case 'revocation_registry':
-                return new RevocationRegistry(agentGovernance, http, cache);
+            case 'issuer_cred_rev':
+                return new DoNothing(agentGovernance, http, cache);
             default:
                 Logger.debug(`unhandled topic ${topic}`);
                 break;

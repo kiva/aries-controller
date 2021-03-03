@@ -29,22 +29,26 @@ export class Connections implements IAgentResponseHandler {
     }
 
     /*
-       body is expected to be like this
-       {
-           "routing_state":"none",
-           "their_label":"Aries Cloud Agent",
-           "alias":"For-Meditor",
-           "my_did":"Yad6847oyTWq7du8qeEFe9",
-           "accept":"manual",
-           "updated_at":"2020-07-16 14:36:45.759114Z",
-           "created_at":"2020-07-16 14:36:01.286531Z",
-           "invitation_key":"62zG2GJEKuY5BTRLjAt9U5YFWchJex2KnDPSf7D92adT",
-           "connection_id":"ddbf57a4-e801-4f70-b508-a91383155476",
-           "request_id":"d898835e-9b3d-4cca-be70-724a0b1a083a",
-           "state":"request",
-           "initiator":"external",
-           "invitation_mode":"once"
+        body is expected to be like this
+        {
+            "connection_id":"6739a6e0-f560-43fb-8597-1ec246dcf737",
+            "their_role":"invitee",
+            "state":"invitation",
+            "invitation_key":"HVRHtK4sjNn8imkQZm3bXRvgYFimgPxgLVzuMxxEdwS4",
+            "routing_state":"none",
+            "accept":"manual",
+            "created_at":"2021-03-03 15:00:43.680821Z",
+            "rfc23_state":"invitation-sent",
+            "updated_at":"2021-03-03 15:00:43.680821Z",
+            "invitation_mode":"once"
         }
+
+        The key attribute is the rfc23_state which will determine the corresponding action:
+        invitation-sent => do nothing
+        invitation-received => accept-invitation
+        request-sent => do nothing
+        request-received => accept-request
+        completed => do nothing
 
         for this handler, this will always be true:
         Route will be "topic"
@@ -64,7 +68,7 @@ export class Connections implements IAgentResponseHandler {
 
         // this webhook message indicates an agent received an connection
         // invitation and we want to tell them to accept it, if the policy allows
-        if (body.state === 'invitation' && body.initiator === 'external') {
+        if (body.rfc23_state === 'invitation-received') {
             const action = 'accept-invitation';
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
@@ -85,7 +89,7 @@ export class Connections implements IAgentResponseHandler {
 
         // this webhook message indicates the receiving agent has accepted the invite and now
         // we need to instruct this agent to finish the steps of a connection
-        if (body.state === 'request' && body.initiator === 'self') {
+        if (body.rfc23_state === 'request-received') {
             const action = 'accept-request';
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
@@ -105,7 +109,7 @@ export class Connections implements IAgentResponseHandler {
         }
 
 
-        Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
+        Logger.debug(`doing nothing for '${agentId}': route '${route}'; topic '${topic}'; rfc23_state '${body.rfc23_state}';`, body);
         return;
     }
 }
