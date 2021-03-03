@@ -27,7 +27,7 @@ export class HandlersFactory {
                 return new IssueCredential(agentGovernance, http, cache);
             case 'problem_report':
                 return new ProblemReport(agentGovernance, http, cache);
-            case 'revocation_registry':
+            case 'issuer_cred_rev':
                 return new RevocationRegistry(agentGovernance, http, cache);
             default:
                 Logger.debug(`unhandled topic ${topic}`);
