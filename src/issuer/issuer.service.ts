@@ -201,7 +201,8 @@ export class IssuerService {
 
         // Only add on revocation registry size if revocation is supported
         if (support_revocation) {
-            data.revocation_registry_size = (revocation_registry_size > 0) ? revocation_registry_size : parseInt(process.env.DEFAULT_REV_REG_SIZE, 10);
+            data.revocation_registry_size =
+                (revocation_registry_size > 0) ? revocation_registry_size : parseInt(process.env.DEFAULT_REV_REG_SIZE, 10);
         }
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'credential-definitions', null, data);
     }
