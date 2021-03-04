@@ -13,7 +13,7 @@ export class DoNothing implements IAgentResponseHandler {
     }
 
 public async handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any): Promise<any> {
-        Logger.warn(`Doing nothing for ${topic} for '${agentId}': ${JSON.stringify(body)}`);
+        Logger.debug(`Doing nothing for ${topic} for '${agentId}': ${JSON.stringify(body)}`);
         return 'ok';
     }
 }
