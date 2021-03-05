@@ -54,7 +54,7 @@ export class Proofs implements IAgentResponseHandler {
            }
          }
     */
-    private async getCredentialsByReferentId(url: string, adminApiKey: string): Promise<any> {
+    private async getCredentialsByReferentId(url: string, adminApiKey: string, token?: string): Promise<any> {
         const req: AxiosRequestConfig = {
             method: 'GET',
             url,
@@ -62,6 +62,9 @@ export class Proofs implements IAgentResponseHandler {
                 'x-api-key': adminApiKey,
             }
         };
+        if (token) {
+            req.headers.Authorization = 'Bearer ' + token;
+        }
         const res = await this.http.requestWithRetry(req);
 
         const sorted = res.data.sort((a, b) => a.cred_info.referent.localeCompare(b.cred_info.referent));
@@ -113,7 +116,9 @@ export class Proofs implements IAgentResponseHandler {
         Route will be "topic"
         topic will be "present_proof"
      */
-    public async handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any): Promise<any> {
+    public async handlePost(
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+    ): Promise<any> {
 
         if (route !== 'topic' || topic !== 'present_proof') {
             throw new ProtocolException('present_proof', `${route}/${topic} is not valid.`);
@@ -138,6 +143,9 @@ export class Proofs implements IAgentResponseHandler {
                     'x-api-key': adminApiKey,
                 }
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
             Logger.info(`requesting holder to present proof ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
@@ -152,7 +160,7 @@ export class Proofs implements IAgentResponseHandler {
 
             // get credential
             let url: string = agentUrl + `/present-proof/records/${presentationExchangeId}/credentials`;
-            const credentials: any = await this.getCredentialsByReferentId(url, adminApiKey);
+            const credentials: any = await this.getCredentialsByReferentId(url, adminApiKey, token);
             const presentationRequest = body.presentation_request;
             const requested_attributes: any = {};
             const requested_predicates: any = {};
@@ -186,6 +194,9 @@ export class Proofs implements IAgentResponseHandler {
                 },
                 data: reply
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
