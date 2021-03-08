@@ -48,6 +48,7 @@ export class Connections implements IAgentResponseHandler {
         invitation-received => accept-invitation
         request-sent => do nothing
         request-received => accept-request
+        response-sent => do nothing
         completed => do nothing
 
         for this handler, this will always be true:
@@ -61,7 +62,6 @@ export class Connections implements IAgentResponseHandler {
             this.agentGovernance.readPermission('connections', governanceKey);
             await this.cache.set(cacheKey, {});
         };
-        Logger.debug('WEBHOOK', body);
 
         if (route !== 'topic' || topic !== 'connections') {
             throw new ProtocolException('Connections',`${route}/${topic} is not valid.`);

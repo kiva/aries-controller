@@ -37,7 +37,7 @@ export class AgentControllerService {
         }
 
         let agentUrl = 'http://multitenant:3021';
-        if (!agent.mutlitenant) {
+        if (!agent.multitenant) {
             const adminPort = (agent ? agent.adminApiPort : process.env.AGENT_ADMIN_PORT);
             // @tothink http/https?  should this be from the env?
             agentUrl = `http://${agentId}:${adminPort}`;
