@@ -2,14 +2,14 @@ import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
-import { IAgentResponseHandler } from './agent.response.handler';
+import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
 import { CacheStore } from '@nestjs/common';
 
 /*
     Acapy webhooks handler for input received from the url [webhookurl]/v1/controller/topic/connections
  */
-export class Connections implements IAgentResponseHandler {
+export class Connections implements BaseAgentResponseHandler {
     private static CONNECTIONS_URL: string = 'connections';
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
     }
