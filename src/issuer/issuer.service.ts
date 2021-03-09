@@ -235,7 +235,7 @@ export class IssuerService {
      */
     public async revokeCredential(credential_exchange_id : number, publish : boolean): Promise<any> {
         const data = {
-            credential_exchange_id,
+            cred_ex_id: credential_exchange_id,
             publish,
         };
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'revocation/revoke', null, data);
