@@ -233,7 +233,7 @@ export class IssuerService {
     /**
      * Revokes credential using the cred_rev_id and rev_reg_id
      */
-    public async revokeCredential(cred_ex_id : number, publish : boolean): Promise<any> {
+    public async revokeCredential(cred_ex_id : string, publish : boolean): Promise<any> {
         const data = {
             cred_ex_id,
             publish,
