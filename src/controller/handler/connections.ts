@@ -8,7 +8,7 @@ import { CacheStore } from '@nestjs/common';
 
 /*
     Acapy webhooks handler for input received from the url [webhookurl]/v1/controller/topic/connections
- */
+*/
 export class Connections implements BaseAgentResponseHandler {
     private static CONNECTIONS_URL: string = 'connections';
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {

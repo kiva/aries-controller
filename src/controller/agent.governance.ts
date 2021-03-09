@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
+import { ProtocolException } from 'protocol-common/protocol.exception';
 import data from '../config/governence.json';
+
+export type HandlerCallback =
+    (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => any;
 
 /**
  * TODO validation, error cases, etc
  */
 @Injectable()
 export class AgentGovernance {
-    // see GOVERANCE.md for documentation on policies data structure
     public static PERMISSION_DENY = 'deny';
     public static PERMISSION_ONCE = 'once';
     public static PERMISSION_ALWAYS = 'always';
@@ -104,5 +107,15 @@ export class AgentGovernance {
         } catch (e) {
             return this.policies[AgentGovernance.ALL_KEY];
         }
+    }
+
+    // register a callback if you want to receive notification that a particular message
+    // has been received by governance policy
+    public registerHandler(topic: string, func: HandlerCallback) {
+        throw new ProtocolException('NOT_IMPLEMENTED', 'yet');
+    }
+
+    public invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) {
+        throw new ProtocolException('NOT_IMPLEMENTED', 'yet');
     }
 }

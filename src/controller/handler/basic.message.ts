@@ -5,18 +5,15 @@ import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
 
 /**
- * This handler is for any topics that don't require any special handling
- * We just log a debug message so we can see what's being called if we need to
+ * TBD
  */
-
-export class DoNothing implements BaseAgentResponseHandler {
+export class BasicMessage implements BaseAgentResponseHandler {
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
     }
 
     public async handlePost(
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
-            Logger.debug(`Doing nothing for ${topic} for '${agentId}': ${JSON.stringify(body)}`);
-            return 'ok';
+        return this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token);
     }
 }

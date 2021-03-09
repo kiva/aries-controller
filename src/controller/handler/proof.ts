@@ -3,10 +3,10 @@ import { AxiosRequestConfig } from 'axios';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { Logger } from 'protocol-common/logger';
-import { IAgentResponseHandler } from './agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
+import { BaseAgentResponseHandler } from './base.agent.response.handler';
 
-export class Proofs implements IAgentResponseHandler {
+export class Proofs implements BaseAgentResponseHandler {
     private static PROOFS_URL: string = 'present-proof';
 
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
