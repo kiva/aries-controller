@@ -35,12 +35,18 @@ export class AgentControllerService {
         if (!adminApiKey) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_NODE_ENVIRONMENT, 'admin api key is missing from environment');
         }
-        const adminPort = (agent ? agent.adminApiPort : process.env.AGENT_ADMIN_PORT);
-        // @tothink http/https?  should this be from the env?
-        const agentUrl = `http://${agentId}:${adminPort}`;
 
+        let agentUrl;
+        if (agent && agent.multitenant) {
+            agentUrl = process.env.MULTITENANT_URL ?? 'http://multitenant:3021';
+        } else {
+            const adminPort = (agent ? agent.adminApiPort : process.env.AGENT_ADMIN_PORT);
+            // @tothink http/https?  should this be from the env?
+            agentUrl = `http://${agentId}:${adminPort}`;
+        }
+
+        const token = agent ? agent.token : null;
         return await HandlersFactory.getHandler(this.agentGovernance, topic, this.http, this.cache)
-            .handlePost(agentUrl, agentId, adminApiKey, route, topic, body);
-
+            .handlePost(agentUrl, agentId, adminApiKey, route, topic, body, token);
     }
 }

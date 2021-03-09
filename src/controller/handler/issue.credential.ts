@@ -67,7 +67,9 @@ export class IssueCredential implements IAgentResponseHandler {
         holder credential_acked
         issuer credential_acked
     */
-    public async handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any): Promise<any> {
+    public async handlePost(
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+    ): Promise<any> {
         if (route !== 'topic' || topic !== 'issue_credential') {
             throw new ProtocolException('issue_credential',`${route}/${topic} is not valid.`);
         }
@@ -90,6 +92,9 @@ export class IssueCredential implements IAgentResponseHandler {
                     'x-api-key': adminApiKey,
                 }
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
             Logger.info(`requesting holder to send-request ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
@@ -118,6 +123,9 @@ export class IssueCredential implements IAgentResponseHandler {
                     'x-api-key': adminApiKey,
                 }
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
             Logger.info(`requesting issuer to issue credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
@@ -137,6 +145,9 @@ export class IssueCredential implements IAgentResponseHandler {
                     'x-api-key': adminApiKey,
                 }
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
             Logger.info(`requesting holder to save credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;

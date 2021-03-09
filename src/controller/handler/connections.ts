@@ -48,13 +48,16 @@ export class Connections implements IAgentResponseHandler {
         invitation-received => accept-invitation
         request-sent => do nothing
         request-received => accept-request
+        response-sent => do nothing
         completed => do nothing
 
         for this handler, this will always be true:
         Route will be "topic"
         topic will be "connections"
     */
-    public async handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any): Promise<any> {
+    public async handlePost(
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+    ): Promise<any> {
         const readPermission = async (governanceKey: string, cacheKey: string) => {
             this.agentGovernance.readPermission('connections', governanceKey);
             await this.cache.set(cacheKey, {});
@@ -81,6 +84,9 @@ export class Connections implements IAgentResponseHandler {
                     'x-api-key': adminApiKey,
                 }
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
 
             Logger.info(`requesting agent to accept connection invite ${req.url}`);
             const res = await this.http.requestWithRetry(req);
@@ -102,6 +108,9 @@ export class Connections implements IAgentResponseHandler {
                     'x-api-key': adminApiKey,
                 }
             };
+            if (token) {
+                req.headers.Authorization = 'Bearer ' + token;
+            }
 
             Logger.info(`requesting initiating agent to complete connection invite ${req.url}`);
             const res = await this.http.requestWithRetry(req);

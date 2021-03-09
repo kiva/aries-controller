@@ -12,7 +12,9 @@ export class DoNothing implements IAgentResponseHandler {
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
     }
 
-public async handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any): Promise<any> {
+public async handlePost(
+    agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+): Promise<any> {
         Logger.debug(`Doing nothing for ${topic} for '${agentId}': ${JSON.stringify(body)}`);
         return 'ok';
     }
