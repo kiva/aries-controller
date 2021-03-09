@@ -4,7 +4,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import data from '../config/governence.json';
 
 export type HandlerCallback =
-    (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => any;
+    (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<any>;
 
 /**
  * TODO validation, error cases, etc
