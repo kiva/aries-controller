@@ -3,8 +3,12 @@ import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import data from '../config/governence.json';
 
+// defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy
+// webhook definition
 export type HandlerCallback =
     (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<any>;
+
+type Registration = { topic: string, func: HandlerCallback, exceptionCount: number};
 
 /**
  * TODO validation, error cases, etc
@@ -16,8 +20,9 @@ export class AgentGovernance {
     public static PERMISSION_ALWAYS = 'always';
     private static ALL_KEY = 'all';
     private static COMMENT_SECTION = 'comment';
-    private readonly policies = { };
     public policyName: string = '';
+    private readonly policies = { };
+    private readonly callbacks = new Map<string, Registration>();
 
     constructor(policyName: string, source: any = data) {
         // flatten out the data between default and the named policy into a single policy
@@ -109,13 +114,15 @@ export class AgentGovernance {
         }
     }
 
-    // register a callback if you want to receive notification that a particular message
-    // has been received by governance policy
+    // register a callback if to receive notification that a particular message
+    // has been received by governance policy.  Note:  currently only the basic message handler
+    // consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
     public registerHandler(topic: string, func: HandlerCallback) {
-        throw new ProtocolException('NOT_IMPLEMENTED', 'yet');
+        this.callbacks.set(topic, {topic, func, exceptionCount: 0});
     }
 
-    public invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) {
+    public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+                               body: any, token?: string) : Promise<any> {
         throw new ProtocolException('NOT_IMPLEMENTED', 'yet');
     }
 }
