@@ -22,7 +22,7 @@ export class AgentGovernance {
     private static COMMENT_SECTION = 'comment';
     public policyName: string = '';
     private readonly policies = { };
-    private readonly callbacks = new Map<string, Registration>();
+    private readonly callbacks = new Array<Registration>();
 
     constructor(policyName: string, source: any = data) {
         // flatten out the data between default and the named policy into a single policy
@@ -118,11 +118,18 @@ export class AgentGovernance {
     // has been received by governance policy.  Note:  currently only the basic message handler
     // consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
     public registerHandler(topic: string, func: HandlerCallback) {
-        this.callbacks.set(topic, {topic, func, exceptionCount: 0});
+        this.callbacks.push({topic, func, exceptionCount: 0});
     }
 
     public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                                body: any, token?: string) : Promise<any> {
-        throw new ProtocolException('NOT_IMPLEMENTED', 'yet');
+        // tslint:disable-next-line:forin
+        for (const x in this.callbacks) {
+            const registration: Registration = this.callbacks[x];
+            Logger.info(`callback found ${registration.topic}`, registration);
+            if (registration.topic === topic) {
+                await registration.func(agentUrl, agentId, adminApiKey, route, topic, body, token);
+            }
+        }
     }
 }

@@ -128,4 +128,37 @@ describe('Governance tests', () => {
         await agentGovernance.invokeHandler('', '', '', '', 'not-bob', '');
         expect(sum === 0);
     });
+
+    it('Both handler for same topic called successfully', async() =>{
+        let sum1: number = 0;
+        let sum2: number = 0;
+        let sum3: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler1: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum1 ++;
+                return undefined;
+            };
+        const customHandler2: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum2 ++;
+                return undefined;
+            };
+        const customHandler3: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum3 ++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob', customHandler1);
+        agentGovernance.registerHandler('bob', customHandler2);
+        agentGovernance.registerHandler('not-bob', customHandler3);
+        await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
+        expect(sum1 === 1);
+        expect(sum2 === 1);
+        expect(sum3 === 0);
+    });
 });
