@@ -65,10 +65,9 @@ describe('Governance tests', () => {
     it('Can add custom handler successfully', () =>{
         //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        // @ts-ignore
         const customHandler: HandlerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string): Promise<any>
-            => {
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
                 return undefined;
             };
 
@@ -78,10 +77,9 @@ describe('Governance tests', () => {
     it('Invoke custom handler successfully', () =>{
         let sum: number = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        // @ts-ignore
         const customHandler: HandlerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string): Promise<any>
-                => {
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
                 sum ++;
                 return undefined;
             };
@@ -96,8 +94,8 @@ describe('Governance tests', () => {
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         // @ts-ignore
         const customHandler: HandlerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string): Promise<any>
-                => {
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
                 sum ++;
                 return undefined;
             };
