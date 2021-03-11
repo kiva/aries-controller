@@ -126,7 +126,7 @@ export class AgentGovernance {
         // tslint:disable-next-line:forin
         for (const x in this.callbacks) {
             const registration: Registration = this.callbacks[x];
-            Logger.info(`callback found ${registration.topic}`, registration);
+            Logger.debug(`callback found ${registration.topic}`, registration);
             if (registration.topic === topic) {
                 await registration.func(agentUrl, agentId, adminApiKey, route, topic, body, token);
             }
