@@ -7,8 +7,9 @@ import { AgentGovernance } from '../agent.governance';
 /**
  * TBD
  */
-export class BasicMessage implements BaseAgentResponseHandler {
+export class BasicMessage extends BaseAgentResponseHandler {
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+        super();
     }
 
     public async handlePost(

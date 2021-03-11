@@ -10,9 +10,10 @@ import { AxiosRequestConfig } from 'axios';
 /*
     Acapy webhooks handler for input received from the url [webhookurl]/v1/controller/topic/connections
  */
-export class IssueCredential implements BaseAgentResponseHandler {
+export class IssueCredential extends BaseAgentResponseHandler {
     private static ISSUE_CREDENTIALS_URL: string = 'issue-credential';
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+        super();
     }
 
     private async checkPolicyForAction(governanceKey: string, cacheKey: string) {
@@ -86,16 +87,7 @@ export class IssueCredential implements BaseAgentResponseHandler {
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
             const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
-            const req: AxiosRequestConfig = {
-                method: 'POST',
-                url,
-                headers: {
-                    'x-api-key': adminApiKey,
-                }
-            };
-            if (token) {
-                req.headers.Authorization = 'Bearer ' + token;
-            }
+            const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to send-request ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
@@ -116,17 +108,8 @@ export class IssueCredential implements BaseAgentResponseHandler {
             const data = {
                 credential_preview: body.credential_offer_dict.credential_preview
             };
-            const req: AxiosRequestConfig = {
-                method: 'POST',
-                url,
-                data,
-                headers: {
-                    'x-api-key': adminApiKey,
-                }
-            };
-            if (token) {
-                req.headers.Authorization = 'Bearer ' + token;
-            }
+            const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
+            req.data = data;
             Logger.info(`requesting issuer to issue credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
@@ -139,16 +122,7 @@ export class IssueCredential implements BaseAgentResponseHandler {
             await readPermission(action, templatedCacheKey);
 
             const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
-            const req: AxiosRequestConfig = {
-                method: 'POST',
-                url,
-                headers: {
-                    'x-api-key': adminApiKey,
-                }
-            };
-            if (token) {
-                req.headers.Authorization = 'Bearer ' + token;
-            }
+            const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to save credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;

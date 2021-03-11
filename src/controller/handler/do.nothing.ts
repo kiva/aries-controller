@@ -9,8 +9,9 @@ import { AgentGovernance } from '../agent.governance';
  * We just log a debug message so we can see what's being called if we need to
  */
 
-export class DoNothing implements BaseAgentResponseHandler {
+export class DoNothing extends BaseAgentResponseHandler {
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+        super();
     }
 
     public async handlePost(

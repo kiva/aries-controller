@@ -1,3 +1,4 @@
+import { AxiosRequestConfig } from 'axios';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { IAgentResponseHandler } from './agent.response.handler';
 
@@ -6,6 +7,20 @@ import { IAgentResponseHandler } from './agent.response.handler';
     be allocated directly, create a derived class.
 */
 export abstract class BaseAgentResponseHandler implements IAgentResponseHandler {
+
+    public createHttpRequest(url: string, adminApiKey: string, token?: string): AxiosRequestConfig {
+        const req: AxiosRequestConfig = {
+            method: 'POST',
+            url,
+            headers: {
+                'x-api-key': adminApiKey,
+            }
+        };
+        if (token) {
+            req.headers.Authorization = 'Bearer ' + token;
+        }
+        return req;
+    }
 
     abstract handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                             body: any, token?: string): Promise<any>;
