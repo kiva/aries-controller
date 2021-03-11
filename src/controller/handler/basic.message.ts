@@ -5,7 +5,7 @@ import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
 
 /**
- * TBD
+ * ResponseHandler for basic messages (aries RFC compliant). For now, bubbles up to consumers.
  */
 export class BasicMessage extends BaseAgentResponseHandler {
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {

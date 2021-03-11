@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
-import { ProtocolException } from 'protocol-common/protocol.exception';
 import data from '../config/governence.json';
 
 // defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy
@@ -11,7 +10,7 @@ export type HandlerCallback =
 type Registration = { topic: string, func: HandlerCallback, exceptionCount: number};
 
 /**
- * TODO validation, error cases, etc
+ * AgentGovernance manages the governance policy initialization and access control
  */
 @Injectable()
 export class AgentGovernance {
@@ -124,8 +123,8 @@ export class AgentGovernance {
     public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                                body: any, token?: string) : Promise<any> {
         // tslint:disable-next-line:forin
-        for (const x in this.callbacks) {
-            const registration: Registration = this.callbacks[x];
+        for (const index in this.callbacks) {
+            const registration: Registration = this.callbacks[index];
             Logger.debug(`callback found ${registration.topic}`, registration);
             if (registration.topic === topic) {
                 await registration.func(agentUrl, agentId, adminApiKey, route, topic, body, token);
