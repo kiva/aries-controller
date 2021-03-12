@@ -15,4 +15,5 @@ This is published as a npm package. Specific controllers can then pull in each m
   ```
   npm link aries-controller
   ```
-  This will link the aries-controller dependency code to the node_modules in the other repo
+  This will link the aries-controller dependency code to the node_modules in the other repo.
+  When you are done testing, run `npm unlink`  

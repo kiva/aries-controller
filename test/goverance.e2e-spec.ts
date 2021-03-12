@@ -3,10 +3,11 @@ import { INestApplication } from '@nestjs/common';
 import { AppService } from '../src/app/app.service';
 import { AppController } from '../src/app/app.controller';
 import { AgentGovernance } from '../src/controller/agent.governance';
-
+import { HandlerCallback } from '../dist/controller/agent.governance';
 
 describe('Governance tests', () => {
     let app: INestApplication;
+
 
     beforeAll(async () => {
         const moduleFixture = await Test.createTestingModule({
@@ -59,5 +60,105 @@ describe('Governance tests', () => {
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         expect(agentGovernance.readPermission('Permissive', 'invitation') === 'once');
         expect(agentGovernance.readPermission('Permissive', 'invitation') === 'deny');
+    });
+
+    it('Can add custom handler successfully', () =>{
+        //
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob', customHandler);
+    });
+
+    it('Can add second handler with same key successfully', () =>{
+        //
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob', customHandler);
+    });
+
+    it('Can additional handler successfully', () =>{
+        //
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob2', customHandler);
+    });
+
+    it('Invoke custom handler successfully', async () =>{
+        let sum: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum ++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob', customHandler);
+        await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
+        expect(sum === 1);
+    });
+
+    it('No handler handled successfully', async() =>{
+        let sum: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        // @ts-ignore
+        const customHandler: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum ++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob', customHandler);
+        await agentGovernance.invokeHandler('', '', '', '', 'not-bob', '');
+        expect(sum === 0);
+    });
+
+    it('Both handler for same topic called successfully', async() =>{
+        let sum1: number = 0;
+        let sum2: number = 0;
+        let sum3: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler1: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum1 ++;
+                return undefined;
+            };
+        const customHandler2: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum2 ++;
+                return undefined;
+            };
+        const customHandler3: HandlerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum3 ++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('bob', customHandler1);
+        agentGovernance.registerHandler('bob', customHandler2);
+        agentGovernance.registerHandler('not-bob', customHandler3);
+        await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
+        expect(sum1 === 1);
+        expect(sum2 === 1);
+        expect(sum3 === 0);
     });
 });

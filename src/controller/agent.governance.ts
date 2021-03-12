@@ -2,19 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
 import data from '../config/governence.json';
 
+// defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy
+// webhook definition
+export type HandlerCallback =
+    (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<any>;
+
+type Registration = { topic: string, func: HandlerCallback, exceptionCount: number};
+
 /**
- * TODO validation, error cases, etc
+ * AgentGovernance manages the governance policy initialization and access control
  */
 @Injectable()
 export class AgentGovernance {
-    // see GOVERANCE.md for documentation on policies data structure
     public static PERMISSION_DENY = 'deny';
     public static PERMISSION_ONCE = 'once';
     public static PERMISSION_ALWAYS = 'always';
     private static ALL_KEY = 'all';
     private static COMMENT_SECTION = 'comment';
-    private readonly policies = { };
     public policyName: string = '';
+    private readonly policies = { };
+    private readonly callbacks = new Array<Registration>();
 
     constructor(policyName: string, source: any = data) {
         // flatten out the data between default and the named policy into a single policy
@@ -103,6 +110,25 @@ export class AgentGovernance {
             return permission;
         } catch (e) {
             return this.policies[AgentGovernance.ALL_KEY];
+        }
+    }
+
+    // register a callback if to receive notification that a particular message
+    // has been received by governance policy.  Note:  currently only the basic message handler
+    // consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
+    public registerHandler(topic: string, func: HandlerCallback) {
+        this.callbacks.push({topic, func, exceptionCount: 0});
+    }
+
+    public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+                               body: any, token?: string) : Promise<any> {
+        // tslint:disable-next-line:forin
+        for (const index in this.callbacks) {
+            const registration: Registration = this.callbacks[index];
+            Logger.debug(`callback found ${registration.topic}`, registration);
+            if (registration.topic === topic) {
+                await registration.func(agentUrl, agentId, adminApiKey, route, topic, body, token);
+            }
         }
     }
 }

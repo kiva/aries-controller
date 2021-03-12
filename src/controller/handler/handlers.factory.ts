@@ -9,6 +9,7 @@ import { Proofs } from './proof';
 import { IssueCredential } from './issue.credential';
 import { ProblemReport } from './problem.report';
 import { DoNothing } from './do.nothing';
+import { BasicMessage } from './basic.message';
 
 /*
     @TODO we want to replace this factory with nestjs injection at some point
@@ -27,6 +28,8 @@ export class HandlersFactory {
                 return new IssueCredential(agentGovernance, http, cache);
             case 'problem_report':
                 return new ProblemReport(agentGovernance, http, cache);
+            case 'basicmessage':
+                return new BasicMessage(agentGovernance, http, cache);
             case 'revocation_registry':
             case 'issuer_cred_rev':
                 return new DoNothing(agentGovernance, http, cache);
