@@ -5,7 +5,6 @@ import rateLimit from 'express-rate-limit';
 import { json } from 'body-parser';
 import { ProtocolExceptionFilter } from 'protocol-common/protocol.exception.filter';
 import { Logger } from 'protocol-common/logger';
-import { LoggingInterceptor } from 'protocol-common/logging.interceptor';
 import { DatadogLogger } from 'protocol-common/datadog.logger';
 import { traceware } from 'protocol-common/tracer';
 import { Constants } from 'protocol-common/constants';
@@ -44,7 +43,6 @@ export class AppService {
             app.enableCors();
         }
         app.useGlobalFilters(new ProtocolExceptionFilter());
-        app.useGlobalInterceptors(new LoggingInterceptor());
 
         app.use(traceware(process.env.SERVICE_NAME));
 

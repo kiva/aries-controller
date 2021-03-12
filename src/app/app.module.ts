@@ -9,6 +9,8 @@ import { IssuerModule } from '../issuer/issuer.module';
 import { StewardModule } from '../steward/steward.module';
 import { VerifierModule } from '../verifier/verifier.module';
 import { ApiModule } from '../api/api.module';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { LoggingInterceptor } from 'protocol-common/logging.interceptor';
 
 /**
  * Base modules for a controller
@@ -24,7 +26,13 @@ import { ApiModule } from '../api/api.module';
         ApiModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+      AppService,
+      {
+          provide: APP_INTERCEPTOR,
+          useClass: LoggingInterceptor
+      }
+    ],
     exports: []
 })
 export class AppModule {}
