@@ -17,6 +17,9 @@
     "present-proof": {
       "verify-presentation": "always",
       "send-presentation": "always"
+    },
+    "basic-message": {
+      "all": "always"
     }
   },
   "SingleConnection": {
@@ -32,6 +35,9 @@
     "present-proof": {
       "verify-presentation": "once",
       "send-presentation": "once"
+    },
+    "basic-message": {
+      "all": "always"
     }
   }
 }
