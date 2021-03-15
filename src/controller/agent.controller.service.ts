@@ -47,6 +47,6 @@ export class AgentControllerService {
 
         const token = agent ? agent.token : null;
         return await HandlersFactory.getHandler(this.agentGovernance, topic, this.http, this.cache)
-            .handlePost(agentUrl, agentId, adminApiKey, route, topic, body, token);
+            .handleAcapyWebhookMsg(agentUrl, agentId, adminApiKey, route, topic, body, token);
     }
 }

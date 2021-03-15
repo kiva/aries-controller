@@ -69,7 +69,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
         holder credential_acked
         issuer credential_acked
     */
-    public async handlePost(
+    public async handleAcapyWebhookMsg(
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         if (route !== 'topic' || topic !== 'issue_credential') {
