@@ -4,10 +4,10 @@ import data from '../config/governence.json';
 
 // defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy
 // webhook definition
-export type HandlerCallback =
+export type ControllerCallback =
     (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<any>;
 
-type Registration = { topic: string, func: HandlerCallback, exceptionCount: number};
+type Registration = { topic: string, func: ControllerCallback, exceptionCount: number};
 
 /**
  * AgentGovernance manages the governance policy initialization and access control
@@ -116,7 +116,7 @@ export class AgentGovernance {
     // register a callback if to receive notification that a particular message
     // has been received by governance policy.  Note:  currently only the basic message handler
     // consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
-    public registerHandler(topic: string, func: HandlerCallback) {
+    public registerHandler(topic: string, func: ControllerCallback) {
         this.callbacks.push({topic, func, exceptionCount: 0});
     }
 
