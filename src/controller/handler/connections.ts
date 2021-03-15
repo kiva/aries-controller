@@ -56,7 +56,7 @@ export class Connections extends BaseAgentResponseHandler {
         Route will be "topic"
         topic will be "connections"
     */
-    public async handlePost(
+    public async handleAcapyWebhookMsg(
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         const readPermission = async (governanceKey: string, cacheKey: string) => {

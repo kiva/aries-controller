@@ -22,6 +22,6 @@ export abstract class BaseAgentResponseHandler implements IAgentResponseHandler 
         return req;
     }
 
-    abstract handlePost(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+    abstract handleAcapyWebhookMsg(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                             body: any, token?: string): Promise<any>;
 }

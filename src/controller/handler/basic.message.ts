@@ -15,7 +15,7 @@ export class BasicMessage extends BaseAgentResponseHandler {
         super();
     }
 
-    public async handlePost(
+    public async handleAcapyWebhookMsg(
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         const permissionState = this.agentGovernance.peekPermission(BasicMessage.BASIC_MESSAGE, BasicMessage.GOVERNANCE_KEY);

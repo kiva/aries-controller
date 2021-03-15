@@ -13,7 +13,7 @@ export class ProblemReport extends BaseAgentResponseHandler {
         super();
     }
 
-    public async handlePost(
+    public async handleAcapyWebhookMsg(
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         Logger.warn(`problem report from agent '${agentId}': ${JSON.stringify(body)}`);
