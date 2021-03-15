@@ -3,7 +3,7 @@ import { INestApplication } from '@nestjs/common';
 import { AppService } from '../src/app/app.service';
 import { AppController } from '../src/app/app.controller';
 import { AgentGovernance } from '../src/controller/agent.governance';
-import { HandlerCallback } from '../dist/controller/agent.governance';
+import { ControllerCallback } from '../src/controller/agent.governance';
 
 describe('Governance tests', () => {
     let app: INestApplication;
@@ -65,7 +65,7 @@ describe('Governance tests', () => {
     it('Can add custom handler successfully', () =>{
         //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: HandlerCallback =
+        const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 return undefined;
@@ -77,7 +77,7 @@ describe('Governance tests', () => {
     it('Can add second handler with same key successfully', () =>{
         //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: HandlerCallback =
+        const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 return undefined;
@@ -89,7 +89,7 @@ describe('Governance tests', () => {
     it('Can additional handler successfully', () =>{
         //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: HandlerCallback =
+        const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 return undefined;
@@ -101,7 +101,7 @@ describe('Governance tests', () => {
     it('Invoke custom handler successfully', async () =>{
         let sum: number = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: HandlerCallback =
+        const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 sum ++;
@@ -117,7 +117,7 @@ describe('Governance tests', () => {
         let sum: number = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         // @ts-ignore
-        const customHandler: HandlerCallback =
+        const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 sum ++;
@@ -134,19 +134,19 @@ describe('Governance tests', () => {
         let sum2: number = 0;
         let sum3: number = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler1: HandlerCallback =
+        const customHandler1: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 sum1 ++;
                 return undefined;
             };
-        const customHandler2: HandlerCallback =
+        const customHandler2: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 sum2 ++;
                 return undefined;
             };
-        const customHandler3: HandlerCallback =
+        const customHandler3: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
                 sum3 ++;
