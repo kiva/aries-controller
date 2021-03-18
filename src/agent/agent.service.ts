@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Logger } from 'protocol-common/logger';
 import { AgentCaller } from './agent.caller';
 
 /**
@@ -75,5 +76,24 @@ export class AgentService {
             did,
         };
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'wallet/did/public', params);
+    }
+
+    /**
+     *   Common functionality for sending a basic message.  Built for transaction history system but can
+     *   be used in any case for sending basic messages.
+     *   @content {any} the format of content depends on the message. For transaction history, see the design doc.
+     *   @connectionID {string} connection Id associated with the agent receiving the message
+     */
+    public async sendBasicMessage(content: any, connectionId: string) : Promise<any> {
+        Logger.debug(`sending basic message ${process.env.AGENT_ID}`, content);
+        const data = { content };
+        return await this.agentCaller.callAgent(
+            process.env.AGENT_ID,
+            process.env.ADMIN_API_KEY,
+            'POST',
+            `connections/${connectionId}/send-message`,
+            null,
+            data
+        );
     }
 }
