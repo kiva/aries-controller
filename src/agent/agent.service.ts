@@ -78,12 +78,12 @@ export class AgentService {
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'wallet/did/public', params);
     }
 
-    /*
-        Common functionality for sending a basic message.  Built for transaction history system but can
-        be used in any case for sending basic messages.
-        the format of content depends on the message.
-        For transaction history, see the design doc.
-    */
+    /**
+     *   Common functionality for sending a basic message.  Built for transaction history system but can
+     *   be used in any case for sending basic messages.
+     *   @content {any} the format of content depends on the message. For transaction history, see the design doc.
+     *   @connectionID {string} connection Id associated with the agent receiving the message
+     */
     public async sendBasicMessage(content: any, connectionId: string) : Promise<any> {
         Logger.debug(`sending basic message ${process.env.AGENT_ID}`, content);
         const data = { content };
