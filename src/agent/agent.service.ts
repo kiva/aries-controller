@@ -15,7 +15,7 @@ export class AgentService {
     /**
      * TODO we could add some error handling/retry logic here if the agent doesn't spin up correctly the first time
      */
-    public async init(token? : string): Promise<any> {
+    public async init(): Promise<any> {
         // setup agent to use the webhook and governance policy handler built in
         const controllerUrl = process.env.SELF_URL + '/v1/controller';
         return await this.agentCaller.spinUpAgent(
