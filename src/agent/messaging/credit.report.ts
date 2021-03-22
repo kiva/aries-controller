@@ -1,7 +1,7 @@
 /**
  *
  */
-export class CreditReport {
+export class CreditReport<T> {
     /**
      * always "credit_report", used by basicmessage handlers to identity the message type
      */
@@ -24,7 +24,7 @@ export class CreditReport {
     public readonly tdcFspId: string;
     /**
      * When state is completed, contains the credit report
-     * todo: replace any with type, may need generic as report format could be different per use case
+     * report data is unique to use case
      */
-    public readonly report: Array<any>;
+    public readonly report: Array<T>;
 }

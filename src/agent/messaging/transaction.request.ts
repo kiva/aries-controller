@@ -1,7 +1,8 @@
 /**
- *
+ *  Used between TDC and TRO to build a credit report when requested from FSP (FSP
+ *  sends a different message).
  */
-export class TransactionRequest {
+export class TransactionRequest<T> {
     /**
      * always "transaction_request", used by basicmessage handlers to identity the message type
      */
@@ -24,7 +25,7 @@ export class TransactionRequest {
     public readonly tdcFspId: string;
     /**
      * When state is completed, will contain array of transactions
-     * todo: replace any with type, may need generic as transactions could be different per use case
+     * transaction format is unique to use case
      */
-    public readonly transactions: Array<any>;
+    public readonly transactions: Array<T>;
 }
