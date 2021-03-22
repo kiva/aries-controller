@@ -26,5 +26,5 @@ export class CreditReport<T> {
      * When state is completed, contains the credit report
      * report data is unique to use case
      */
-    public readonly report: Array<T>;
+    public readonly report: T[];
 }

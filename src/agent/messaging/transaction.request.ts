@@ -27,5 +27,5 @@ export class TransactionRequest<T> {
      * When state is completed, will contain array of transactions
      * transaction format is unique to use case
      */
-    public readonly transactions: Array<T>;
+    public readonly transactions: T[];
 }
