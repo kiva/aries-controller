@@ -81,12 +81,12 @@ export class AgentService {
     /**
      *   Common functionality for sending a basic message.  Built for transaction history system but can
      *   be used in any case for sending basic messages.
-     *   @content {any} the format of content depends on the message. For transaction history, see the design doc.
+     *   @content {any} must be an object.  the format of content depends on the message. For transaction history, see the design doc.
      *   @connectionID {string} connection Id associated with the agent receiving the message
      */
-    public async sendBasicMessage(content: any, connectionId: string) : Promise<any> {
-        Logger.debug(`sending basic message ${process.env.AGENT_ID}`, content);
-        const data = { content };
+    public async sendBasicMessage(msg: any, connectionId: string) : Promise<any> {
+        Logger.debug(`sending basic message ${process.env.AGENT_ID}`, msg);
+        const data = { content: JSON.stringify(msg) };
         return await this.agentCaller.callAgent(
             process.env.AGENT_ID,
             process.env.ADMIN_API_KEY,
