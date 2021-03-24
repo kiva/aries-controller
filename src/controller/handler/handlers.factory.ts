@@ -10,28 +10,35 @@ import { IssueCredential } from './issue.credential';
 import { ProblemReport } from './problem.report';
 import { DoNothing } from './do.nothing';
 import { BasicMessage } from './basic.message';
+import { Topics } from './topics';
 
 /*
     @TODO we want to replace this factory with nestjs injection at some point
  */
 export class HandlersFactory {
-    /*
-
+    /**
+     * Factory method that examines 'topic' input and finds an appropriate handler. returns implementation of
+     * IAgentResponseHandler
+     *
+     * @param agentGovernance
+     * @param topic
+     * @param http
+     * @param cache
      */
     public static getHandler(agentGovernance: AgentGovernance, topic: string, http: ProtocolHttpService, cache: CacheStore): IAgentResponseHandler {
         switch (topic) {
-            case 'connections':
+            case Topics.CONNECTIONS:
                 return new Connections(agentGovernance, http, cache);
-            case 'present_proof':
+            case Topics.PRESENT_PROOF:
                 return new Proofs(agentGovernance, http, cache);
-            case 'issue_credential':
+            case Topics.ISSUE_CREDENTIAL:
                 return new IssueCredential(agentGovernance, http, cache);
-            case 'problem_report':
+            case Topics.PROBLEM_REPORT:
                 return new ProblemReport(agentGovernance, http, cache);
-            case 'basicmessage':
+            case Topics.BASIC_MESSAGES:
                 return new BasicMessage(agentGovernance, http, cache);
-            case 'revocation_registry':
-            case 'issuer_cred_rev':
+            case Topics.REVOCATION_REGISTRY:
+            case Topics.ISSUE_CRED_REV:
                 return new DoNothing(agentGovernance, http, cache);
             default:
                 Logger.debug(`unhandled topic ${topic}`);
