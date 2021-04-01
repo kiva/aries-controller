@@ -163,6 +163,6 @@ export class ApiController {
     @ApiResponse({ status: 200, type: IssueDeleteResDto })
     @Delete('issue-credential/records/:credExId}')
     async issuerDeleteCredential(@Param('credExID') credExId: string): Promise<VerifyGetResDto> {
-        return await this.verifierService.checkPresEx(credExId);
+        return await this.issuerService.deleteCredential(credExId);
     }
 }
