@@ -158,11 +158,20 @@ export class ApiController {
     }
 
     /**
-     * Creates a credential definition with revocation passed on the passed in data
+     * Deletes a credential for the issuer
      */
     @ApiResponse({ status: 200, type: IssueDeleteResDto })
-    @Delete('issue-credential/records/:credExId}')
-    async issuerDeleteCredential(@Param('credExID') credExId: string): Promise<VerifyGetResDto> {
+    @Delete('issuer/records/:credExId}')
+    async issuerDeleteCredential(@Param('credExId') credExId: string): Promise<VerifyGetResDto> {
         return await this.issuerService.deleteCredential(credExId);
     }
+
+    /**
+     * Deletes a credential for the holder
+     */
+     @ApiResponse({ status: 200, type: IssueDeleteResDto })
+     @Delete('holder/records/:credId}')
+     async holderDeleteCredential(@Param('credExId') credExId: string): Promise<VerifyGetResDto> {
+         return await this.agentService.deleteCredential(credExId);
+     }
 }

@@ -255,7 +255,7 @@ export class IssuerService {
     }
 
     /**
-     * Revokes credential using the cred_rev_id and rev_reg_id
+     * Deletes credential using the cred_rev_id for issuer
      */
     public async deleteCredential(credential_exchange_id : string): Promise<any> {
         const data = {
