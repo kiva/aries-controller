@@ -1,4 +1,4 @@
-import { Get, Controller, Post, Param, Body } from '@nestjs/common';
+import { Get, Controller, Post, Param, Body, Delete } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/protocol.validation.pipe';
 import { Services } from '../utility/services';
@@ -12,6 +12,7 @@ import { GuardianOnboardPostResDto } from './dtos/guardian.onboard.post.res.dto'
 import { GuardianVerifyPostReqDto } from './dtos/guardian.verify.post.req.dto';
 import { IssuePostReqDto } from './dtos/issue.post.req.dto';
 import { IssuePostResDto } from './dtos/issue.post.res.dto';
+import { IssueDeleteResDto} from './dtos/issue.delete.res.dto';
 import { VerifyGetResDto } from './dtos/verify.get.res.dto';
 import { VerifyPostReqDto } from './dtos/verify.post.req.dto';
 import { VerifyPostResDto } from './dtos/verify.post.res.dto';
@@ -154,5 +155,14 @@ export class ApiController {
     @Post('revoke')
     public async revoke(@Body() body: any): Promise<any> {
         return await this.issuerService.revokeCredential(body.credential_exchange_id, body.publish);
+    }
+
+    /**
+     * Creates a credential definition with revocation passed on the passed in data
+     */
+    @ApiResponse({ status: 200, type: IssueDeleteResDto })
+    @Delete('issue-credential/records/:credExId}')
+    async issuerDeleteCredential(@Param('credExID') credExId: string): Promise<VerifyGetResDto> {
+        return await this.verifierService.checkPresEx(credExId);
     }
 }

@@ -255,6 +255,17 @@ export class IssuerService {
     }
 
     /**
+     * Revokes credential using the cred_rev_id and rev_reg_id
+     */
+      public async deleteCredential(credential_exchange_id : number): Promise<any> {
+        const data = {
+            cred_ex_id: credential_exchange_id,
+            publish,
+        };
+        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'revocation/revoke', null, data);
+    }
+
+    /**
      * The records return from aca-py have a lot of extra data that we don't need, this just includes the
      * Optional: new fields can easily be added if the front end needed
      *   eg right now we don't include photo since they're large, but it's available at: record.credential_offer_dict.credential_preview.offers~attach
