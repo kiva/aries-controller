@@ -68,6 +68,10 @@ export class Proofs extends BaseAgentResponseHandler {
         }
         const res = await this.http.requestWithRetry(req);
 
+        // if (res.data.length === 0) {
+        //     throw new ProtocolException('NO_MATCHING_CREDENTIAL', 'No credentials found to match proof request')
+        // }
+
         const sorted = res.data.sort((a, b) => a.cred_info.referent.localeCompare(b.cred_info.referent));
         const credentials: any = {};
 
@@ -153,35 +157,49 @@ export class Proofs extends BaseAgentResponseHandler {
             // get credential
             let url: string = agentUrl + `/present-proof/records/${presentationExchangeId}/credentials`;
             const credentials: any = await this.getCredentialsByReferentId(url, adminApiKey, token);
-            const presentationRequest = body.presentation_request;
-            const requested_attributes: any = {};
-            const requested_predicates: any = {};
-            const self_attested_attributes: any = {};       // note: we are not building any as we do not use self_attested attribs
-                                                            // if proofs fail, look at this missing functionality
 
-            for (const attributeKey in presentationRequest.requested_attributes) {
-                if (credentials[attributeKey]) {
-                    requested_attributes[attributeKey] = {
-                        cred_id: credentials[attributeKey].cred_info.referent,
-                        revealed: true
-                    };
+            if (Object.keys(credentials).length === 0) {
+                Logger.warn('Empty credential');
+                url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/problem-report`;
+                const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
+                req.data = {
+                    explain_ltxt: 'No credentials found for proof - sorry man'
+                };
+                const res = await this.http.requestWithRetry(req);
+                return res.data;
+            } else {
+                Logger.warn('Not empty credential', credentials);
+                const presentationRequest = body.presentation_request;
+                const requested_attributes: any = {};
+                const requested_predicates: any = {};
+                const self_attested_attributes: any = {};       // note: we are not building any as we do not use self_attested attribs
+                                                                // if proofs fail, look at this missing functionality
+    
+                for (const attributeKey in presentationRequest.requested_attributes) {
+                    if (credentials[attributeKey]) {
+                        requested_attributes[attributeKey] = {
+                            cred_id: credentials[attributeKey].cred_info.referent,
+                            revealed: true
+                        };
+                    }
                 }
+    
+                for (const predicateKey in presentationRequest.requested_predicates) {
+                    if (credentials[predicateKey]) {
+                        requested_predicates[predicateKey] = {
+                            cred_id: credentials[predicateKey].cred_info.referent
+                        };
+                    }
+                }
+    
+                const reply = { trace: false, requested_predicates, requested_attributes, self_attested_attributes };
+                url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/${action}`;
+                const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
+                req.data = reply;
+                const res = await this.http.requestWithRetry(req);
+                return res.data;
             }
 
-            for (const predicateKey in presentationRequest.requested_predicates) {
-                if (credentials[predicateKey]) {
-                    requested_predicates[predicateKey] = {
-                        cred_id: credentials[predicateKey].cred_info.referent
-                    };
-                }
-            }
-
-            const reply = { trace: false, requested_predicates, requested_attributes, self_attested_attributes };
-            url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/${action}`;
-            const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
-            req.data = reply;
-            const res = await this.http.requestWithRetry(req);
-            return res.data;
         }
 
         Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);

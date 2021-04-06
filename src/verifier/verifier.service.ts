@@ -44,6 +44,7 @@ export class VerifierService {
         // (aka state === active).
         while (waitMS > ProtocolUtility.timeDelta(new Date(), startOf)) {
             const res = await this.checkPresEx(presExId);
+            Logger.log(res.state, res);
             if (res.state === 'verified') {
                 Logger.log('Proof record state verified');
                 return res;
