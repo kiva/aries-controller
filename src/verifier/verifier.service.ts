@@ -113,13 +113,13 @@ export class VerifierService {
     private getValuesFromVerifyRes(verifyRes): any {
         const attributes = verifyRes.presentation.requested_proof.revealed_attrs;
         const keys = Object.keys(attributes);
-        const values = {};
+        const values: any = {};
         for (const key of keys) {
             const value = attributes[key].raw;
             values[key] = value;
         }
         // add the verified boolean
-        values['verified'] = verifyRes.verified;
+        values.verified = verifyRes.verified;
         return values;
     }
 
