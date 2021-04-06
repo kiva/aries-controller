@@ -118,6 +118,8 @@ export class VerifierService {
             const value = attributes[key].raw;
             values[key] = value;
         }
+        // add the verified boolean
+        values['verified'] = verifyRes.verified;
         return values;
     }
 
