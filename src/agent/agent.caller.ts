@@ -82,7 +82,7 @@ export class AgentCaller {
         } catch (e) {
             Logger.error(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             // TODO add 'AgentCallFailed' to ProtocolErrorCode
-            throw new ProtocolException('AgentCallFailed', `Agent: ${e.message}`, { agentRoute: route });
+            throw new ProtocolException('AgentCallFailed', `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
     }
 

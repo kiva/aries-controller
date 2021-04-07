@@ -75,6 +75,8 @@ export class VerifierService {
             } else {
                 Logger.warn('Unknown problem report: ', problemReport);
             }
+            // Clean out cache when done processing
+            await this.cache.del(threadId);
         }
     }
 
