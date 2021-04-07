@@ -162,18 +162,18 @@ export class Proofs extends BaseAgentResponseHandler {
             if (Object.keys(credentials).length === 0) {
                 Logger.warn('No matching credentials for proof request, sending problem-report');
                 url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/problem-report`;
-                const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
+                const problemReportReq: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
                 // We send JSON encoded code & message to allow easily throwing a protocol exception
-                req.data = {
+                problemReportReq.data = {
                     explain_ltxt: JSON.stringify({
                         code: 'ProofFailedUnfulfilled',
                         message: 'No credentials found to match proof request'
-                    }) 
+                    })
                 };
-                const res = await this.http.requestWithRetry(req);
-                return res.data;
-            } 
-            
+                const problemReportRes = await this.http.requestWithRetry(problemReportReq);
+                return problemReportRes.data;
+            }
+
             // Continue constructing proof based on matching credentials
             const presentationRequest = body.presentation_request;
             const requested_attributes: any = {};
