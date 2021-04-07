@@ -155,4 +155,12 @@ export class ApiController {
     public async revoke(@Body() body: any): Promise<any> {
         return await this.issuerService.revokeCredential(body.credential_exchange_id, body.publish);
     }
+
+    /**
+     * Checks the revocation state of a credential by credExId
+     */
+    @Get('revoke/state/:credExId')
+    public async checkRevokedState(@Param('credExId') credExId: string): Promise<any> {
+        return await this.issuerService.checkRevokedState(credExId);
+    }
 }

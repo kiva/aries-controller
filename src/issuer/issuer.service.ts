@@ -242,6 +242,20 @@ export class IssuerService {
     }
 
     /**
+     * Checks the revocation status of a credential by cred ex id
+     * To simplify things we just return the revocation state not the rest of the values aca-py provides
+     */
+    public async checkRevokedState(credExId: string): Promise<any> {
+        const params = {
+            cred_ex_id: credExId
+        };
+        const res = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', 'revocation/credential-record', params);
+        return {
+            state: res.result.state
+        };
+    }
+
+    /**
      * Optional: not adding any filters now, but if there's a use case aca-py supports the following:
      *   connection_id, role, state, thread_id
      */
