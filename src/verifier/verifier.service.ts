@@ -54,7 +54,7 @@ export class VerifierService {
             await this.handleProblemReport(res.thread_id);
             await ProtocolUtility.delay(1000);
         }
-        throw new ProtocolException('ProofFailedNoResponse', 'Proof exchange never completed'); // TODO replace ProtocolErrorCode
+        throw new ProtocolException(ProtocolErrorCode.PROOF_FAILED_NO_RESPONSE, 'Proof exchange never completed');
     }
 
     /**
@@ -140,7 +140,7 @@ export class VerifierService {
      */
     private getValuesFromVerifyRes(verifyRes): any {
         if (verifyRes.verified === 'false') {
-            throw new ProtocolException('ProofFailedVerification', 'Proof failed verification, possibly it’s been revoked'); // todo ProtocolErrorCode
+            throw new ProtocolException(ProtocolErrorCode.PROOF_FAILED_VERIFICATION, 'Proof failed verification, possibly it’s been revoked');
         }
         const attributes = verifyRes.presentation.requested_proof.revealed_attrs;
         const keys = Object.keys(attributes);

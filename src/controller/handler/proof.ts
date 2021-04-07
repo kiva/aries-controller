@@ -5,6 +5,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { Logger } from 'protocol-common/logger';
 import { AgentGovernance } from '../agent.governance';
 import { BaseAgentResponseHandler } from './base.agent.response.handler';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 export class Proofs extends BaseAgentResponseHandler {
     private static PROOFS_URL: string = 'present-proof';
@@ -67,10 +68,6 @@ export class Proofs extends BaseAgentResponseHandler {
             req.headers.Authorization = 'Bearer ' + token;
         }
         const res = await this.http.requestWithRetry(req);
-
-        // if (res.data.length === 0) {
-        //     throw new ProtocolException('NO_MATCHING_CREDENTIAL', 'No credentials found to match proof request')
-        // }
 
         const sorted = res.data.sort((a, b) => a.cred_info.referent.localeCompare(b.cred_info.referent));
         const credentials: any = {};
@@ -166,7 +163,7 @@ export class Proofs extends BaseAgentResponseHandler {
                 // We send JSON encoded code & message to allow easily throwing a protocol exception
                 problemReportReq.data = {
                     explain_ltxt: JSON.stringify({
-                        code: 'ProofFailedUnfulfilled',
+                        code: ProtocolErrorCode.PROOF_FAILED_UNFULFILLED,
                         message: 'No credentials found to match proof request'
                     })
                 };

@@ -3,6 +3,7 @@ import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /**
  * TODO add types
@@ -81,8 +82,7 @@ export class AgentCaller {
             return res.data;
         } catch (e) {
             Logger.error(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
-            // TODO add 'AgentCallFailed' to ProtocolErrorCode
-            throw new ProtocolException('AgentCallFailed', `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
+            throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
     }
 
