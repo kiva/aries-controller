@@ -5,6 +5,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { Logger } from 'protocol-common/logger';
 import { AgentGovernance } from '../agent.governance';
 import { BaseAgentResponseHandler } from './base.agent.response.handler';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 export class Proofs extends BaseAgentResponseHandler {
     private static PROOFS_URL: string = 'present-proof';
@@ -153,6 +154,24 @@ export class Proofs extends BaseAgentResponseHandler {
             // get credential
             let url: string = agentUrl + `/present-proof/records/${presentationExchangeId}/credentials`;
             const credentials: any = await this.getCredentialsByReferentId(url, adminApiKey, token);
+
+            // Handle no matching credentials case
+            if (Object.keys(credentials).length === 0) {
+                Logger.warn('No matching credentials for proof request, sending problem-report');
+                url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/problem-report`;
+                const problemReportReq: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
+                // We send JSON encoded code & message to allow easily throwing a protocol exception
+                problemReportReq.data = {
+                    explain_ltxt: JSON.stringify({
+                        code: ProtocolErrorCode.PROOF_FAILED_UNFULFILLED,
+                        message: 'No credentials found to match proof request'
+                    })
+                };
+                const problemReportRes = await this.http.requestWithRetry(problemReportReq);
+                return problemReportRes.data;
+            }
+
+            // Continue constructing proof based on matching credentials
             const presentationRequest = body.presentation_request;
             const requested_attributes: any = {};
             const requested_predicates: any = {};

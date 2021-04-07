@@ -1,6 +1,6 @@
 import { Get, Controller, Post, Param, Body } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProtocolValidationPipe } from 'protocol-common/protocol.validation.pipe';
+import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
 import { Services } from '../utility/services';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
@@ -154,5 +154,13 @@ export class ApiController {
     @Post('revoke')
     public async revoke(@Body() body: any): Promise<any> {
         return await this.issuerService.revokeCredential(body.credential_exchange_id, body.publish);
+    }
+
+    /**
+     * Checks the revocation state of a credential by credExId
+     */
+    @Get('revoke/state/:credExId')
+    public async checkRevokedState(@Param('credExId') credExId: string): Promise<any> {
+        return await this.issuerService.checkRevokedState(credExId);
     }
 }

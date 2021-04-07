@@ -4,6 +4,7 @@ import { VerifierController } from './verifier.controller';
 import { AgentModule } from '../agent/agent.module';
 import { AgentService } from '../agent/agent.service';
 import { AgentCaller } from '../agent/agent.caller';
+import { GlobalCacheModule } from '../app/global.cache.module';
 
 /**
  *
@@ -12,6 +13,7 @@ import { AgentCaller } from '../agent/agent.caller';
     imports: [
         AgentModule,
         HttpModule,
+        GlobalCacheModule,
     ],
     controllers: [VerifierController],
     providers: [

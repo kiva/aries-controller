@@ -1,4 +1,4 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable, HttpService, CacheStore, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { Logger } from 'protocol-common/logger';
@@ -21,6 +21,7 @@ export class VerifierService {
         private readonly agentService: AgentService,
         private readonly agentCaller: AgentCaller,
         httpService: HttpService,
+        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }
@@ -43,14 +44,39 @@ export class VerifierService {
         // we want to poll the agent every so often to see if/when the proof is completely set up
         // (aka state === active).
         while (waitMS > ProtocolUtility.timeDelta(new Date(), startOf)) {
+            // Check proof exchange
             const res = await this.checkPresEx(presExId);
             if (res.state === 'verified') {
                 Logger.log('Proof record state verified');
                 return res;
             }
+            await this.handleProblemReport(res.thread_id);
             await ProtocolUtility.delay(1000);
         }
-        throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, 'Proof exchange never completed');
+        throw new ProtocolException(ProtocolErrorCode.PROOF_FAILED_NO_RESPONSE, 'Proof exchange never completed');
+    }
+
+    /**
+     * If a problem report web hook has come it it will be cached by thread id
+     * If it's a known json parsable exception throw a ProtocolException, otherwise log and continue on
+     */
+    private async handleProblemReport(threadId: string) {
+        const problemReport: string = await this.cache.get(threadId);
+        if (problemReport) {
+            let exception;
+            try {
+                exception = JSON.parse(problemReport);
+            } catch (e) {
+                Logger.warn('Unparsable JSON in problem report: ', problemReport);
+            }
+            if (exception && exception.code && exception.message) {
+                throw new ProtocolException(exception.code, exception.message);
+            } else {
+                Logger.warn('Unknown problem report: ', problemReport);
+            }
+            // Clean out cache when done processing
+            await this.cache.del(threadId);
+        }
     }
 
     /**
@@ -109,8 +135,12 @@ export class VerifierService {
     /**
      * TODO error handling + maybe some more useful bit of info like the issuer did, etc
      * TODO may need special handling for attachments
+     * Handles throwing an exception if the proof failed verification
      */
     private getValuesFromVerifyRes(verifyRes): any {
+        if (verifyRes.verified === 'false') {
+            throw new ProtocolException(ProtocolErrorCode.PROOF_FAILED_VERIFICATION, 'Proof failed verification, possibly it’s been revoked');
+        }
         const attributes = verifyRes.presentation.requested_proof.revealed_attrs;
         const keys = Object.keys(attributes);
         const values = {};
