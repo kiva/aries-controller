@@ -46,12 +46,14 @@ export class Services {
     /**
      * Loads all profiles and returns an key-value object of fileNames => files
      */
-    public static getAllProfiles(): any {
+    public static getAllProfiles(endsWithString?: string): any {
         const profilesDir = process.cwd() + '/profiles/';
         const fileNames = readdirSync(profilesDir);
         const files = {};
         for (const fileName of fileNames) {
-            files[fileName] = Services.getProfile(fileName);
+            if (!endsWithString || (endsWithString && fileName.endsWith(endsWithString))) {
+                files[fileName] = Services.getProfile(fileName);
+            }
         }
         return files;
     }
