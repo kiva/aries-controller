@@ -6,6 +6,8 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { AgentCaller } from '../agent/agent.caller';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
+import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -42,12 +44,10 @@ export class IssuerService {
         const connectionRes = await this.agentService.acceptConnection(keyGuardRes.id, keyGuardRes.connectionData);
         Logger.log('2: Connection invitation created');
         if (false === await Services.waitForAcceptedConnection(connectionRes.connection_id, this.agentCaller)) {
-            // TODO add AgentConnectionError to ProtocolErrorCode
-            // TODO provide more details on the state of the connection (eg what the final state was)
-            throw new ProtocolException('AgentConnectionError', 'Connection was not accepted by newly created agent');
+            throw new ProtocolException(ProtocolErrorCode.CONNECTION_NOT_READY, 'Connection was not accepted by newly created agent');
         }
         Logger.log('3: Connection accepted');
-        const agentData = await this.issueCredential(credDefProfilePath, connectionRes.connection_id, entityData);
+        const agentData = await this.issueCredentialAndWait(credDefProfilePath, connectionRes.connection_id, entityData);
         Logger.log('4: Credential Issued');
         return {
             agentId: keyGuardRes.id,
@@ -88,12 +88,31 @@ export class IssuerService {
             throw new ProtocolException('AgentConnectionError', 'Connection was not accepted by newly created agent');
         }
         Logger.log('3. Accepted connection invitation');
-        const agentData = await this.issueCredential(credDefProfilePath, connectionRes.connection_id, entityData);
+        const agentData = await this.issueCredentialAndWait(credDefProfilePath, connectionRes.connection_id, entityData);
         Logger.log('4: Credential Issued');
         return {
             agentId: keyGuardRes.id,
             agentData
         };
+    }
+
+    /**
+     * Issues a credential and polls the exchange status until it's being accepted and acked
+     */
+    public async issueCredentialAndWait(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
+        const credSend = await this.issueCredential(credDefProfilePath, connectionId, entityData);
+        const credExId = credSend.credential_exchange_id;
+
+        let res = null;
+        for (let i = 0; i < parseInt(process.env.PROOF_WAIT_SEC, 10); i++) {
+            res = await this.checkCredentialExchange(credExId);
+            if (res.state === 'credential_acked') {
+                Logger.log('Credential accepted');
+                return res;
+            }
+            await ProtocolUtility.delay(1000);
+        }
+        throw new ProtocolException('IssueFailed', 'Issuing process failed to complete', { state: res.state });
     }
 
     /**
@@ -210,7 +229,7 @@ export class IssuerService {
     /**
      * Makes a call to the agent to issue a credential
      */
-    public async issueCredentialSend(credentialData: any, connectionId: string, attributes: Array<any>): Promise<string> {
+    public async issueCredentialSend(credentialData: any, connectionId: string, attributes: Array<any>): Promise<any> {
         credentialData.connection_id = connectionId;
         credentialData.credential_proposal.attributes = this.sanitizeAttributes(attributes);
         return await this.agentCaller.callAgent(
@@ -239,6 +258,20 @@ export class IssuerService {
             publish,
         };
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'revocation/revoke', null, data);
+    }
+
+    /**
+     * Checks the revocation status of a credential by cred ex id
+     * To simplify things we just return the revocation state not the rest of the values aca-py provides
+     */
+    public async checkRevokedState(credExId: string): Promise<any> {
+        const params = {
+            cred_ex_id: credExId
+        };
+        const res = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', 'revocation/credential-record', params);
+        return {
+            state: res.result.state
+        };
     }
 
     /**

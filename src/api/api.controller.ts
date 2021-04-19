@@ -1,6 +1,7 @@
-import { Get, Controller, Post, Param, Body, Delete } from '@nestjs/common';
+
+import { Get, Controller, Post, Param, Body, Query, Delete } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ProtocolValidationPipe } from 'protocol-common/protocol.validation.pipe';
+import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
 import { Services } from '../utility/services';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
@@ -135,10 +136,19 @@ export class ApiController {
 
     /**
      * Returns all profiles indexed by profile name
+     * There's an optional param endsWith, eg to get all proof requests use: ?endsWith=proof.request.json
      */
     @Get('profiles')
-    public getProfiles(): any {
-        return Services.getAllProfiles();
+    public getProfiles(@Query('endsWith') endsWith: string): any {
+        return Services.getAllProfiles(endsWith);
+    }
+
+    /**
+     * Convenience endpoint to returns all proof request json profiles indexed by profile name
+     */
+    @Get('profiles/proofs')
+    public getProfileProofs(): any {
+        return Services.getAllProfiles('proof.request.json');
     }
 
     /**
@@ -174,4 +184,12 @@ export class ApiController {
      async holderDeleteCredential(@Param('credExId') credExId: string): Promise<VerifyGetResDto> {
          return await this.agentService.deleteCredential(credExId);
      }
+  
+    /**
+     * Checks the revocation state of a credential by credExId
+     */
+    @Get('revoke/state/:credExId')
+    public async checkRevokedState(@Param('credExId') credExId: string): Promise<any> {
+        return await this.issuerService.checkRevokedState(credExId);
+    }
 }
