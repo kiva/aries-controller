@@ -13,7 +13,6 @@ import { GuardianOnboardPostResDto } from './dtos/guardian.onboard.post.res.dto'
 import { GuardianVerifyPostReqDto } from './dtos/guardian.verify.post.req.dto';
 import { IssuePostReqDto } from './dtos/issue.post.req.dto';
 import { IssuePostResDto } from './dtos/issue.post.res.dto';
-import { IssueDeleteResDto} from './dtos/issue.delete.res.dto';
 import { VerifyGetResDto } from './dtos/verify.get.res.dto';
 import { VerifyPostReqDto } from './dtos/verify.post.req.dto';
 import { VerifyPostResDto } from './dtos/verify.post.res.dto';
@@ -170,19 +169,17 @@ export class ApiController {
     /**
      * Deletes a credential for the issuer
      */
-    @ApiResponse({ status: 200, type: IssueDeleteResDto })
     @Delete('issuer/records/:credExId}')
-    async issuerDeleteCredential(@Param('credExId') credExId: string): Promise<VerifyGetResDto> {
+    async deletedIssuedCredential(@Param('credExId') credExId: string): Promise<any> {
         return await this.issuerService.deleteCredential(credExId);
     }
 
     /**
      * Deletes a credential for the holder
      */
-     @ApiResponse({ status: 200, type: IssueDeleteResDto })
      @Delete('holder/records/:credId}')
-     async holderDeleteCredential(@Param('credExId') credExId: string): Promise<VerifyGetResDto> {
-         return await this.agentService.deleteCredential(credExId);
+     async holderDeleteCredential(@Param('creId') credId: string): Promise<any> {
+         return await this.agentService.deleteCredential(credId);
      }
   
     /**
