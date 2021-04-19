@@ -44,9 +44,7 @@ export class IssuerService {
         const connectionRes = await this.agentService.acceptConnection(keyGuardRes.id, keyGuardRes.connectionData);
         Logger.log('2: Connection invitation created');
         if (false === await Services.waitForAcceptedConnection(connectionRes.connection_id, this.agentCaller)) {
-            // TODO add AgentConnectionError to ProtocolErrorCode
-            // TODO provide more details on the state of the connection (eg what the final state was)
-            throw new ProtocolException('AgentConnectionError', 'Connection was not accepted by newly created agent');
+            throw new ProtocolException(ProtocolErrorCode.CONNECTION_NOT_READY, 'Connection was not accepted by newly created agent');
         }
         Logger.log('3: Connection accepted');
         const agentData = await this.issueCredentialAndWait(credDefProfilePath, connectionRes.connection_id, entityData);
