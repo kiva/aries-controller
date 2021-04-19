@@ -81,11 +81,8 @@ export class AgentService {
     /**
      * Deletes credential using the cred_rev_id for issuer
      */
-     public async deleteCredential(credential_id : string): Promise<any> {
-        const data = {
-            credential_id,
-        };
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', 'credential/records', null, data);
+    public async deleteCredential(credentialExchangeI: string): Promise<any> {
+        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', `credential/records/${credentialExchangeI}`);
     }
 
     /**
