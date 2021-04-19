@@ -24,7 +24,7 @@ export class Services {
             }
         }
 
-        Logger.debug(`Connection not completed, final state: ${connection.state}`)
+        Logger.debug(`Connection not completed, final state: ${connection.state}`);
         return false;
     }
 
