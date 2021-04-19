@@ -81,7 +81,7 @@ export class AgentCaller {
             const res = await this.http.requestWithRetry(req);
             return res.data;
         } catch (e) {
-            Logger.error(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
+            Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
     }
