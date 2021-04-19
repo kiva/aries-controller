@@ -42,7 +42,6 @@ export class VerifierService {
         const waitMS: number = parseInt(process.env.PROOF_WAIT_SEC, 10) * 1000;
 
         // we want to poll the agent every so often to see if/when the proof is completely set up
-        // (aka state === active).
         while (waitMS > ProtocolUtility.timeDelta(new Date(), startOf)) {
             // Check proof exchange
             const res = await this.checkPresEx(presExId);
