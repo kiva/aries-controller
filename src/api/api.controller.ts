@@ -169,7 +169,7 @@ export class ApiController {
     /**
      * Deletes a credential for the issuer
      */
-    @Delete('issuer/records/:credExId}')
+    @Delete('issuer/records/:credExId')
     async deletedIssuedCredential(@Param('credExId') credExId: string): Promise<any> {
         return await this.issuerService.deleteCredential(credExId);
     }
@@ -177,7 +177,7 @@ export class ApiController {
     /**
      * Deletes a credential for the holder
      */
-     @Delete('holder/records/:credId}')
+     @Delete('holder/records/:credId')
      async holderDeleteCredential(@Param('creId') credId: string): Promise<any> {
          return await this.agentService.deleteCredential(credId);
      }
