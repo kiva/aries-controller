@@ -40,6 +40,15 @@ export class ApiController {
     ) {}
 
     /**
+     * Endpoint to check the InstitutionGuard to ensure user has access
+     */
+     @ApiResponse({ status: 201, type: String })
+     @Get('institution')
+     async check(): Promise<string> {
+         return process.env.INSTITUTION;
+     }
+
+    /**
      * Create connection for mobile agent to receive
      */
     @ApiResponse({ status: 201, type: ConnectionPostResDto })

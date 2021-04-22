@@ -11,6 +11,7 @@ describe('AppController (e2e)', () => {
             imports: [ AppModule ]
         }).compile();
 
+        process.env.INSTITUTION_GUARD_ENABLED = 'false';
         app = moduleFixture.createNestApplication();
         await app.init();
     });

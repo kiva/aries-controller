@@ -17,13 +17,13 @@ export class InstitutionGuard implements CanActivate {
      * We add lots of debug messages to help us figure out what when wrong if things fail
      */
     canActivate(context: ExecutionContext): boolean {
-        if (!process.env.INSTITUTION) {
-            throw new ProtocolException(ProtocolErrorCode.MISSING_CONFIGURATION, 'Must configure institution for this controller');
-        }
-
-        if (process.env.INSTITUTION_GUARD_ENABLED !== 'false') {
+        if (process.env.INSTITUTION_GUARD_ENABLED === 'false') {
             Logger.debug('Allowing user since institution guard is disabled');
             return true;
+        }
+
+        if (!process.env.INSTITUTION) {
+            throw new ProtocolException(ProtocolErrorCode.MISSING_CONFIGURATION, 'Must configure institution for this controller');
         }
 
         const req = context.switchToHttp().getRequest();
@@ -40,7 +40,6 @@ export class InstitutionGuard implements CanActivate {
         let metaData;
         try {
             metaData = jwt.decode(token);
-            Logger.log(metaData);
             if (!metaData) {
                 throw new Error();
             }
