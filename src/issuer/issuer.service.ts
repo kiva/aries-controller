@@ -264,7 +264,7 @@ export class IssuerService {
     /**
      * Revokes credential using the cred_rev_id and rev_reg_id
      */
-    public async revokeCredential(credential_exchange_id : number, publish : boolean): Promise<any> {
+    public async revokeCredential(credential_exchange_id : string, publish : boolean): Promise<any> {
         const data = {
             cred_ex_id: credential_exchange_id,
             publish,
@@ -297,6 +297,13 @@ export class IssuerService {
             formatted.push(this.formatRecord(record));
         }
         return formatted;
+    }
+
+    /**
+     * Deletes credential using the cred_ex_id for issuer
+     */
+    public async deleteCredential(creExId : string): Promise<any> {
+        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', `issue-credential/records/${creExId}`);
     }
 
     /**
