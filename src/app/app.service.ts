@@ -1,7 +1,5 @@
 import { Injectable, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
 import { json } from 'body-parser';
 import { ProtocolExceptionFilter } from 'protocol-common/protocol.exception.filter';
 import { Logger } from 'protocol-common/logger';
@@ -14,7 +12,7 @@ import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { Services } from '../utility/services';
 
 /**
- * Sets up the app to support all the public gateway-like controllers, eg ratelimiting, etc
+ * All external traffic will be routed through gateway so no need for things like rate-limiting here
  */
 @Injectable()
 export class AppService {
@@ -23,34 +21,14 @@ export class AppService {
      * Sets up app in a way that can be used by main.ts and e2e tests
      */
     public static async setup(app: INestApplication): Promise<void> {
-
-        // Setting request-id middleware which assigns a unique requestid per incomming requests if not sent by client.
-        const requestId = require('express-request-id')();
-        app.use(requestId);
-
         const logger = new Logger(DatadogLogger.getLogger());
         app.useLogger(logger);
+        app.use(traceware(process.env.SERVICE_NAME));
+
+        app.useGlobalFilters(new ProtocolExceptionFilter());
 
         // Increase json parse size to handle encoded images
         app.use(json({ limit: HttpConstants.JSON_LIMIT }));
-
-        app.use(helmet());
-
-        const corsWhitelist = process.env.CORS_WHITELIST;
-        if (corsWhitelist) {
-            app.enableCors({origin: corsWhitelist.split(',')});
-        } else {
-            app.enableCors();
-        }
-        app.useGlobalFilters(new ProtocolExceptionFilter());
-
-        app.use(traceware(process.env.SERVICE_NAME));
-
-        // Default is 100 requests per minute
-        app.use(rateLimit({
-            windowMs: process.env.RATE_LIMIT_WINDOW_MS,
-            max: process.env.RATE_LIMIT_MAX,
-        }));
 
         // Load swagger docs and display
         if (process.env.NODE_ENV === Constants.LOCAL) {

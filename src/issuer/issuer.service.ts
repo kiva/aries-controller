@@ -97,20 +97,32 @@ export class IssuerService {
     }
 
     /**
-     * Issues a credential and polls the exchange status until it's being accepted and acked
+     * Issues a credential and polls the exchange status until it's being accepted
+     * There are 2 different cases depending on if auto_remove is set:
+     *   if true then we poll until we get a 404 error that the credential has been removed (ie completed)
+     *   if false we poll until we get a credential_acked state
      */
     public async issueCredentialAndWait(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
         const credSend = await this.issueCredential(credDefProfilePath, connectionId, entityData);
         const credExId = credSend.credential_exchange_id;
 
-        let res = null;
+        let res = { state: 'not_started'};
         for (let i = 0; i < parseInt(process.env.PROOF_WAIT_SEC, 10); i++) {
-            res = await this.checkCredentialExchange(credExId);
-            if (res.state === 'credential_acked') {
-                Logger.log('Credential accepted');
-                return res;
+            try {
+                res = await this.checkCredentialExchange(credExId);
+                if (res.state === 'credential_acked') {
+                    Logger.log('Credential accepted');
+                    return res;
+                }
+                await ProtocolUtility.delay(1000);
+            } catch(e) {
+                // If this issuer is set to auto remove then we expect a 404 message
+                if (credSend.auto_remove && e.message && e.message.endsWith('404')) {
+                    Logger.log('Credential accepted and deleted from issuers records');
+                    return res;
+                }
+                throw new ProtocolException('IssueFailed', 'Issuing process failed', e);
             }
-            await ProtocolUtility.delay(1000);
         }
         throw new ProtocolException('IssueFailed', 'Issuing process failed to complete', { state: res.state });
     }

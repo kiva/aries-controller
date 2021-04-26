@@ -1,5 +1,5 @@
 
-import { Get, Controller, Post, Param, Body, Query, Delete } from '@nestjs/common';
+import { Get, Controller, Post, Param, Body, Query, Delete, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
 import { Services } from '../utility/services';
@@ -19,12 +19,15 @@ import { VerifyPostResDto } from './dtos/verify.post.res.dto';
 import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
 import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
+import { InstitutionGuard } from './institution.guard';
 
 /**
- * Contains API routes that we want exposed to the front end
+ * Contains API routes that we want exposed to the front end via the gateway
+ * Has an InstitutionGuard to ensure the user is authorized to access this entity (eg kiva)
  */
 @Controller('v2/api')
 @ApiTags('api')
+@UseGuards(InstitutionGuard)
 @Controller()
 export class ApiController {
 
@@ -36,6 +39,15 @@ export class ApiController {
         private readonly issuerService: IssuerService,
         private readonly verifierService: VerifierService,
     ) {}
+
+    /**
+     * Endpoint to check the InstitutionGuard to ensure user has access
+     */
+     @ApiResponse({ status: 201, type: String })
+     @Get('institution')
+     async check(): Promise<string> {
+         return process.env.INSTITUTION;
+     }
 
     /**
      * Create connection for mobile agent to receive
