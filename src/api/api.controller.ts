@@ -180,7 +180,7 @@ export class ApiController {
      @Delete('holder/records/:credId')
      async holderDeleteCredential(@Param('creId') credId: string): Promise<any> {
          return await this.agentService.deleteCredential(credId);
-     }
+    }
   
     /**
      * Checks the revocation state of a credential by credExId
