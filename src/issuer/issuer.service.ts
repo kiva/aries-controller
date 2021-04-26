@@ -300,7 +300,7 @@ export class IssuerService {
     }
 
     /**
-     * Deletes credential using the cred_rev_id for issuer
+     * Deletes credential using the cred_ex_id for issuer
      */
     public async deleteCredential(creExId : string): Promise<any> {
         return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', `issue-credential/records/${creExId}`);
