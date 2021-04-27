@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app/app.module';
 
-describe('Multi agent and multi controller tests (e2e)', () => {
+describe('AppController (e2e)', () => {
     let app: INestApplication;
 
     beforeAll(async () => {
@@ -11,8 +11,7 @@ describe('Multi agent and multi controller tests (e2e)', () => {
             imports: [ AppModule ]
         }).compile();
 
-        process.env.MULTI_AGENT = 'false';
-        process.env.MULTI_CONTROLLER = 'false';
+        process.env.INSTITUTION_GUARD_ENABLED = 'false';
         app = moduleFixture.createNestApplication();
         await app.init();
     });

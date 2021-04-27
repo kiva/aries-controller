@@ -1,9 +1,8 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable, HttpService, Inject } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
-import { AgentCaller } from '../agent/agent.caller';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
@@ -20,7 +19,7 @@ export class IssuerService {
 
     constructor(
         public readonly agentService: AgentService,
-        private readonly agentCaller: AgentCaller,
+        @Inject('CALLER') private readonly agentCaller: any,
         httpService: HttpService,
     ) {
         this.http = new ProtocolHttpService(httpService);

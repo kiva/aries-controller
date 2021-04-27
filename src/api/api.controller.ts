@@ -1,4 +1,4 @@
-import { Get, Controller, Post, Param, Body, Query, UseGuards } from '@nestjs/common';
+import { Get, Controller, Post, Param, Body, Query, UseGuards, Logger } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
 import { Services } from '../utility/services';
@@ -24,10 +24,9 @@ import { InstitutionGuard } from './institution.guard';
  * Contains API routes that we want exposed to the front end via the gateway
  * Has an InstitutionGuard to ensure the user is authorized to access this entity (eg kiva)
  */
-@Controller('v2/api')
+@Controller(['v2/api', 'v2/:institution/api'])
 @ApiTags('api')
 @UseGuards(InstitutionGuard)
-@Controller()
 export class ApiController {
 
     /**
@@ -44,7 +43,8 @@ export class ApiController {
      */
      @ApiResponse({ status: 201, type: String })
      @Get('institution')
-     async check(): Promise<string> {
+     async check(@Param('institution') institution: string): Promise<string> {
+         Logger.log(institution);
          return process.env.INSTITUTION;
      }
 

@@ -3,8 +3,8 @@ import { VerifierService } from './verifier.service';
 import { VerifierController } from './verifier.controller';
 import { AgentModule } from '../agent/agent.module';
 import { AgentService } from '../agent/agent.service';
-import { AgentCaller } from '../agent/agent.caller';
 import { GlobalCacheModule } from '../app/global.cache.module';
+import { CallerModule } from '../caller/caller.module';
 
 /**
  *
@@ -14,12 +14,12 @@ import { GlobalCacheModule } from '../app/global.cache.module';
         AgentModule,
         HttpModule,
         GlobalCacheModule,
+        CallerModule.registerAsync()
     ],
     controllers: [VerifierController],
     providers: [
         VerifierService,
         AgentService,
-        AgentCaller,
     ],
     exports: [VerifierService]
 })

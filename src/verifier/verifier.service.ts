@@ -19,7 +19,7 @@ export class VerifierService {
 
     constructor(
         private readonly agentService: AgentService,
-        private readonly agentCaller: AgentCaller,
+        @Inject('CALLER') private readonly agentCaller: any,
         httpService: HttpService,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {

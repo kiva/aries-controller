@@ -13,6 +13,9 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 export class AgentCaller {
 
     private readonly http: ProtocolHttpService;
+    private walletId: string;
+    private walletKey: string;
+    private
 
     /**
      * TODO just using a cache for now, but eventually may want to use a postgres DB or take another approach eg manually set agentId and port
@@ -22,6 +25,21 @@ export class AgentCaller {
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore
     ) {
         this.http = new ProtocolHttpService(httpService);
+    }
+
+    /**
+     * 4 scenarios
+     * Single controller load from env vars, call single agent endpoint
+     * Single controller load from env vars call multi agent endpoint
+     * Multi controller load from DB, call single agent endpoint
+     * Multi controller load from DB call multi agent endpoint
+     */
+    public async init() {
+        if (process.env.SINGLE_CONTROLLER) {
+            // Load from env vars
+        } else {
+            // Load from DB
+        }
     }
 
     /**

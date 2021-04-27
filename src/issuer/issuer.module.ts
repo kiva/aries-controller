@@ -2,8 +2,8 @@ import { Module, HttpModule } from '@nestjs/common';
 import { IssuerService } from './issuer.service';
 import { IssuerController } from './issuer.controller';
 import { GlobalCacheModule } from '../app/global.cache.module';
-import { AgentCaller } from '../agent/agent.caller';
 import { AgentService } from '../agent/agent.service';
+import { CallerModule } from '../caller/caller.module';
 
 /**
  *
@@ -12,12 +12,12 @@ import { AgentService } from '../agent/agent.service';
     imports: [
         HttpModule,
         GlobalCacheModule,
+        CallerModule.registerAsync()
     ],
     controllers: [IssuerController],
     providers: [
         IssuerService,
         AgentService,
-        AgentCaller,
     ],
     exports: [
         IssuerService,

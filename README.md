@@ -17,3 +17,9 @@ This is published as a npm package. Specific controllers can then pull in each m
   ```
   This will link the aries-controller dependency code to the node_modules in the other repo.
   When you are done testing, run `npm unlink`  
+- For local development using docker containers npm link won't work since symbolic links on the mac won't work in a docker container.
+  Instead you need to map the dist folder from your mac into the node_modules in the container. Something like this (the relative path may vary)
+  ```
+  volumes:
+    - ../aries-controller/dist:/www/node_modules/aries-controller
+  ```

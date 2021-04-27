@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { AgentCaller } from '../agent/agent.caller';
 
 /**
@@ -7,7 +7,7 @@ import { AgentCaller } from '../agent/agent.caller';
 @Injectable()
 export class StewardService {
 
-    constructor(private readonly agentCaller: AgentCaller) {}
+    constructor(@Inject('CALLER') private readonly agentCaller: any) {}
 
     public async createSchema(schema_name: string, schema_version: string, attributes: Array<string>): Promise<any> {
         const data = {

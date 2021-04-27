@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
+import { ICaller } from '../caller/caller.interface';
 import { Logger } from 'protocol-common/logger';
-import { AgentCaller } from './agent.caller';
 
 /**
  * TODO abstract out a base service that includes things like making connections
@@ -9,7 +9,7 @@ import { AgentCaller } from './agent.caller';
 export class AgentService {
 
     constructor(
-        private readonly agentCaller: AgentCaller,
+        @Inject('CALLER') private readonly agentCaller: ICaller,
     ) {}
 
     /**
@@ -19,19 +19,19 @@ export class AgentService {
         // setup agent to use the webhook and governance policy handler built in
         const controllerUrl = process.env.SELF_URL + '/v1/controller';
         return await this.agentCaller.spinUpAgent(
-            process.env.WALLET_ID,
-            process.env.WALLET_KEY,
-            process.env.ADMIN_API_KEY,
-            process.env.SEED,
-            controllerUrl,
-            process.env.AGENT_ID,
-            process.env.LABEL,
-            (process.env.USE_TAILS_SERVER === 'true'),
+            // process.env.WALLET_ID,
+            // process.env.WALLET_KEY,
+            // process.env.ADMIN_API_KEY,
+            // process.env.SEED,
+            // controllerUrl,
+            // process.env.AGENT_ID,
+            // process.env.LABEL,
+            // (process.env.USE_TAILS_SERVER === 'true'),
         );
     }
 
     public async openConnection(): Promise<any> {
-        const data = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'connections/create-invitation');
+        const data = await this.agentCaller.callAgent(process.env.AGENT_ID, 'POST', 'connections/create-invitation');
         data.invitation.imageUrl = process.env.IMAGE_URL || '';
         // Remove invitation_url since it doesn't work and can confuse consumers
         delete data.invitation.invitation_url;
@@ -45,7 +45,6 @@ export class AgentService {
         };
         return await this.agentCaller.callAgent(
             process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
             'POST',
             'connections/receive-invitation',
             params,
@@ -63,7 +62,6 @@ export class AgentService {
         };
         return await this.agentCaller.callAgent(
             process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
             'POST',
             `connections/${connectionId}/send-ping`,
             null,
@@ -89,7 +87,6 @@ export class AgentService {
         const data = { content: JSON.stringify(msg) };
         return await this.agentCaller.callAgent(
             process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
             'POST',
             `connections/${connectionId}/send-message`,
             null,
