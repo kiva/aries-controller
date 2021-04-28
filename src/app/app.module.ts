@@ -19,11 +19,11 @@ import { LoggingInterceptor } from 'protocol-common/logging.interceptor';
     imports: [
         ConfigModule.init(data),
         AgentModule,
-        // AgentControllerModule,
-        // IssuerModule,
-        // StewardModule,
-        // VerifierModule,
-        // ApiModule,
+        AgentControllerModule,
+        IssuerModule,
+        StewardModule,
+        VerifierModule,
+        ApiModule,
     ],
     controllers: [AppController],
     providers: [

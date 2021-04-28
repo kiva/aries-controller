@@ -16,7 +16,7 @@ export class MultiAgentCaller implements ICaller {
     private readonly http: ProtocolHttpService;
 
     /**
-     * 
+     *
      */
     constructor(
         httpService: HttpService,
@@ -26,30 +26,25 @@ export class MultiAgentCaller implements ICaller {
     }
 
     /**
-     * Makes a call to the agency to spin up an agent, this can work in 
+     * Makes a call to the agency to spin up an agent, this can work in
      */
-    public async spinUpAgent(): Promise<any> {
-        
+    public async spinUpAgent(agentId: string): Promise<any> {
         let walletId;
         let walletKey;
         let adminApiKey;
-        let seed;
         let controllerUrl;
-        let agentId;
         let label;
-        let useTailsServer;
         if (process.env.MULTI_CONTROLLER === 'true') {
             // TODO fetch from DB
-            walletId = process.env.WALLET_ID;
-            walletKey = process.env.WALLET_KEY;
-            label = process.env.LABEL;
-            agentId = process.env.AGENT_ID;
-            controllerUrl = process.env.SELF_URL + '/v1/controller'; // TODO this endpoint needs to handle multi webhook responses
+            const profile: any = await this.cache.get('profile_' + agentId);
+            walletId = profile.walletId;
+            walletKey = profile.walletKey;
+            label = profile.label;
+            controllerUrl = profile.controllerUrl;
         } else {
             walletId = process.env.WALLET_ID;
             walletKey = process.env.WALLET_KEY;
             label = process.env.LABEL;
-            agentId = process.env.AGENT_ID;
             controllerUrl = process.env.SELF_URL + '/v1/controller';
         }
         // admin key is universal for multi controller
@@ -89,7 +84,7 @@ export class MultiAgentCaller implements ICaller {
         let req: AxiosRequestConfig;
         url = `${process.env.MULTITENANT_URL}/${route}`;
         // TODO need the agentId/institution passed in from the request in order to look up the cached value
-        const token = await this.cache.get('token_' + agentId); //TODO get token from cache and handle cache miss
+        const token = await this.cache.get('token_' + agentId); // TODO get token from cache and handle cache miss
         req = {
             method,
             url,
@@ -100,7 +95,7 @@ export class MultiAgentCaller implements ICaller {
                 'authorization': 'Bearer ' + token
             },
         };
-        
+
         // TODO remove logging or make cleaner
         try {
             Logger.log(`Calling agent ${url}`, req);

@@ -41,8 +41,6 @@ services:
         environment:
             - MULTI_AGENT=false
             - MULTI_CONTROLLER=true
-            - WALLET_ID=samcwallet
-            - AGENT_ID=samcagent
             - PORT=3031
             - SELF_URL=http://sa-mc-controller:3031
         build:
@@ -91,8 +89,6 @@ services:
         environment:
             - MULTI_AGENT=true
             - MULTI_CONTROLLER=true
-            - WALLET_ID=mamcwallet
-            - AGENT_ID=mamcagent
             - PORT=3033
             - SELF_URL=http://sa-sc-controller:3033
         build:

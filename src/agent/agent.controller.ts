@@ -12,19 +12,11 @@ export class AgentController {
     constructor(private readonly agentService: AgentService) {}
 
     /**
-     * Starts up an agent if it hasn't already
-     */
-    @Post()
-    public async init(): Promise<any> {
-        return await this.agentService.init();
-    }
-
-    /**
      * Opens a connection and returns the invitation connection data
      */
     @Post('connection')
     public async openConnection(): Promise<any> {
-        return await this.agentService.openConnection();
+        return await this.agentService.openConnection(process.env.AGENT_ID);
     }
 
     /**
@@ -49,5 +41,12 @@ export class AgentController {
     @Post('publicize-did')
     public async publicizeDid(@Body() body: any): Promise<any> {
         return await this.agentService.publicizeDid(body.did);
+    }
+
+    // TODO putting these here for now but will eventually move somewhere else
+
+    @Post('controller')
+    public async registerController(@Body() body: any): Promise<any> {
+        return await this.agentService.registerController(body);
     }
 }

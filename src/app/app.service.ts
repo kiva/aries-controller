@@ -58,16 +58,21 @@ export class AppService {
 
     /**
      * Try twice to spin up the agent, if it fails, quit
+     * TODO we only want to automatically spin up an agent if it's single controller - for multicontroller we spin up on register or usage?
      */
     public static async initAgent(app: INestApplication) {
+        if (process.env.MULTI_CONTROLLER === 'true') {
+            return;
+        }
+
         const agentService = app.get<AgentService>(AgentService);
         try {
-            await agentService.init();
+            await agentService.init(process.env.AGENT_ID);
         } catch (e) {
             Logger.log(`Failed to start agent, retrying... ${e.message}`, e);
             try {
                 await ProtocolUtility.delay(1000);
-                await agentService.init();
+                await agentService.init(process.env.AGENT_ID);
             } catch (e2) {
                 Logger.log(`Failed to start agent, exiting... ${e2.message}`, e2);
                 if (process.env.NODE_ENV !== Constants.LOCAL) {

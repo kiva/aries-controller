@@ -24,7 +24,7 @@ import { InstitutionGuard } from './institution.guard';
  * Contains API routes that we want exposed to the front end via the gateway
  * Has an InstitutionGuard to ensure the user is authorized to access this entity (eg kiva)
  */
-@Controller(['v2/api', 'v2/:institution/api'])
+@Controller('v2/api')
 @ApiTags('api')
 @UseGuards(InstitutionGuard)
 export class ApiController {
@@ -44,8 +44,8 @@ export class ApiController {
      @ApiResponse({ status: 201, type: String })
      @Get('institution')
      async check(@Param('institution') institution: string): Promise<string> {
-         Logger.log(institution);
-         return process.env.INSTITUTION;
+        institution = institution ? institution : process.env.AGENT_ID;
+        return institution;
      }
 
     /**
@@ -54,7 +54,8 @@ export class ApiController {
     @ApiResponse({ status: 201, type: ConnectionPostResDto })
     @Post('connection')
     async createConnection(): Promise<ConnectionPostResDto> {
-        return await this.agentService.openConnection();
+        // TODO get from header or from path
+        return await this.agentService.openConnection(process.env.AGENT_ID);
     }
 
     /**

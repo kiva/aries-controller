@@ -14,7 +14,7 @@ import { SingleAgentCaller } from './single.agent.caller';
          if (multiAgent) {
             return {
                 module: CallerModule,
-                imports: [ 
+                imports: [
                     GlobalCacheModule,
                     HttpModule,
                 ],
@@ -31,8 +31,9 @@ import { SingleAgentCaller } from './single.agent.caller';
          } else {
             return {
                 module: CallerModule,
-                imports: [ 
-                    HttpModule 
+                imports: [
+                    GlobalCacheModule,
+                    HttpModule
                 ],
                 providers: [
                     {

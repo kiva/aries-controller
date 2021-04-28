@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { ICaller } from '../caller/caller.interface';
 import { Logger } from 'protocol-common/logger';
 
@@ -10,28 +10,18 @@ export class AgentService {
 
     constructor(
         @Inject('CALLER') private readonly agentCaller: ICaller,
+        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {}
 
     /**
      * TODO we could add some error handling/retry logic here if the agent doesn't spin up correctly the first time
      */
-    public async init(): Promise<any> {
-        // setup agent to use the webhook and governance policy handler built in
-        const controllerUrl = process.env.SELF_URL + '/v1/controller';
-        return await this.agentCaller.spinUpAgent(
-            // process.env.WALLET_ID,
-            // process.env.WALLET_KEY,
-            // process.env.ADMIN_API_KEY,
-            // process.env.SEED,
-            // controllerUrl,
-            // process.env.AGENT_ID,
-            // process.env.LABEL,
-            // (process.env.USE_TAILS_SERVER === 'true'),
-        );
+    public async init(agentId: string): Promise<any> {
+        return await this.agentCaller.spinUpAgent(agentId);
     }
 
-    public async openConnection(): Promise<any> {
-        const data = await this.agentCaller.callAgent(process.env.AGENT_ID, 'POST', 'connections/create-invitation');
+    public async openConnection(agentId: string): Promise<any> {
+        const data = await this.agentCaller.callAgent(agentId, 'POST', 'connections/create-invitation');
         data.invitation.imageUrl = process.env.IMAGE_URL || '';
         // Remove invitation_url since it doesn't work and can confuse consumers
         delete data.invitation.invitation_url;
@@ -92,5 +82,15 @@ export class AgentService {
             null,
             data
         );
+    }
+
+
+    // TODO putting this here now but will move it
+
+    public async registerController(body: any) {
+        Logger.log(body);
+        await this.cache.set('profile_' + body.agentId, body);
+
+        await this.init(body.agentId);
     }
 }

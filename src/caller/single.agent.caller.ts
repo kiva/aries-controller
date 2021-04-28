@@ -1,4 +1,4 @@
-import { Injectable, HttpService } from '@nestjs/common';
+import { Injectable, HttpService, CacheStore, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
@@ -16,42 +16,41 @@ export class SingleAgentCaller implements ICaller {
     private readonly http: ProtocolHttpService;
 
     /**
-     * 
+     *
      */
     constructor(
         httpService: HttpService,
+        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }
 
     /**
-     * Makes a call to the agency to spin up an agent, this can work in 
+     * Makes a call to the agency to spin up an agent, this can work in
      */
-    public async spinUpAgent(): Promise<any> {
-        
+    public async spinUpAgent(agentId: string): Promise<any> {
         let walletId;
         let walletKey;
         let adminApiKey;
         let seed;
         let controllerUrl;
-        let agentId;
         let label;
         let useTailsServer;
         if (process.env.MULTI_CONTROLLER === 'true') {
             // TODO fetch from DB
-            walletId = process.env.WALLET_ID;
-            walletKey = process.env.WALLET_KEY;
-            seed = process.env.SEED;
-            controllerUrl = process.env.SELF_URL + '/v1/controller';
-            agentId = process.env.AGENT_ID;
-            label = process.env.LABEL;
-            useTailsServer = (process.env.USE_TAILS_SERVER === 'true'); 
+            // TODO fetch from DB
+            const profile: any = await this.cache.get('profile_' + agentId);
+            walletId = profile.walletId;
+            walletKey = profile.walletKey;
+            label = profile.label;
+            controllerUrl = profile.controllerUrl;
+            useTailsServer = profile.useTailsServer;
+            seed = profile.seed;
         } else {
             walletId = process.env.WALLET_ID;
             walletKey = process.env.WALLET_KEY;
             seed = process.env.SEED;
             controllerUrl = process.env.SELF_URL + '/v1/controller';
-            agentId = process.env.AGENT_ID;
             label = process.env.LABEL;
             useTailsServer = (process.env.USE_TAILS_SERVER === 'true');
         }
@@ -99,7 +98,7 @@ export class SingleAgentCaller implements ICaller {
                 'x-api-key': adminApiKey,
             },
         };
-        
+
         // TODO remove logging or make cleaner
         try {
             Logger.log(`Calling agent ${url}`);

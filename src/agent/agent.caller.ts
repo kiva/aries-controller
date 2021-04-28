@@ -15,7 +15,7 @@ export class AgentCaller {
     private readonly http: ProtocolHttpService;
     private walletId: string;
     private walletKey: string;
-    private
+    private;
 
     /**
      * TODO just using a cache for now, but eventually may want to use a postgres DB or take another approach eg manually set agentId and port
