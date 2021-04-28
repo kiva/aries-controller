@@ -38,20 +38,25 @@ export class SingleAgentCaller implements ICaller {
         let label;
         let useTailsServer;
         if (process.env.MULTI_CONTROLLER === 'true') {
-            // fetch from DB
-
-            // admin key is universal for multi controller
-            adminApiKey = process.env.ADMIN_API_KEY;
+            // TODO fetch from DB
+            walletId = process.env.WALLET_ID;
+            walletKey = process.env.WALLET_KEY;
+            seed = process.env.SEED;
+            controllerUrl = process.env.SELF_URL + '/v1/controller';
+            agentId = process.env.AGENT_ID;
+            label = process.env.LABEL;
+            useTailsServer = (process.env.USE_TAILS_SERVER === 'true'); 
         } else {
             walletId = process.env.WALLET_ID;
             walletKey = process.env.WALLET_KEY;
-            adminApiKey = process.env.ADMIN_API_KEY;
             seed = process.env.SEED;
             controllerUrl = process.env.SELF_URL + '/v1/controller';
             agentId = process.env.AGENT_ID;
             label = process.env.LABEL;
             useTailsServer = (process.env.USE_TAILS_SERVER === 'true');
         }
+        // admin key is universal for multi controller
+        adminApiKey = process.env.ADMIN_API_KEY;
 
         let req: AxiosRequestConfig;
         req = {
@@ -84,11 +89,6 @@ export class SingleAgentCaller implements ICaller {
         const adminApiKey = process.env.ADMIN_API_KEY;
         let url;
         let req: AxiosRequestConfig;
-        if (process.env.MULTI_CONTROLLER === 'true') {
-            agentId == ''; //TODO passed in via request
-        } else {
-            agentId = process.env.AGENT_ID
-        }
         url = `http://${agentId}:${process.env.AGENT_ADMIN_PORT}/${route}`;
         req = {
             method,

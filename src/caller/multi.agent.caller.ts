@@ -43,20 +43,17 @@ export class MultiAgentCaller implements ICaller {
             walletId = process.env.WALLET_ID;
             walletKey = process.env.WALLET_KEY;
             label = process.env.LABEL;
+            agentId = process.env.AGENT_ID;
             controllerUrl = process.env.SELF_URL + '/v1/controller'; // TODO this endpoint needs to handle multi webhook responses
-
-            // admin key is universal for multi controller
-            adminApiKey = process.env.ADMIN_API_KEY;
         } else {
             walletId = process.env.WALLET_ID;
             walletKey = process.env.WALLET_KEY;
-            adminApiKey = process.env.ADMIN_API_KEY;
-            seed = process.env.SEED;
-            controllerUrl = process.env.SELF_URL + '/v1/controller';
-            agentId = process.env.AGENT_ID;
             label = process.env.LABEL;
-            useTailsServer = (process.env.USE_TAILS_SERVER === 'true');
+            agentId = process.env.AGENT_ID;
+            controllerUrl = process.env.SELF_URL + '/v1/controller';
         }
+        // admin key is universal for multi controller
+        adminApiKey = process.env.ADMIN_API_KEY;
 
         let req: AxiosRequestConfig;
         req = {
