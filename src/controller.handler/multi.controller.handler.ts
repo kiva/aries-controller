@@ -1,33 +1,24 @@
-import { Injectable, CacheStore, Inject, CACHE_MANAGER } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
-import jwt from 'jsonwebtoken';
+import { BaseControllerHandler } from './base.controller.handler';
+import { IControllerHandler } from './controller.handler.interface';
 
 /**
- *
+ * The handler for multi-controllers
+ * The multi-controller loads it's values from the DB and it's AgentId from the request/auth token
  */
 @Injectable()
-export class MultiControllerHandler {
+export class MultiControllerHandler extends BaseControllerHandler implements IControllerHandler {
 
     /**
-     *
-     */
-    constructor(
-        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
-        @Inject(REQUEST) private readonly req: Request,
-    ) { }
-
-    /**
-     * Loads the values to use for the multi controller
-     *
+     * Loads the values to use for the multi controller from the DB
      */
     public async loadValues(): Promise<any> {
         const agentId = this.handleAgentId();
 
-        // TODO fetch from DB
+        // TODO fetch from DB not cache
         const profile: any = await this.cache.get('profile_' + agentId);
 
         if (!profile) {
@@ -47,6 +38,9 @@ export class MultiControllerHandler {
         };
     }
 
+    /**
+     * When the
+     */
     public handleAgentId(): string {
         // TODO change name to AgentId gaurd?
         if (process.env.INSTITUTION_GUARD_ENABLED === 'false') {
@@ -67,37 +61,5 @@ export class MultiControllerHandler {
             throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No agent header', null, 403);
         }
         return agentHeader;
-    }
-
-    /**
-     * This relies on metadata from auth 0
-     * TODO move to base class
-     */
-    private getFromAuthHeader(): string {
-        const authHeader = this.req.headers.authorization;
-        if (!authHeader) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No auth header', null, 403);
-        }
-
-        const token = authHeader.slice(7, authHeader.length);
-        if (!token) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No token in auth header', null, 403);
-        }
-
-        let metaData;
-        try {
-            metaData = jwt.decode(token);
-            if (!metaData) {
-                throw new Error();
-            }
-        } catch (e) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: Failed to decode JWT', null, 403);
-        }
-
-        const institution: string = metaData['https://ekyc.sl.kiva.org/institution'];
-        if (!institution) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No institution in token metadata', null, 403);
-        }
-        return institution.toLowerCase();
     }
 }

@@ -4,13 +4,12 @@ import { MultiControllerHandler } from '../controller.handler/multi.controller.h
 import { SingleControllerHandler } from '../controller.handler/single.controller.handler';
 
 /**
- *
+ * Assembles the controller handler module based on single-controller multi-controller
  */
  @Module({})
  export class ControllerHandlerModule {
     static async registerAsync(): Promise<DynamicModule> {
-        const multiController = (process.env.MULTI_CONTROLLER === 'true');
-        const controllerHandler = multiController ? MultiControllerHandler : SingleControllerHandler;
+        const controllerHandler = (process.env.MULTI_CONTROLLER === 'true') ? MultiControllerHandler : SingleControllerHandler;
         return {
             module: ControllerHandlerModule,
             imports: [

@@ -1,5 +1,5 @@
 import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
-import { ICaller } from '../caller/caller.interface';
+import { CALLER, ICaller } from '../caller/caller.interface';
 import { Logger } from 'protocol-common/logger';
 
 /**
@@ -9,7 +9,7 @@ import { Logger } from 'protocol-common/logger';
 export class AgentService {
 
     constructor(
-        @Inject('CALLER') private readonly agentCaller: ICaller,
+        @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {}
 
@@ -37,7 +37,7 @@ export class AgentService {
     }
 
     public async checkConnection(connectionId: string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `connections/${connectionId}`);
+        return await this.agentCaller.callAgent('GET', `connections/${connectionId}`);
     }
 
     public async sendPing(connectionId: string, comment = 'ping'): Promise<any> {

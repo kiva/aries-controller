@@ -3,10 +3,11 @@ import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
-import { AgentService } from '../agent/agent.service';
-import { Services } from '../utility/services';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { AgentService } from '../agent/agent.service';
+import { Services } from '../utility/services';
+import { CALLER, ICaller } from '../caller/caller.interface';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -19,7 +20,7 @@ export class IssuerService {
 
     constructor(
         public readonly agentService: AgentService,
-        @Inject('CALLER') private readonly agentCaller: any,
+        @Inject(CALLER) private readonly agentCaller: ICaller,
         httpService: HttpService,
     ) {
         this.http = new ProtocolHttpService(httpService);
@@ -234,7 +235,7 @@ export class IssuerService {
             data.revocation_registry_size =
                 (revocation_registry_size > 0) ? revocation_registry_size : parseInt(process.env.DEFAULT_REV_REG_SIZE, 10);
         }
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'credential-definitions', null, data);
+        return await this.agentCaller.callAgent('POST', 'credential-definitions', null, data);
     }
 
     /**
@@ -243,21 +244,14 @@ export class IssuerService {
     public async issueCredentialSend(credentialData: any, connectionId: string, attributes: Array<any>): Promise<any> {
         credentialData.connection_id = connectionId;
         credentialData.credential_proposal.attributes = this.sanitizeAttributes(attributes);
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
-            'POST',
-            'issue-credential/send',
-            null,
-            credentialData
-        );
+        return await this.agentCaller.callAgent('POST', 'issue-credential/send', null, credentialData);
     }
 
     /**
      * Returns the status of a credential exchange record
      */
     public async checkCredentialExchange(credentialExchangeId: string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `issue-credential/records/${credentialExchangeId}`);
+        return await this.agentCaller.callAgent('GET', `issue-credential/records/${credentialExchangeId}`);
     }
 
     /**
@@ -268,7 +262,7 @@ export class IssuerService {
             cred_ex_id: credential_exchange_id,
             publish,
         };
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'revocation/revoke', null, data);
+        return await this.agentCaller.callAgent('POST', 'revocation/revoke', null, data);
     }
 
     /**
@@ -279,7 +273,7 @@ export class IssuerService {
         const params = {
             cred_ex_id: credExId
         };
-        const res = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', 'revocation/credential-record', params);
+        const res = await this.agentCaller.callAgent('GET', 'revocation/credential-record', params);
         return {
             state: res.result.state
         };
@@ -290,7 +284,7 @@ export class IssuerService {
      *   connection_id, role, state, thread_id
      */
     public async getAllRecords(): Promise<any> {
-        const records = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `issue-credential/records`);
+        const records = await this.agentCaller.callAgent('GET', `issue-credential/records`);
         const formatted = [];
         for (const record of records.results) {
             formatted.push(this.formatRecord(record));
@@ -302,7 +296,7 @@ export class IssuerService {
      * Deletes credential using the cred_ex_id for issuer
      */
     public async deleteCredential(creExId : string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', `issue-credential/records/${creExId}`);
+        return await this.agentCaller.callAgent('DELETE', `issue-credential/records/${creExId}`);
     }
 
     /**

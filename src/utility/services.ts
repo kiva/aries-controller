@@ -1,11 +1,11 @@
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
-import { AgentCaller } from '../agent/agent.caller';
 import { readdirSync, readFileSync } from 'fs';
 import { Logger } from 'protocol-common/logger';
+import { ICaller } from 'caller/caller.interface';
 
 export class Services {
 
-    public static async waitForAcceptedConnection(credentialId: string, agentCaller: AgentCaller): Promise<boolean> {
+    public static async waitForAcceptedConnection(credentialId: string, agentCaller: ICaller): Promise<boolean> {
         const startOf: Date = new Date();
         const waitMS: number = parseInt(process.env.CONNECTION_WAIT_SEC, 10) * 1000;
 
@@ -15,7 +15,7 @@ export class Services {
 
             // just so we do not spam the agent, wait a bit before making a call
             await ProtocolUtility.delay(1000);
-            connection = await agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `connections/${credentialId}`);
+            connection = await agentCaller.callAgent('GET', `connections/${credentialId}`);
             // toThink(): we have these states and status spread out among several projects and source files.
             // TODO: should we make some shared constants?
             // Either of these 2 states is good enough to continue with the interaction

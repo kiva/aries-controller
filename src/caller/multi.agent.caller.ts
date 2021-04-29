@@ -8,17 +8,13 @@ import { ICaller } from './caller.interface';
 import { IControllerHandler } from '../controller.handler/controller.handler.interface';
 
 /**
- * TODO add types
- * TODO add more comments
+ * Handles all calls to the multitenant aca-py agent
  */
 @Injectable()
 export class MultiAgentCaller implements ICaller {
 
     private readonly http: ProtocolHttpService;
 
-    /**
-     *
-     */
     constructor(
         httpService: HttpService,
         @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
@@ -28,7 +24,7 @@ export class MultiAgentCaller implements ICaller {
     }
 
     /**
-     * Makes a call to the agency to spin up an agent, this can work in
+     * Makes a call to the agency to spin up an agent in multitenancy
      */
     public async spinUpAgent(): Promise<any> {
         const profile = await this.controllerHandler.loadValues();
@@ -58,8 +54,7 @@ export class MultiAgentCaller implements ICaller {
     }
 
     /**
-     * TODO we can abstract away the method and route to just be a command that looks up the method and route
-     * TODO should handle the case where a call is made but the agent isn't up (in both single and multi)
+     * Calls a multitenant agent using the stored token
      */
     public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
         const agentId = this.controllerHandler.handleAgentId();

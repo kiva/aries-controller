@@ -11,9 +11,6 @@ import { VerifierModule } from '../verifier/verifier.module';
 import { ApiModule } from '../api/api.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from 'protocol-common/logging.interceptor';
-import { AgentService } from 'agent/agent.service';
-import { CallerModule } from 'caller/caller.module';
-import { ControllerHandlerModule } from 'controller.handler/controller.handler.module';
 
 /**
  * Base modules for a controller

@@ -1,3 +1,5 @@
+export declare const CALLER = 'CALLER';
+
 export interface ICaller {
 
     spinUpAgent(): Promise<any>;

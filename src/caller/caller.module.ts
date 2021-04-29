@@ -3,15 +3,15 @@ import { MultiAgentCaller } from './multi.agent.caller';
 import { GlobalCacheModule } from '../app/global.cache.module';
 import { SingleAgentCaller } from './single.agent.caller';
 import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
+import { CALLER } from './caller.interface';
 
 /**
- *
+ * Assembles the caller module based on whether we're configured for multi-agent or single-agent
  */
  @Module({})
  export class CallerModule {
     static async registerAsync(): Promise<DynamicModule> {
-        const multiAgent = (process.env.MULTI_AGENT === 'true');
-        const agentCaller = multiAgent ? MultiAgentCaller : SingleAgentCaller;
+        const agentCaller = (process.env.MULTI_AGENT === 'true') ? MultiAgentCaller : SingleAgentCaller;
         return {
             module: CallerModule,
             imports: [
@@ -21,12 +21,12 @@ import { ControllerHandlerModule } from '../controller.handler/controller.handle
             ],
             providers: [
                 {
-                    provide: 'CALLER',
+                    provide: CALLER,
                     useClass: agentCaller
                 },
             ],
             exports: [
-                'CALLER'
+                CALLER
             ],
         };
     }
