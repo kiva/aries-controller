@@ -20,6 +20,7 @@ services:
             - AGENT_ID=sascagent
             - PORT=3030
             - SELF_URL=http://sa-sc-controller:3030
+            - ADMIN_API_KEY=sascAdminApiKey
         build:
             context: .
             dockerfile: Dockerfile
@@ -68,6 +69,7 @@ services:
             - AGENT_ID=mascagent
             - PORT=3032
             - SELF_URL=http://ma-sc-controller:3032
+            - ADMIN_API_KEY=adminApiKey
         build:
             context: .
             dockerfile: Dockerfile
@@ -91,6 +93,7 @@ services:
             - MULTI_CONTROLLER=true
             - PORT=3033
             - SELF_URL=http://sa-sc-controller:3033
+            - ADMIN_API_KEY=adminApiKey
         build:
             context: .
             dockerfile: Dockerfile

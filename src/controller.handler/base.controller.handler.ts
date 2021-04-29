@@ -1,10 +1,10 @@
-import { Injectable, CacheStore, Inject, CACHE_MANAGER } from '@nestjs/common';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { Injectable, Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
+import { ProtocolException } from 'protocol-common/protocol.exception';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { ProfileManager } from './profile.manager';
 
 /**
  * Base class for both single and multi controller handlers
@@ -13,13 +13,13 @@ import jwt from 'jsonwebtoken';
 export class BaseControllerHandler {
 
     constructor(
-        @Inject(CACHE_MANAGER) protected readonly cache: CacheStore,
+        protected readonly profileManager: ProfileManager,
         @Inject(REQUEST) protected readonly req: Request,
     ) { }
 
     /**
-     * This relies on metadata from auth 0
-     * TODO move to base class
+     * This relies on metadata from Auth0 and only gets called in envs where it's enabled
+     * Note that in Auth0 we reference "instituion"
      */
      protected getFromAuthHeader(): string {
         const authHeader = this.req.headers.authorization;

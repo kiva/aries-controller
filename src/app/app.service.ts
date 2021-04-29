@@ -7,8 +7,8 @@ import { DatadogLogger } from 'protocol-common/datadog.logger';
 import { traceware } from 'protocol-common/tracer';
 import { Constants } from 'protocol-common/constants';
 import { HttpConstants } from 'protocol-common/http-context/http.constants';
-import { AgentService } from '../agent/agent.service';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 
 /**

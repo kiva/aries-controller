@@ -1,4 +1,4 @@
-import { Injectable, HttpService, CacheStore, Inject, CACHE_MANAGER } from '@nestjs/common';
+import { Injectable, HttpService, Inject } from '@nestjs/common';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
@@ -6,6 +6,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
 import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { ProfileManager } from '../controller.handler/profile.manager';
 
 /**
  * Handles all calls to the multitenant aca-py agent
@@ -17,8 +18,8 @@ export class MultiAgentCaller implements ICaller {
 
     constructor(
         httpService: HttpService,
+        private readonly profileManger: ProfileManager,
         @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
-        @Inject(CACHE_MANAGER) private readonly cache: CacheStore
     ) {
         this.http = new ProtocolHttpService(httpService);
     }
@@ -28,9 +29,7 @@ export class MultiAgentCaller implements ICaller {
      */
     public async spinUpAgent(): Promise<any> {
         const profile = await this.controllerHandler.loadValues();
-
-        let req: AxiosRequestConfig;
-        req = {
+        const req: AxiosRequestConfig = {
             method: 'POST',
             url: process.env.AGENCY_URL + '/v2/multitenant',
             data: {
@@ -42,33 +41,29 @@ export class MultiAgentCaller implements ICaller {
                 autoConnect: false,
             }
         };
-        Logger.log(`Spinning up agent ${profile.agentId}`);
         const res = await this.http.requestWithRetry(req);
         Logger.log(`Successfully spun up agent ${profile.agentId}`);
         if (!res || !res.data || !res.data.token) {
-            Logger.error('NO TOKEN!', res.data);
+            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `No token after spinning up agent ${profile.agentId}`);
         }
-        await this.cache.set('token_' + profile.agentId, res.data.token);
+        await this.profileManger.append(profile.agentId, 'token', res.data.token);
         return res.data;
-
     }
 
     /**
      * Calls a multitenant agent using the stored token
      */
     public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
-        const agentId = this.controllerHandler.handleAgentId();
-        Logger.log('agentId', agentId);
+        // The admin api key will always be the one for multitenant stored as an env
         const adminApiKey = process.env.ADMIN_API_KEY;
-        let url;
-        let req: AxiosRequestConfig;
-        url = `${process.env.MULTITENANT_URL}/${route}`;
-        // TODO need the agentId/institution passed in from the request in order to look up the cached value
-        const token = await this.cache.get('token_' + agentId); // TODO get token from cache and handle cache miss
+        const url = `${process.env.MULTITENANT_URL}/${route}`;
+        const agentId = this.controllerHandler.handleAgentId();
+        const profile = await this.profileManger.get(agentId);
+        const token = profile.token;
         if (!token) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No token, agent has not been registered');
         }
-        req = {
+        const req: AxiosRequestConfig = {
             method,
             url,
             params,
@@ -79,9 +74,8 @@ export class MultiAgentCaller implements ICaller {
             },
         };
 
-        // TODO remove logging or make cleaner
         try {
-            Logger.log(`Calling agent ${url}`, req);
+            Logger.log(`Calling agent ${url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         } catch (e) {

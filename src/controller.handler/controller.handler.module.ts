@@ -19,7 +19,7 @@ import { SingleControllerHandler } from '../controller.handler/single.controller
                 {
                     provide: 'CONTROLLER_HANDLER',
                     useClass: controllerHandler
-                },
+                }
             ],
             exports: [
                 'CONTROLLER_HANDLER'

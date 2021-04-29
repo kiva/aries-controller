@@ -55,4 +55,11 @@ export class SingleControllerHandler extends BaseControllerHandler implements IC
         }
         return institution;
     }
+
+    /**
+     * For single controllers the api key is saved as an env var
+     */
+    public async handleAdminApiKey(): Promise<string> {
+        return process.env.ADMIN_API_KEY;
+    }
 }

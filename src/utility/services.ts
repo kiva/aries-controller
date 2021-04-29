@@ -1,7 +1,7 @@
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { readdirSync, readFileSync } from 'fs';
 import { Logger } from 'protocol-common/logger';
-import { ICaller } from 'caller/caller.interface';
+import { ICaller } from '../caller/caller.interface';
 
 export class Services {
 

@@ -17,9 +17,7 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
      */
     public async loadValues(): Promise<any> {
         const agentId = this.handleAgentId();
-
-        // TODO fetch from DB not cache
-        const profile: any = await this.cache.get('profile_' + agentId);
+        const profile = await this.profileManager.get(agentId);
 
         if (!profile) {
             throw new ProtocolException('NotRegistered', `No profile found for ${agentId}, need to register first`);
@@ -50,6 +48,12 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
 
         // Check Auth0 and pull from there
         return this.getFromAuthHeader();
+    }
+
+    public async handleAdminApiKey(): Promise<string> {
+        const agentId = this.handleAgentId();
+        const data = await this.profileManager.get(agentId);
+        return data.adminApiKey;
     }
 
     /**
