@@ -7,7 +7,7 @@ import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 /**
- * 
+ *
  */
 @Injectable()
 export class SingleControllerHandler {
@@ -36,7 +36,7 @@ export class SingleControllerHandler {
             // below are just needed for single agents
             seed: process.env.SEED,
             useTailsServer: (process.env.USE_TAILS_SERVER === 'true'),
-        }
+        };
     }
 
     public handleAgentId(): string {

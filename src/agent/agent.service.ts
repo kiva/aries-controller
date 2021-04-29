@@ -79,6 +79,6 @@ export class AgentService {
     public async registerController(body: any) {
         Logger.log(body);
         await this.cache.set('profile_' + body.agentId, body);
-        await this.init();
+        return await this.init();
     }
 }

@@ -7,7 +7,7 @@ import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
 /**
- * 
+ *
  */
 @Injectable()
 export class MultiControllerHandler {
@@ -22,7 +22,7 @@ export class MultiControllerHandler {
 
     /**
      * Loads the values to use for the multi controller
-     * 
+     *
      */
     public async loadValues(): Promise<any> {
         const agentId = this.handleAgentId();
@@ -33,14 +33,18 @@ export class MultiControllerHandler {
         if (!profile) {
             throw new ProtocolException('NotRegistered', `No profile found for ${agentId}, need to register first`);
         }
-        
+
         return {
+            agentId,
             walletId: profile.walletId,
             walletKey: profile.walletKey,
             label: profile.label,
             controllerUrl: profile.controllerUrl,
             adminApiKey: process.env.ADMIN_API_KEY,
-        }
+            // below are just needed for single agents
+            seed: profile.seed,
+            useTailsServer: profile.useTailsServer,
+        };
     }
 
     public handleAgentId(): string {

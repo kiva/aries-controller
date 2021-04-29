@@ -65,7 +65,7 @@ export class AppService {
             return;
         }
 
-        const agentService = app.get<AgentService>(AgentService);
+        const agentService = await app.resolve(AgentService);
         try {
             await agentService.init();
         } catch (e) {

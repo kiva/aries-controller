@@ -10,7 +10,7 @@ import { SingleControllerHandler } from '../controller.handler/single.controller
  export class ControllerHandlerModule {
     static async registerAsync(): Promise<DynamicModule> {
         const multiController = (process.env.MULTI_CONTROLLER === 'true');
-        const controllerHandler = multiController ? MultiControllerHandler : SingleControllerHandler
+        const controllerHandler = multiController ? MultiControllerHandler : SingleControllerHandler;
         return {
             module: ControllerHandlerModule,
             imports: [
