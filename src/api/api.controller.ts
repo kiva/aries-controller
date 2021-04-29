@@ -39,23 +39,12 @@ export class ApiController {
     ) {}
 
     /**
-     * Endpoint to check the InstitutionGuard to ensure user has access
-     */
-     @ApiResponse({ status: 201, type: String })
-     @Get('institution')
-     async check(@Param('institution') institution: string): Promise<string> {
-        institution = institution ? institution : process.env.AGENT_ID;
-        return institution;
-     }
-
-    /**
      * Create connection for mobile agent to receive
      */
     @ApiResponse({ status: 201, type: ConnectionPostResDto })
     @Post('connection')
     async createConnection(): Promise<ConnectionPostResDto> {
-        // TODO get from header or from path
-        return await this.agentService.openConnection(process.env.AGENT_ID);
+        return await this.agentService.openConnection();
     }
 
     /**

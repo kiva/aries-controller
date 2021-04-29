@@ -14,9 +14,17 @@ export class AgentController {
     /**
      * Opens a connection and returns the invitation connection data
      */
+    @Post('init')
+    public async init(): Promise<any> {
+        return await this.agentService.init();
+    }
+
+    /**
+     * Opens a connection and returns the invitation connection data
+     */
     @Post('connection')
     public async openConnection(): Promise<any> {
-        return await this.agentService.openConnection(process.env.AGENT_ID);
+        return await this.agentService.openConnection();
     }
 
     /**

@@ -16,12 +16,12 @@ export class AgentService {
     /**
      * TODO we could add some error handling/retry logic here if the agent doesn't spin up correctly the first time
      */
-    public async init(agentId: string): Promise<any> {
-        return await this.agentCaller.spinUpAgent(agentId);
+    public async init(): Promise<any> {
+        return await this.agentCaller.spinUpAgent();
     }
 
-    public async openConnection(agentId: string): Promise<any> {
-        const data = await this.agentCaller.callAgent(agentId, 'POST', 'connections/create-invitation');
+    public async openConnection(): Promise<any> {
+        const data = await this.agentCaller.callAgent('POST', 'connections/create-invitation');
         data.invitation.imageUrl = process.env.IMAGE_URL || '';
         // Remove invitation_url since it doesn't work and can confuse consumers
         delete data.invitation.invitation_url;
@@ -33,13 +33,7 @@ export class AgentService {
         const params = {
             alias
         };
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            'POST',
-            'connections/receive-invitation',
-            params,
-            invitation
-        );
+        return await this.agentCaller.callAgent('POST', 'connections/receive-invitation', params, invitation);
     }
 
     public async checkConnection(connectionId: string): Promise<any> {
@@ -50,27 +44,21 @@ export class AgentService {
         const data = {
             comment
         };
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            'POST',
-            `connections/${connectionId}/send-ping`,
-            null,
-            data,
-        );
+        return await this.agentCaller.callAgent('POST', `connections/${connectionId}/send-ping`, null, data);
     }
 
     public async publicizeDid(did: string): Promise<any> {
         const params = {
             did,
         };
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'wallet/did/public', params);
+        return await this.agentCaller.callAgent('POST', 'wallet/did/public', params);
     }
 
     /**
      * Deletes credential using the cred_id for issuer
      */
     public async deleteCredential(credId: string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', `credential/${credId}`);
+        return await this.agentCaller.callAgent('DELETE', `credential/${credId}`);
     }
 
     /**
@@ -82,13 +70,7 @@ export class AgentService {
     public async sendBasicMessage(msg: any, connectionId: string) : Promise<any> {
         Logger.debug(`sending basic message ${process.env.AGENT_ID}`, msg);
         const data = { content: JSON.stringify(msg) };
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            'POST',
-            `connections/${connectionId}/send-message`,
-            null,
-            data
-        );
+        return await this.agentCaller.callAgent('POST', `connections/${connectionId}/send-message`, null, data);
     }
 
 
@@ -97,7 +79,6 @@ export class AgentService {
     public async registerController(body: any) {
         Logger.log(body);
         await this.cache.set('profile_' + body.agentId, body);
-
-        await this.init(body.agentId);
+        await this.init();
     }
 }

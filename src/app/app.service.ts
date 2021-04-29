@@ -67,12 +67,12 @@ export class AppService {
 
         const agentService = app.get<AgentService>(AgentService);
         try {
-            await agentService.init(process.env.AGENT_ID);
+            await agentService.init();
         } catch (e) {
             Logger.log(`Failed to start agent, retrying... ${e.message}`, e);
             try {
                 await ProtocolUtility.delay(1000);
-                await agentService.init(process.env.AGENT_ID);
+                await agentService.init();
             } catch (e2) {
                 Logger.log(`Failed to start agent, exiting... ${e2.message}`, e2);
                 if (process.env.NODE_ENV !== Constants.LOCAL) {
