@@ -1,4 +1,4 @@
-import { Get, Controller, Post, Param, Body, Query, UseGuards, Logger } from '@nestjs/common';
+import { Get, Controller, Post, Param, Body, Query, Delete, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
 import { Services } from '../utility/services';
@@ -176,6 +176,22 @@ export class ApiController {
     @Post('revoke')
     public async revoke(@Body() body: any): Promise<any> {
         return await this.issuerService.revokeCredential(body.credential_exchange_id, body.publish);
+    }
+
+    /**
+     * Deletes a credential for the issuer
+     */
+    @Delete('issuer/records/:credExId')
+    async deletedIssuedCredential(@Param('credExId') credExId: string): Promise<any> {
+        return await this.issuerService.deleteCredential(credExId);
+    }
+
+    /**
+     * Deletes a credential
+     */
+    @Delete('holder/records/:credId')
+    async holderDeleteCredential(@Param('creId') credId: string): Promise<any> {
+        return await this.agentService.deleteCredential(credId);
     }
 
     /**

@@ -4,6 +4,7 @@ import { AppService } from '../src/app/app.service';
 import { AppController } from '../src/app/app.controller';
 import { AgentGovernance } from '../src/controller/agent.governance';
 import { ControllerCallback } from '../src/controller/agent.governance';
+import { AgentGovernanceFactory } from '../src/controller/agent.governance.factory';
 
 describe('Governance tests', () => {
     let app: INestApplication;
@@ -60,6 +61,43 @@ describe('Governance tests', () => {
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         expect(agentGovernance.readPermission('Permissive', 'invitation') === 'once');
         expect(agentGovernance.readPermission('Permissive', 'invitation') === 'deny');
+    });
+
+    it('factory returns previously created instance', () => {
+        const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
+        let count = 0;
+        const customHandler: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                count ++;
+                return undefined;
+            };
+        agentGovernance.registerHandler('something', customHandler);
+
+        const agentGovernance2 = AgentGovernanceFactory.useFactory();
+        agentGovernance2.invokeHandler('', '', '', '', 'something', '');
+        expect(count === 1);
+
+    });
+
+    it('factory returns new instance', () => {
+        const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
+        let count = 0;
+        const customHandler: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                count ++;
+                return undefined;
+            };
+        agentGovernance.registerHandler('something', customHandler);
+
+        const policyName = process.env.POLICY_NAME;
+        process.env.POLICY_NAME = 'bob';
+        const agentGovernance2 = AgentGovernanceFactory.useFactory();
+        agentGovernance2.invokeHandler('', '', '', '', 'something', '');
+        expect(count === 0);
+        process.env.POLICY_NAME = policyName;
+
     });
 
     it('Can add custom handler successfully', () =>{
