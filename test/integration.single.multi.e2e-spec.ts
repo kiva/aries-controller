@@ -14,9 +14,17 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     const samcUrl = 'http://localhost:3031';
     const mascUrl = 'http://localhost:3032';
     const mamcUrl = 'http://localhost:3033';
+    let sascInvitation;
+    let samcInvitation;
+    let mascInvitation;
+    let mamcInvitation;
+    let sascConnectionId;
+    let samcConnectionId;
+    let mascConnectionId;
+    let mamcConnectionId;
 
     beforeAll(async () => {
-
+        jest.setTimeout(20000);
     });
 
     it('Register single agent in multi controller', async () => {
@@ -24,7 +32,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             "walletId": "samcwalletid",
             "walletKey": "samcwalletkey",
             "seed": "0000000000000000000000000Random1",
-            "controllerUrl": "http://sa-mc-controller:3031/v1/controller",
             "label": "Single agent multi controller",
             "useTailsServer": false,
             "agentId": "samcagent",
@@ -45,7 +52,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             "walletId": "mamcwalletid",
             "walletKey": "mamcwalletkey",
-            "controllerUrl": "http://ma-mc-controller:3031/v1/controller",
             "label": "Multi agent multi controller",
             "agentId": "mamcagent",
         }
@@ -61,39 +67,145 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Init connection with single agent single controller', async () => {
         return request(sascUrl)
-            .post('/v1/agent/connection')
+            .post('/v2/api/connection')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.invitation).toBeDefined();
+                sascInvitation = res.body.invitation;
             });
     });
 
     it('Init connection with single agent multi controller', async () => {
         return request(samcUrl)
-            .post('/v1/agent/connection')
+            .post('/v2/api/connection')
             .set('agent', 'samcagent')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.invitation).toBeDefined();
+                samcInvitation = res.body.invitation;
             });
     });
 
     it('Init connection with multi agent single controller', async () => {
+        await ProtocolUtility.delay(1000)
         return request(mascUrl)
-            .post('/v1/agent/connection')
+            .post('/v2/api/connection')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.invitation).toBeDefined();
+                mascInvitation = res.body.invitation;
             });
     });
 
     it('Init connection with multi agent multi controller', async () => {
         return request(mamcUrl)
-            .post('/v1/agent/connection')
+            .post('/v2/api/connection')
             .set('agent', 'mamcagent')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.invitation).toBeDefined();
+                mamcInvitation = res.body.invitation;
+            });
+    });
+
+    it('sasc accepts invitation from samc', async () => {
+        const data = {
+            alias: 'samc',
+            invitation: samcInvitation,
+        }
+        return request(sascUrl)
+            .post('/v1/agent/accept-connection')
+            .send(data)
+            .expect((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body.connection_id).toBeDefined();
+                sascConnectionId = res.body.connection_id;
+            });
+    });
+
+    it('samc accepts invitation from masc', async () => {
+        const data = {
+            alias: 'masc',
+            invitation: mascInvitation,
+        }
+        return request(samcUrl)
+            .post('/v1/agent/accept-connection')
+            .set('agent', 'samcagent')
+            .send(data)
+            .expect((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body.connection_id).toBeDefined();
+                samcConnectionId = res.body.connection_id;
+            });
+    });
+
+    it('masc accepts invitation from mamc', async () => {
+        const data = {
+            alias: 'mamc',
+            invitation: mamcInvitation,
+        }
+        return request(mascUrl)
+            .post('/v1/agent/accept-connection')
+            .send(data)
+            .expect((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body.connection_id).toBeDefined();
+                mascConnectionId = res.body.connection_id;
+            });
+    });
+
+    it('mamc accepts invitation from sasc', async () => {
+        const data = {
+            alias: 'sasc',
+            invitation: sascInvitation,
+        }
+        return request(mamcUrl)
+            .post('/v1/agent/accept-connection')
+            .set('agent', 'mamcagent')
+            .send(data)
+            .expect((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body.connection_id).toBeDefined();
+                mamcConnectionId = res.body.connection_id;
+            });
+    });
+
+    it('sasc checks connection status', async () => {
+        await ProtocolUtility.delay(3000)
+        return request(sascUrl)
+            .get(`/v2/api/connection/${sascConnectionId}`)
+            .expect((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body.state).toBe('response');
+            });
+    });
+
+    it('samc checks connection status', async () => {
+        return request(samcUrl)
+            .get(`/v2/api/connection/${samcConnectionId}`)
+            .set('agent', 'samcagent')
+            .expect((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body.state).toBe('response');
+            });
+    });
+
+    it('masc checks connection status', async () => {
+        return request(mascUrl)
+            .get(`/v2/api/connection/${mascConnectionId}`)
+            .expect((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body.state).toBe('response');
+            });
+    });
+
+    it('mamc checks connection status', async () => {
+        return request(mamcUrl)
+            .get(`/v2/api/connection/${mamcConnectionId}`)
+            .set('agent', 'mamcagent')
+            .expect((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body.state).toBe('response');
             });
     });
 });

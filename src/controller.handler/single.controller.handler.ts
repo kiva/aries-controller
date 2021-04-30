@@ -17,12 +17,14 @@ export class SingleControllerHandler extends BaseControllerHandler implements IC
      */
     public async loadValues(): Promise<any> {
         const agentId = this.handleAgentId();
+        // The webhook url always points back to this controller, references the agent id
+        const webhookUrl = `${process.env.SELF_URL}:${process.env.PORT}/v2/webhook/${agentId}`;
         return {
             agentId,
             walletId: process.env.WALLET_ID,
             walletKey: process.env.WALLET_KEY,
             label: process.env.LABEL,
-            controllerUrl: process.env.SELF_URL + '/v1/controller',
+            controllerUrl: webhookUrl,
             adminApiKey: process.env.ADMIN_API_KEY,
             // below are just needed for single agents
             seed: process.env.SEED,

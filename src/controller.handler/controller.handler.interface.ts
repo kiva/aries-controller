@@ -4,5 +4,5 @@ export interface IControllerHandler {
 
     handleAgentId(): string;
 
-    handleAdminApiKey(): Promise<string>;
+    handleAdminApiKey(agentId?: string): Promise<string>;
 }

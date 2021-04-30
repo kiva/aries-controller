@@ -4,6 +4,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentGovernance } from './agent.governance';
 import { HandlersFactory } from './handler/handlers.factory';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Handler for ACAPY "webhook" endpoints, which allows agents to automatically respond to agent messages
@@ -16,36 +17,43 @@ export class AgentControllerService {
 
     constructor(
         httpService: HttpService,
+        private readonly profileManager: ProfileManager,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
         @Inject('AGENT_GOVERNANCE') private readonly agentGovernance: AgentGovernance) {
         this.http = new ProtocolHttpService(httpService);
     }
 
-    async handleRequest(route: string, topic: string, body: any) {
-        const agentId: string = process.env.AGENT_ID || 'agent';
-        const agent: any = await this.cache.get(agentId);
-        let adminApiKey = process.env.ADMIN_API_KEY;
+    /**
+     * TODO right now I'm duplicating a lot of the multi/single agent/controller logic because I don't want to refactor the HandlersFactory yet
+     *      Eventually that will take an ICaller and so we won't need logic here to extract agentUrl, adminApiKey and token
+     */
+    public async handleRequest(agentId: string, route: string, topic: string, body: any) {
+        const profile: any = await this.profileManager.get(agentId);
 
-        // Sometimes the agent controller is used for a single agent and other times it serves in an agency
-        // capacity.  Because of this, adminApiKey may not be cached so we have to check env when its not in
-        // cache and we will error if environment isn't setup correctly.
-        if (!adminApiKey && agent) {
-            adminApiKey = agent.adminApiKey;
+        // Logic for adminApiKey - eventually this will all be handled by ICaller
+        let adminApiKey;
+        if (profile && profile.adminApiKey) {
+            adminApiKey = profile.adminApiKey;
+        } else {
+            adminApiKey = process.env.ADMIN_API_KEY;
         }
         if (!adminApiKey) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_NODE_ENVIRONMENT, 'admin api key is missing from environment');
         }
 
+        // Logic for agentUrl - eventually this will all be handled by ICaller
         let agentUrl;
-        if (agent && agent.multitenant) {
-            agentUrl = process.env.MULTITENANT_URL ?? 'http://multitenant:3021';
+        if (process.env.MULTI_AGENT === 'true') {
+            agentUrl = process.env.MULTITENANT_URL;
         } else {
-            const adminPort = (agent ? agent.adminApiPort : process.env.AGENT_ADMIN_PORT);
+            const adminPort = ((profile && profile.adminApiPort) ? profile.adminApiPort : process.env.AGENT_ADMIN_PORT);
             // @tothink http/https?  should this be from the env?
             agentUrl = `http://${agentId}:${adminPort}`;
         }
 
-        const token = agent ? agent.token : null;
+        // Logic for token - eventually this will all be handled by ICaller
+        const token = profile ? profile.token : null;
+
         return await HandlersFactory.getHandler(this.agentGovernance, topic, this.http, this.cache)
             .handleAcapyWebhookMsg(agentUrl, agentId, adminApiKey, route, topic, body, token);
     }

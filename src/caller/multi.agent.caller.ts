@@ -54,7 +54,7 @@ export class MultiAgentCaller implements ICaller {
      * Calls a multitenant agent using the stored token
      */
     public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
-        // When calling the multi agent the admin api key is always from the env - only the token varies
+        // When calling the multi agent the admin api key is always from the env - it's the multitenant api key
         const adminApiKey = process.env.ADMIN_API_KEY;
         const agentId = this.controllerHandler.handleAgentId();
         const profile = await this.profileManger.get(agentId);

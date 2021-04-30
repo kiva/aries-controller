@@ -23,12 +23,14 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
             throw new ProtocolException('NotRegistered', `No profile found for ${agentId}, need to register first`);
         }
 
+        // The webhook url always points back to this controller, references the agent id
+        const webhookUrl = `${process.env.SELF_URL}:${process.env.PORT}/v2/webhook/${agentId}`;
         return {
             agentId,
             walletId: profile.walletId,
             walletKey: profile.walletKey,
             label: profile.label,
-            controllerUrl: profile.controllerUrl,
+            controllerUrl: webhookUrl,
             adminApiKey: profile.adminApiKey ?? process.env.ADMIN_API_KEY,
             // below are just needed for single agents
             seed: profile.seed,
@@ -51,8 +53,12 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
         return this.getFromAuthHeader();
     }
 
-    public async handleAdminApiKey(): Promise<string> {
-        const agentId = this.handleAgentId();
+    /**
+     * For convenience agent id can be passed in rather than fetching it from handleAgentId
+     * The adminApiKey is pulled of the profile for single agents?
+     */
+    public async handleAdminApiKey(agentId?: string): Promise<string> {
+        agentId = agentId ?? this.handleAgentId();
         const profile = await this.profileManager.get(agentId);
         if (!profile) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, `No profile found for ${agentId}`);
