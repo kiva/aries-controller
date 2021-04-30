@@ -1,4 +1,4 @@
-export declare const CALLER = 'CALLER';
+export const CALLER = 'CALLER';
 
 export interface ICaller {
 

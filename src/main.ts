@@ -13,8 +13,6 @@ async function bootstrap() {
     await app.listen(port);
     Logger.info(`Server started on ${port}`);
 
-    // TODO this isn't working right now because the AgentService doesn't have all it's dependencies at call time,
-    //       not sure why
     await AppService.initAgent(app);
 }
 bootstrap();

@@ -6,7 +6,6 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
 import { IControllerHandler } from '../controller.handler/controller.handler.interface';
-import { ProfileManager } from '../controller.handler/profile.manager';
 
 /**
  * Caller for a single agent
@@ -18,7 +17,6 @@ export class SingleAgentCaller implements ICaller {
 
     constructor(
         httpService: HttpService,
-        private readonly profileManger: ProfileManager,
         @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
     ) {
         this.http = new ProtocolHttpService(httpService);
@@ -54,8 +52,9 @@ export class SingleAgentCaller implements ICaller {
      * Calls a single agent, which is on our docker network by agentId using
      */
     public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
-        const adminApiKey = this.controllerHandler.handleAdminApiKey();
+        const adminApiKey = await this.controllerHandler.handleAdminApiKey();
         const agentId = this.controllerHandler.handleAgentId();
+
         const url = `http://${agentId}:${process.env.AGENT_ADMIN_PORT}/${route}`;
         const req: AxiosRequestConfig = {
             method,

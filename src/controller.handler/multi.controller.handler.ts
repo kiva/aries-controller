@@ -29,7 +29,7 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
             walletKey: profile.walletKey,
             label: profile.label,
             controllerUrl: profile.controllerUrl,
-            adminApiKey: process.env.ADMIN_API_KEY,
+            adminApiKey: profile.adminApiKey ?? process.env.ADMIN_API_KEY,
             // below are just needed for single agents
             seed: profile.seed,
             useTailsServer: profile.useTailsServer,
@@ -37,7 +37,8 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
     }
 
     /**
-     * When the
+     * When the guard is disabled (eg local) we get the agent id off the agent header
+     * Otherwise (eg non-local) we get it from the Auth0 token
      */
     public handleAgentId(): string {
         // TODO change name to AgentId gaurd?
@@ -52,8 +53,11 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
 
     public async handleAdminApiKey(): Promise<string> {
         const agentId = this.handleAgentId();
-        const data = await this.profileManager.get(agentId);
-        return data.adminApiKey;
+        const profile = await this.profileManager.get(agentId);
+        if (!profile) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, `No profile found for ${agentId}`);
+        }
+        return profile.adminApiKey;
     }
 
     /**

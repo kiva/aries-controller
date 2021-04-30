@@ -11,6 +11,9 @@ import { IssuerModule } from '../issuer/issuer.module';
 import { StewardModule } from '../steward/steward.module';
 import { VerifierModule } from '../verifier/verifier.module';
 import { ApiModule } from '../api/api.module';
+import { ProfileModule } from 'profile/profile.module';
+import { ControllerHandlerModule } from 'controller.handler/controller.handler.module';
+import { CallerModule } from 'caller/caller.module';
 
 
 /**
@@ -19,12 +22,13 @@ import { ApiModule } from '../api/api.module';
 @Module({
     imports: [
         ConfigModule.init(data),
+        ProfileModule,
         AgentModule,
-        // AgentControllerModule,
-        // IssuerModule,
-        // StewardModule,
-        // VerifierModule,
-        // ApiModule,
+        AgentControllerModule,
+        IssuerModule,
+        StewardModule,
+        VerifierModule,
+        ApiModule,
     ],
     controllers: [AppController],
     providers: [

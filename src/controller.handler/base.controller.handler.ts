@@ -4,7 +4,7 @@ import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { ProfileManager } from './profile.manager';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Base class for both single and multi controller handlers

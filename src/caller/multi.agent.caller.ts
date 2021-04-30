@@ -6,7 +6,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
 import { IControllerHandler } from '../controller.handler/controller.handler.interface';
-import { ProfileManager } from '../controller.handler/profile.manager';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Handles all calls to the multitenant aca-py agent
@@ -54,15 +54,19 @@ export class MultiAgentCaller implements ICaller {
      * Calls a multitenant agent using the stored token
      */
     public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
-        // The admin api key will always be the one for multitenant stored as an env
+        // When calling the multi agent the admin api key is always from the env - only the token varies
         const adminApiKey = process.env.ADMIN_API_KEY;
-        const url = `${process.env.MULTITENANT_URL}/${route}`;
         const agentId = this.controllerHandler.handleAgentId();
         const profile = await this.profileManger.get(agentId);
+        if (!profile) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No profile, agent has not been registered');
+        }
         const token = profile.token;
         if (!token) {
-            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No token, agent has not been registered');
+            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No token, agent has not been initialized');
         }
+
+        const url = `${process.env.MULTITENANT_URL}/${route}`;
         const req: AxiosRequestConfig = {
             method,
             url,
