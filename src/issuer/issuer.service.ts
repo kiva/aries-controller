@@ -32,7 +32,53 @@ export class IssuerService {
     public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
         const [credentialData, credDefAttributes] = this.getCredDefAndSchemaData(credDefProfilePath);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
-        return await this.issueCredentialSend(credentialData, connectionId, attributes);
+
+        let ret = await this.issueCredentialSend(credentialData, connectionId, attributes);
+
+        if (process.env.FLAG_RECORD_ISSUANCES == 'true') {
+            await this.recordCredential(entityData, ret);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Record the issued credential using the external credential record service
+     */
+    public async recordCredential(entityData: any, issuanceRecord: any) {
+        const url = process.env.CREDENTIAL_RECORD_URL;
+        this.callService('POST', url, {
+            entityData: entityData,
+            connection_id: issuanceRecord.connection_id,
+            schema_id: issuanceRecord.schema_id,
+            credential_definition_id: issuanceRecord.credential_definition_id,
+            credential_exchange_id: issuanceRecord.credential_exchange_id,
+            state: issuanceRecord.state,
+            created_at: issuanceRecord.created_at,
+            thread_id: issuanceRecord.thread_id,
+            updated_at: issuanceRecord.updated_at,
+            credential_id: null,
+            revoc_reg_id: null,
+        });
+    }
+
+    /**
+     * Call an external service / url
+     */
+    public async callService(method: any, url: string, data: any): Promise<any> {
+        const req: AxiosRequestConfig = {
+            method,
+            url,
+            data,
+        };
+        try {
+            Logger.log(`Calling service ${url}`);
+            const res = await this.http.requestWithRetry(req);
+            return res.data;
+        } catch (e) {
+            Logger.warn(`Service call failed to ${url} with ${JSON.stringify(data)}`, e);
+            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `Service call failed: ${e.message}`, { url: url, ex: e.details });
+        }
     }
 
     /**
