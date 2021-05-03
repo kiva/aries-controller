@@ -5,6 +5,7 @@ import { AgentModule } from '../agent/agent.module';
 import { AgentService } from '../agent/agent.service';
 import { GlobalCacheModule } from '../app/global.cache.module';
 import { CallerModule } from '../caller/caller.module';
+import { ProfileModule } from '../profile/profile.module';
 
 /**
  *
@@ -14,7 +15,8 @@ import { CallerModule } from '../caller/caller.module';
         AgentModule,
         HttpModule,
         GlobalCacheModule,
-        CallerModule.registerAsync()
+        CallerModule.registerAsync(),
+        ProfileModule,
     ],
     controllers: [VerifierController],
     providers: [

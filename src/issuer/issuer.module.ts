@@ -4,6 +4,7 @@ import { IssuerController } from './issuer.controller';
 import { GlobalCacheModule } from '../app/global.cache.module';
 import { AgentService } from '../agent/agent.service';
 import { CallerModule } from '../caller/caller.module';
+import { ProfileModule } from '../profile/profile.module';
 
 /**
  *
@@ -12,7 +13,8 @@ import { CallerModule } from '../caller/caller.module';
     imports: [
         HttpModule,
         GlobalCacheModule,
-        CallerModule.registerAsync()
+        CallerModule.registerAsync(),
+        ProfileModule,
     ],
     controllers: [IssuerController],
     providers: [

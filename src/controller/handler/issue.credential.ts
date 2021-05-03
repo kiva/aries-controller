@@ -8,7 +8,7 @@ import { AxiosRequestConfig } from 'axios';
 
 
 /*
-    Acapy webhooks handler for input received from the url [webhookurl]/v1/controller/topic/connections
+    Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections
  */
 export class IssueCredential extends BaseAgentResponseHandler {
     private static ISSUE_CREDENTIALS_URL: string = 'issue-credential';

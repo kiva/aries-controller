@@ -4,6 +4,7 @@ import { Logger } from 'protocol-common/logger';
 import { AgentControllerService } from './agent.controller.service';
 
 /**
+ * TODO will change the name to webhook in this ticket: https://kiva.atlassian.net/browse/PRO-3014
  * This handles all the webhook responses from our aca-py agents to this controller
  * They will always be POST and alway contain a body
  * Every webhook will have 3 components:
@@ -12,8 +13,8 @@ import { AgentControllerService } from './agent.controller.service';
  *   subroute: is the specific topic for this webhook, eg connections, issue_credential, etc
  * TODO eventually we can strip out route since it's always topic and not useful
  */
-@Controller('v2/webhook')
-@ApiTags('webhook')
+@Controller('v1/controller')
+@ApiTags('controller')
 export class AgentControllerController {
 
     constructor(private readonly agentControllerService: AgentControllerService) {}
