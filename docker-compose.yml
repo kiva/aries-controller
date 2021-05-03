@@ -11,8 +11,6 @@ networks:
 
 services:
     sa-sc-controller:
-        env_file:
-            - .env
         environment:
             - MULTI_AGENT=false
             - MULTI_CONTROLLER=false
@@ -39,8 +37,6 @@ services:
         tty: true
 
     sa-mc-controller:
-        env_file:
-            - .env
         environment:
             - MULTI_AGENT=false
             - MULTI_CONTROLLER=true
@@ -62,8 +58,6 @@ services:
         tty: true
 
     ma-sc-controller:
-        env_file:
-            - .env
         environment:
             - MULTI_AGENT=true
             - MULTI_CONTROLLER=false
@@ -89,8 +83,6 @@ services:
         tty: true
 
     ma-mc-controller:
-        env_file:
-            - .env
         environment:
             - MULTI_AGENT=true
             - MULTI_CONTROLLER=true
