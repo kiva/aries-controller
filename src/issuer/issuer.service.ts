@@ -33,9 +33,9 @@ export class IssuerService {
         const [credentialData, credDefAttributes] = this.getCredDefAndSchemaData(credDefProfilePath);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
 
-        let ret = await this.issueCredentialSend(credentialData, connectionId, attributes);
+        const ret = await this.issueCredentialSend(credentialData, connectionId, attributes);
 
-        if (process.env.FLAG_RECORD_ISSUANCES == 'true') {
+        if (process.env.FLAG_RECORD_ISSUANCES === 'true') {
             await this.recordCredential(entityData, ret);
         }
 
@@ -48,7 +48,7 @@ export class IssuerService {
     public async recordCredential(entityData: any, issuanceRecord: any) {
         const url = process.env.CREDENTIAL_RECORD_URL;
         this.callService('POST', url, {
-            entityData: entityData,
+            entityData,
             connection_id: issuanceRecord.connection_id,
             schema_id: issuanceRecord.schema_id,
             credential_definition_id: issuanceRecord.credential_definition_id,
@@ -77,7 +77,7 @@ export class IssuerService {
             return res.data;
         } catch (e) {
             Logger.warn(`Service call failed to ${url} with ${JSON.stringify(data)}`, e);
-            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `Service call failed: ${e.message}`, { url: url, ex: e.details });
+            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `Service call failed: ${e.message}`, { url, ex: e.details });
         }
     }
 
