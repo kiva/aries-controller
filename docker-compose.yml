@@ -17,6 +17,8 @@ services:
             - MULTI_AGENT=false
             - MULTI_CONTROLLER=false
             - WALLET_ID=sascwallet
+            - WALLET_KEY=sascwalletkey
+            - SEED=0000000000000000000000000Random1
             - AGENT_ID=sascagent
             - PORT=3030
             - SELF_URL=http://sa-sc-controller
@@ -66,6 +68,7 @@ services:
             - MULTI_AGENT=true
             - MULTI_CONTROLLER=false
             - WALLET_ID=mascwallet
+            - WALLET_KEY=mascwalletkey
             - AGENT_ID=mascagent
             - PORT=3032
             - SELF_URL=http://ma-sc-controller

@@ -22,7 +22,9 @@ export class AgentService {
 
     public async openConnection(): Promise<any> {
         const data = await this.agentCaller.callAgent('POST', 'connections/create-invitation');
-        data.invitation.imageUrl = process.env.IMAGE_URL || '';
+        if (process.env.IMAGE_URL) {
+            data.invitation.imageUrl = process.env.IMAGE_URL;
+        }
         // Remove invitation_url since it doesn't work and can confuse consumers
         delete data.invitation.invitation_url;
         return data;
