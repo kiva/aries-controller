@@ -40,6 +40,7 @@ jobs:
       - run:
           name: Start docker compose and wait for readiness
           command: |
+            docker-compose -f docker-compose.dep.yml build
             docker-compose -f docker-compose.dep.yml up -d
             sleep 20
             docker-compose up -d
