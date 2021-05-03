@@ -17,8 +17,8 @@ services:
     # External service dependencies for full test
     protocol-indy-pool:
         build:
-            context: integration_tests
-            dockerfile: resources/indy-pool-kiva.dockerfile
+            context: resources
+            dockerfile: indy-pool-kiva.dockerfile
             args:
                 pool_ip: '10.0.0.2'
         image: protocol-indy-pool
