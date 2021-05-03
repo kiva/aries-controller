@@ -66,6 +66,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     });
 
     it('Init connection with single agent single controller', async () => {
+        await ProtocolUtility.delay(3000);
         return request(sascUrl)
             .post('/v2/api/connection')
             .expect((res) => {
