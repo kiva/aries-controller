@@ -57,8 +57,8 @@ export class IssuerService {
             created_at: issuanceRecord.created_at,
             thread_id: issuanceRecord.thread_id,
             updated_at: issuanceRecord.updated_at,
-            credential_id: null,
-            revoc_reg_id: null,
+            credential_id: issuanceRecord.credential_id,
+            revoc_reg_id: issuanceRecord.revoc_reg_id,
         });
     }
 
