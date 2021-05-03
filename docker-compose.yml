@@ -19,7 +19,7 @@ services:
             - SEED=0000000000000000000000000Random1
             - AGENT_ID=sascagent
             - PORT=3030
-            - SELF_URL=http://sa-sc-controller
+            - SELF_URL=http://sa-sc-controller:3030
             - ADMIN_API_KEY=sascAdminApiKey
         build:
             context: .
@@ -41,7 +41,7 @@ services:
             - MULTI_AGENT=false
             - MULTI_CONTROLLER=true
             - PORT=3031
-            - SELF_URL=http://sa-mc-controller
+            - SELF_URL=http://sa-mc-controller:3031
         build:
             context: .
             dockerfile: Dockerfile
@@ -65,7 +65,7 @@ services:
             - WALLET_KEY=mascwalletkey
             - AGENT_ID=mascagent
             - PORT=3032
-            - SELF_URL=http://ma-sc-controller
+            - SELF_URL=http://ma-sc-controller:3032
             - ADMIN_API_KEY=adminApiKey
         build:
             context: .
@@ -87,7 +87,7 @@ services:
             - MULTI_AGENT=true
             - MULTI_CONTROLLER=true
             - PORT=3033
-            - SELF_URL=http://ma-mc-controller
+            - SELF_URL=http://ma-mc-controller:3033
             - ADMIN_API_KEY=adminApiKey
         build:
             context: .

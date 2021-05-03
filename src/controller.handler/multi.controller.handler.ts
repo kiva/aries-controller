@@ -24,7 +24,7 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
         }
 
         // The webhook url always points back to this controller, references the agent id
-        const webhookUrl = `${process.env.SELF_URL}:${process.env.PORT}/v2/webhook/${agentId}`;
+        const webhookUrl = `${process.env.SELF_URL}/v2/webhook/${agentId}`;
         return {
             agentId,
             walletId: profile.walletId,
