@@ -1,6 +1,7 @@
 import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { Logger } from 'protocol-common/logger';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * TODO abstract out a base service that includes things like making connections
@@ -9,6 +10,7 @@ import { Logger } from 'protocol-common/logger';
 export class AgentService {
 
     constructor(
+        private readonly profileManager: ProfileManager,
         @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {}
@@ -75,12 +77,11 @@ export class AgentService {
         return await this.agentCaller.callAgent('POST', `connections/${connectionId}/send-message`, null, data);
     }
 
-
-    // TODO putting this here now but will move it
-
+    /**
+     * Saves a newly registered wallet and spins up it's agent
+     */
     public async registerController(body: any) {
-        Logger.log(body);
-        await this.cache.set('profile_' + body.agentId, body);
+        await this.profileManager.save(body.agentId, body);
         return await this.init();
     }
 }

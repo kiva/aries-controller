@@ -3,6 +3,7 @@ import { AgentService } from './agent.service';
 import { AgentController } from './agent.controller';
 import { GlobalCacheModule } from '../app/global.cache.module';
 import { CallerModule } from '../caller/caller.module';
+import { ProfileModule } from '../profile/profile.module';
 
 /**
  *
@@ -11,7 +12,8 @@ import { CallerModule } from '../caller/caller.module';
     imports: [
         HttpModule,
         GlobalCacheModule,
-        CallerModule.registerAsync()
+        CallerModule.registerAsync(),
+        ProfileModule
     ],
     controllers: [AgentController],
     providers: [

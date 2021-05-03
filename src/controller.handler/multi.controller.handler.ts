@@ -43,7 +43,6 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
      * Otherwise (eg non-local) we get it from the Auth0 token
      */
     public handleAgentId(): string {
-        // TODO change name to AgentId gaurd?
         if (process.env.INSTITUTION_GUARD_ENABLED === 'false') {
             Logger.debug('Allowing user since institution guard is disabled');
             return this.getFromAgentHeader();

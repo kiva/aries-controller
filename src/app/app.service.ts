@@ -58,7 +58,7 @@ export class AppService {
 
     /**
      * Try twice to spin up the agent, if it fails, quit
-     * TODO we only want to automatically spin up an agent if it's single controller - for multicontroller we spin up on register or usage?
+     * Note we only want to spin up an agent on system start if it's single controller - for multicontroller we spin up on register
      */
     public static async initAgent(app: INestApplication) {
         if (process.env.MULTI_CONTROLLER === 'true') {

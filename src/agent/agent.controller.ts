@@ -51,8 +51,9 @@ export class AgentController {
         return await this.agentService.publicizeDid(body.did);
     }
 
-    // TODO putting these here for now but will eventually move somewhere else
-
+    /**
+     * Registers a new wallet (multi controller only)
+     */
     @Post('register')
     public async registerController(@Body() body: any): Promise<any> {
         return await this.agentService.registerController(body);

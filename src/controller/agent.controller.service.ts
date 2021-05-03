@@ -26,6 +26,7 @@ export class AgentControllerService {
     /**
      * TODO right now I'm duplicating a lot of the multi/single agent/controller logic because I don't want to refactor the HandlersFactory yet
      *      Eventually that will take an ICaller and so we won't need logic here to extract agentUrl, adminApiKey and token
+     *      This work if captured in this ticket: https://kiva.atlassian.net/browse/PRO-3012
      */
     public async handleRequest(agentId: string, route: string, topic: string, body: any) {
         const profile: any = await this.profileManager.get(agentId);

@@ -1,7 +1,8 @@
 import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 
 /**
- * Grouping calls here for convenience, eventually this will be replaced with a DB
+ * Grouping calls here for convenience, eventually we will replace cache calls with DB calls
+ * Future work described in this ticket: https://kiva.atlassian.net/browse/PRO-2999
  */
 @Injectable()
 export class ProfileManager  {

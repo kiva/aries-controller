@@ -18,8 +18,9 @@ export class BaseControllerHandler {
     ) { }
 
     /**
+     * TODO filed https://kiva.atlassian.net/browse/PRO-3011 for additional refactors
      * This relies on metadata from Auth0 and only gets called in envs where it's enabled
-     * Note that in Auth0 we reference "instituion"
+     * Note that in Auth0 we reference "institution"
      */
      protected getFromAuthHeader(): string {
         const authHeader = this.req.headers.authorization;

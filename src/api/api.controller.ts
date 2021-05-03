@@ -26,9 +26,7 @@ import { InstitutionGuard } from './institution.guard';
  */
 @Controller('v2/api')
 @ApiTags('api')
-// TODO not sure the best strategy for the InstitutionGuard, we want to fail early, but the logic is buried down in the controller handlers
-//      because it depends on multi vs single controller, for now comment it out, and relying on it getting blocked when calling an agent
-// @UseGuards(InstitutionGuard)
+@UseGuards(InstitutionGuard)
 export class ApiController {
 
     /**

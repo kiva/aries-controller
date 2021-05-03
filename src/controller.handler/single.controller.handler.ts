@@ -6,7 +6,7 @@ import { BaseControllerHandler } from './base.controller.handler';
 import { IControllerHandler } from './controller.handler.interface';
 
 /**
- *
+ * Single controllers can fetch all values from env vars
  */
 @Injectable()
 export class SingleControllerHandler extends BaseControllerHandler implements IControllerHandler {

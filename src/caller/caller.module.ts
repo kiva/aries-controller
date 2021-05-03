@@ -9,6 +9,7 @@ import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Assembles the caller module based on whether we're configured for multi-agent or single-agent
+ * The ControllerHandlerModule takes care of multi-controller vs single-controller
  */
  @Module({})
  export class CallerModule {
