@@ -86,16 +86,11 @@ services:
         image: kivaprotocol/tails-server:latest
         container_name: tails-server
         ports:
-        - 6543:6543
+            - 6543:6543
         networks:
-        - agency-network
+            - agency-network
         depends_on:
-        - protocol-indy-pool
-        # environment: 
-        #     - GENESIS_URL=http://localhost:9000/genesis
-        #     - STORAGE_PATH=/tmp/tails-files
-        #     - LOG_LEVEL=INFO
-        #     - TAILS_SERVER_URL=http://tails-server:6543
+            - protocol-indy-pool
         command: >
             tails-server
                 --host 0.0.0.0
@@ -111,7 +106,6 @@ services:
         depends_on:
           - protocol-indy-pool
           - protocol-identity-wallet-db
-          - protocol-identity-service
           - tails-server
         ports:
           - "3020:3020"
