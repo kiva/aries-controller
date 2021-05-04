@@ -7,8 +7,8 @@ import { DatadogLogger } from 'protocol-common/datadog.logger';
 import { traceware } from 'protocol-common/tracer';
 import { Constants } from 'protocol-common/constants';
 import { HttpConstants } from 'protocol-common/http-context/http.constants';
-import { AgentService } from '../agent/agent.service';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 
 /**
@@ -58,9 +58,14 @@ export class AppService {
 
     /**
      * Try twice to spin up the agent, if it fails, quit
+     * Note we only want to spin up an agent on system start if it's single controller - for multicontroller we spin up on register
      */
     public static async initAgent(app: INestApplication) {
-        const agentService = app.get<AgentService>(AgentService);
+        if (process.env.MULTI_CONTROLLER === 'true') {
+            return;
+        }
+
+        const agentService = await app.resolve(AgentService);
         try {
             await agentService.init();
         } catch (e) {

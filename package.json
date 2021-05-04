@@ -33,7 +33,9 @@
     "start:hmr": "node server",
     "lint": "tslint -p tsconfig.json -c tslint.json",
     "lint:fix": "tslint -p tsconfig.json -c tslint.json --fix",
-    "test": "NODE_ENV=LOCAL node -r dotenv/config node_modules/.bin/jest --runInBand"
+    "test": "NODE_ENV=LOCAL node -r dotenv/config node_modules/.bin/jest --runInBand",
+    "test:local": "NODE_ENV=LOCAL node -r dotenv/config node_modules/.bin/jest --runInBand -- local",
+    "test:integration": "NODE_ENV=LOCAL node -r dotenv/config node_modules/.bin/jest --runInBand -- integration"
   },
   "dependencies": {
     "@nestjs/common": "^7.6.5",

@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { CALLER, ICaller } from '../caller/caller.interface';
 import { Logger } from 'protocol-common/logger';
-import { AgentCaller } from './agent.caller';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * TODO abstract out a base service that includes things like making connections
@@ -9,30 +10,23 @@ import { AgentCaller } from './agent.caller';
 export class AgentService {
 
     constructor(
-        private readonly agentCaller: AgentCaller,
+        private readonly profileManager: ProfileManager,
+        @Inject(CALLER) private readonly agentCaller: ICaller,
+        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {}
 
     /**
      * TODO we could add some error handling/retry logic here if the agent doesn't spin up correctly the first time
      */
     public async init(): Promise<any> {
-        // setup agent to use the webhook and governance policy handler built in
-        const controllerUrl = process.env.SELF_URL + '/v1/controller';
-        return await this.agentCaller.spinUpAgent(
-            process.env.WALLET_ID,
-            process.env.WALLET_KEY,
-            process.env.ADMIN_API_KEY,
-            process.env.SEED,
-            controllerUrl,
-            process.env.AGENT_ID,
-            process.env.LABEL,
-            (process.env.USE_TAILS_SERVER === 'true'),
-        );
+        return await this.agentCaller.spinUpAgent();
     }
 
     public async openConnection(): Promise<any> {
-        const data = await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'connections/create-invitation');
-        data.invitation.imageUrl = process.env.IMAGE_URL || '';
+        const data = await this.agentCaller.callAgent('POST', 'connections/create-invitation');
+        if (process.env.IMAGE_URL) {
+            data.invitation.imageUrl = process.env.IMAGE_URL;
+        }
         // Remove invitation_url since it doesn't work and can confuse consumers
         delete data.invitation.invitation_url;
         return data;
@@ -43,46 +37,32 @@ export class AgentService {
         const params = {
             alias
         };
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
-            'POST',
-            'connections/receive-invitation',
-            params,
-            invitation
-        );
+        return await this.agentCaller.callAgent('POST', 'connections/receive-invitation', params, invitation);
     }
 
     public async checkConnection(connectionId: string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `connections/${connectionId}`);
+        return await this.agentCaller.callAgent('GET', `connections/${connectionId}`);
     }
 
     public async sendPing(connectionId: string, comment = 'ping'): Promise<any> {
         const data = {
             comment
         };
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
-            'POST',
-            `connections/${connectionId}/send-ping`,
-            null,
-            data,
-        );
+        return await this.agentCaller.callAgent('POST', `connections/${connectionId}/send-ping`, null, data);
     }
 
     public async publicizeDid(did: string): Promise<any> {
         const params = {
             did,
         };
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'wallet/did/public', params);
+        return await this.agentCaller.callAgent('POST', 'wallet/did/public', params);
     }
 
     /**
      * Deletes credential using the cred_id for issuer
      */
     public async deleteCredential(credId: string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'DELETE', `credential/${credId}`);
+        return await this.agentCaller.callAgent('DELETE', `credential/${credId}`);
     }
 
     /**
@@ -94,13 +74,14 @@ export class AgentService {
     public async sendBasicMessage(msg: any, connectionId: string) : Promise<any> {
         Logger.debug(`sending basic message ${process.env.AGENT_ID}`, msg);
         const data = { content: JSON.stringify(msg) };
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID,
-            process.env.ADMIN_API_KEY,
-            'POST',
-            `connections/${connectionId}/send-message`,
-            null,
-            data
-        );
+        return await this.agentCaller.callAgent('POST', `connections/${connectionId}/send-message`, null, data);
+    }
+
+    /**
+     * Saves a newly registered wallet and spins up it's agent
+     */
+    public async registerController(body: any) {
+        await this.profileManager.save(body.agentId, body);
+        return await this.init();
     }
 }

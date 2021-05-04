@@ -3,7 +3,7 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppModule } from '../src/app/app.module';
 
-describe('AppController (e2e)', () => {
+describe('Profiles (e2e)', () => {
     let app: INestApplication;
 
     beforeAll(async () => {

@@ -1,4 +1,3 @@
-
 import { Get, Controller, Post, Param, Body, Query, Delete, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
@@ -28,7 +27,6 @@ import { InstitutionGuard } from './institution.guard';
 @Controller('v2/api')
 @ApiTags('api')
 @UseGuards(InstitutionGuard)
-@Controller()
 export class ApiController {
 
     /**
@@ -39,15 +37,6 @@ export class ApiController {
         private readonly issuerService: IssuerService,
         private readonly verifierService: VerifierService,
     ) {}
-
-    /**
-     * Endpoint to check the InstitutionGuard to ensure user has access
-     */
-     @ApiResponse({ status: 201, type: String })
-     @Get('institution')
-     async check(): Promise<string> {
-         return process.env.INSTITUTION;
-     }
 
     /**
      * Create connection for mobile agent to receive

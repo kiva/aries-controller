@@ -1,6 +1,5 @@
 version: 2.1
-orbs:
-  node: circleci/node@4.1.0
+
 jobs:
   build-and-test:
     executor:
@@ -11,12 +10,64 @@ jobs:
       - run: npm install
       - run: npm run build
       - run: npm run lint
-      - run: npm test
+      - run: npm run test:local
       - run: |
           if [ "$CIRCLE_BRANCH" == "main" ] && [ "$CD_SKIP" != "1" ]; then
               ./publish.sh
           fi
+
+  integration-test:
+    machine:
+      docker_layer_caching: true
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - run:
+          name: setup shell environment
+          command: |
+            touch .env
+            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run:
+          name: node npm setup
+          command: |
+              npm install
+              nvm install v14.15.1
+              nvm alias default v14.15.1
+      - run:
+          name: setup docker environments
+          command: |
+            docker pull bcgovimages/aries-cloudagent:py36-1.15-1_0.6.0
+      - run:
+          name: Start docker compose and wait for readiness
+          command: |
+            docker-compose -f docker-compose.dep.yml build
+            docker-compose -f docker-compose.dep.yml up -d
+            sleep 20
+            docker-compose up -d
+            sleep 60
+      - run:
+          name: Run tests
+          command: |
+            if ! npm run test:integration ; then
+              echo "Tests failed. Server logs:";
+              docker-compose logs;
+              exit 1;
+            fi
+
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  build-test-publish:
+    jobs:
+      - build-and-test:
+          filters: # run for all branches AND tags
+            tags:
+              only: /.*/
+      - integration-test:
+          requires:
+            - build-and-test
+          filters: # run for all branches AND tags
+            tags:
+              only: /.*/
+
+orbs:
+  node: circleci/node@1.1.6
+  docker: circleci/docker@1.3.0

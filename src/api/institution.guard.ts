@@ -5,6 +5,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 
 /**
+ * TODO added https://kiva.atlassian.net/browse/PRO-3011 to refactor this for multi-controller
  * This guard ensures that the "institution" on the token matches the configured institution (eg kiva)
  * The gateway has already verified the jwt so we just need to decode and extract metadata
  */

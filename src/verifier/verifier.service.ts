@@ -5,9 +5,9 @@ import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
-import { AgentCaller } from '../agent/agent.caller';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
+import { CALLER, ICaller } from '../caller/caller.interface';
 
 /**
  * TODO maybe more of the kyc logic should be moved in here
@@ -19,8 +19,8 @@ export class VerifierService {
 
     constructor(
         private readonly agentService: AgentService,
-        private readonly agentCaller: AgentCaller,
         httpService: HttpService,
+        @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {
         this.http = new ProtocolHttpService(httpService);
@@ -29,8 +29,7 @@ export class VerifierService {
     public async verify(proofProfilePath: string, connectionId: string): Promise<any> {
         const proofProfile = Services.getProfile(proofProfilePath);
         proofProfile.connection_id = connectionId;
-        return await this.agentCaller.callAgent(
-            process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'POST', 'present-proof/send-request', null, proofProfile);
+        return await this.agentCaller.callAgent('POST', 'present-proof/send-request', null, proofProfile);
     }
 
     /**
@@ -82,7 +81,7 @@ export class VerifierService {
      * Calls agent to get presentation record by id
      */
     public async checkPresEx(presExId: string): Promise<any> {
-        return await this.agentCaller.callAgent(process.env.AGENT_ID, process.env.ADMIN_API_KEY, 'GET', `present-proof/records/${presExId}`);
+        return await this.agentCaller.callAgent('GET', `present-proof/records/${presExId}`);
     }
 
     /**

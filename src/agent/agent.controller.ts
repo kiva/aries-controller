@@ -12,9 +12,9 @@ export class AgentController {
     constructor(private readonly agentService: AgentService) {}
 
     /**
-     * Starts up an agent if it hasn't already
+     * Opens a connection and returns the invitation connection data
      */
-    @Post()
+    @Post('init')
     public async init(): Promise<any> {
         return await this.agentService.init();
     }
@@ -49,5 +49,13 @@ export class AgentController {
     @Post('publicize-did')
     public async publicizeDid(@Body() body: any): Promise<any> {
         return await this.agentService.publicizeDid(body.did);
+    }
+
+    /**
+     * Registers a new wallet (multi controller only)
+     */
+    @Post('register')
+    public async registerController(@Body() body: any): Promise<any> {
+        return await this.agentService.registerController(body);
     }
 }

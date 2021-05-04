@@ -12,6 +12,7 @@ async function bootstrap() {
     await AppService.setup(app);
     await app.listen(port);
     Logger.info(`Server started on ${port}`);
+
     await AppService.initAgent(app);
 }
 bootstrap();
