@@ -90,6 +90,7 @@ services:
         depends_on:
           - protocol-indy-pool
           - protocol-identity-wallet-db
+          - aries-guardianship-agency
         ports:
           - "3020:3020"
           - "3021:3021"
