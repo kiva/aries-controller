@@ -8,6 +8,8 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
+import { Validator } from 'jsonschema';
+
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -18,19 +20,23 @@ export class IssuerService {
 
     private readonly http: ProtocolHttpService;
 
+    private readonly validator: Validator;
+
     constructor(
         public readonly agentService: AgentService,
         @Inject(CALLER) private readonly agentCaller: ICaller,
         httpService: HttpService,
     ) {
         this.http = new ProtocolHttpService(httpService);
+        this.validator = new Validator();
     }
 
     /**
      * Issue a credential to existing connection using a cred def profile path and some entity data which can be formatted to Aries attributes
      */
     public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
-        const [credentialData, credDefAttributes] = this.getCredDefAndSchemaData(credDefProfilePath);
+        const [credentialData, credDefAttributes, validation] = this.getCredDefAndSchemaData(credDefProfilePath);
+        this.validateEntityData(validation, entityData);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
 
         const ret = await this.issueCredentialSend(credentialData, connectionId, attributes);
@@ -174,6 +180,20 @@ export class IssuerService {
     }
 
     /**
+     * Validates entity data against any validation schema provided in the cred def
+     */
+    private validateEntityData(entityData: any, validationSchema: any): Promise<void> {
+        if (!validationSchema) {
+            return;
+        }
+
+        const result = this.validator.validate(entityData, validationSchema);
+        if (result.errors.length > 0) {
+            throw new ProtocolException(ProtocolErrorCode.VALIDATION_EXCEPTION, 'Errors on schema validation', result.errors);
+        }
+    }
+
+    /**
      * Formats entity data in the form of an object into a set of attributes that can be used by Aries, using the cred def attributes as a guide
      */
     private formatEntityData(entityData: any, credDefAttrs: Array<string>): Array<any> {
@@ -213,10 +233,12 @@ export class IssuerService {
     private getCredDefAndSchemaData(credDefProfilePath: string): any {
         const credDefProfile = Services.getProfile(credDefProfilePath);
         const attributes = credDefProfile.attributes;
+        const validation = credDefProfile.validation;
+        delete credDefProfile.validation;
         delete credDefProfile.attributes;
         delete credDefProfile.schema_profile;
         delete credDefProfile.tag;
-        return [credDefProfile, attributes];
+        return [credDefProfile, attributes, validation];
     }
 
     // -- Key Guardian calls -- //
