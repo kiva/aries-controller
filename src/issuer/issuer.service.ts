@@ -10,10 +10,11 @@ import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { Validator } from 'jsonschema';
 
-
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
  * TODO need to figure out rollbacks - ie if one part fails need to roll back any saved data
+ * Note we're using jsonschema here instead of class-validator because even though class-validator says they support json schemas
+ *      it doesn't currently work, and in their road map their planning to deprecate it.
  */
 @Injectable()
 export class IssuerService {
