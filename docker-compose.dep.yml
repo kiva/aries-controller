@@ -90,7 +90,6 @@ services:
         depends_on:
           - protocol-indy-pool
           - protocol-identity-wallet-db
-          - aries-guardianship-agency
         ports:
           - "3020:3020"
           - "3021:3021"
@@ -99,8 +98,15 @@ services:
           - "3021"
         volumes:
           - ./resources/:/home/indy/resources
-        command: start
-          --inbound-transport http '0.0.0.0' 3020
+        # Have multitenant wait a few seconds until indy ledger is up
+        # Also for some reason inbound transport doesn't work via env args so using commmand line here
+        entrypoint: /bin/bash
+        command: [
+            "-c",
+            "sleep 2;
+            aca-py start \
+            --inbound-transport http '0.0.0.0' 3020"
+        ]
         environment:
             - ACAPY_OUTBOUND_TRANSPORT=http
             - ACAPY_ADMIN=[0.0.0.0,3021]
