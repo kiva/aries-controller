@@ -50,6 +50,7 @@ jobs:
           command: |
             if ! npm run test:integration ; then
               echo "Tests failed. Server logs:";
+              docker-compose -f docker-compose.dep.yml logs
               docker-compose logs;
               exit 1;
             fi
