@@ -5,6 +5,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
 import { CacheStore } from '@nestjs/common';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /*
     Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections
@@ -19,13 +20,13 @@ export class Connections extends BaseAgentResponseHandler {
         const permissionState = this.agentGovernance.peekPermission(Connections.CONNECTIONS_URL, governanceKey);
 
         if (AgentGovernance.PERMISSION_DENY === permissionState) {
-            throw new ProtocolException('AgencyGovernance',`${governanceKey} governance doesnt not allow.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${governanceKey} governance doesnt not allow.`);
         }
 
         // if the cacheKey is in the cache then the agent has already accepted the request
         // when we only allow once, there is no need to continue with this message
         if (await this.cache.get<any>(cacheKey) && permissionState === AgentGovernance.PERMISSION_ONCE) {
-            throw new ProtocolException('AgencyGovernance',`${governanceKey} governance has already been used.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${governanceKey} governance has already been used.`);
         }
     }
 
@@ -65,7 +66,7 @@ export class Connections extends BaseAgentResponseHandler {
         };
 
         if (route !== 'topic' || topic !== 'connections') {
-            throw new ProtocolException('Connections',`${route}/${topic} is not valid.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${route}/${topic} is not valid.`);
         }
 
         const templatedCacheKey = `${agentId}-${body.state}-${body.initiator}`;

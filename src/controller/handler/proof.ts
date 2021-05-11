@@ -17,13 +17,13 @@ export class Proofs extends BaseAgentResponseHandler {
     private async checkPolicyForAction(governanceKey: string, cacheKey: string) {
         const permissionState = this.agentGovernance.peekPermission(Proofs.PROOFS_URL, governanceKey);
         if (AgentGovernance.PERMISSION_DENY === permissionState) {
-            throw new ProtocolException('AgencyGovernance',`${governanceKey} governance doesnt not allow.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${governanceKey} governance doesnt not allow.`);
         }
 
         // if the cacheKey is in the cache then the agent has already accepted the request
         // when we only allow once, there is no need to continue with this message
         if (await this.cache.get<any>(cacheKey) && permissionState === AgentGovernance.PERMISSION_ONCE) {
-            throw new ProtocolException('AgencyGovernance',`${governanceKey} governance has already been used.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${governanceKey} governance has already been used.`);
         }
     }
 
@@ -123,7 +123,7 @@ export class Proofs extends BaseAgentResponseHandler {
     ): Promise<any> {
 
         if (route !== 'topic' || topic !== 'present_proof') {
-            throw new ProtocolException('present_proof', `${route}/${topic} is not valid.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE, `${route}/${topic} is not valid.`);
         }
 
         const readPermission = async (governanceKey: string, cacheKey: string) => {

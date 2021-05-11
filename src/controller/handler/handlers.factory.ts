@@ -11,6 +11,7 @@ import { ProblemReport } from './problem.report';
 import { DoNothing } from './do.nothing';
 import { BasicMessage } from './basic.message';
 import { Topics } from './topics';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /*
     @TODO we want to replace this factory with nestjs injection at some point
@@ -44,6 +45,6 @@ export class HandlersFactory {
                 Logger.debug(`unhandled topic ${topic}`);
                 break;
         }
-        throw new ProtocolException('Agency', `No suitable handler found for topic ${topic}`);
+        throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE, `No suitable handler found for topic ${topic}`);
     }
 }

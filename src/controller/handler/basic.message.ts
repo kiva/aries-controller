@@ -4,6 +4,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { Logger } from 'protocol-common/logger';
 import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /**
  * ResponseHandler for basic messages (aries RFC compliant). For now, bubbles up to consumers.
@@ -20,7 +21,7 @@ export class BasicMessage extends BaseAgentResponseHandler {
     ): Promise<any> {
         const permissionState = this.agentGovernance.peekPermission(BasicMessage.BASIC_MESSAGE, BasicMessage.GOVERNANCE_KEY);
         if (AgentGovernance.PERMISSION_DENY === permissionState) {
-            throw new ProtocolException('AgencyGovernance',`${BasicMessage.GOVERNANCE_KEY} governance doesnt not allow basic message.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${BasicMessage.GOVERNANCE_KEY} governance doesnt not allow basic message.`);
         }
         Logger.debug(`handling basic message for agent ${agentId}`, body);
         return this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token);
