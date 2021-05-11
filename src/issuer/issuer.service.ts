@@ -138,7 +138,7 @@ export class IssuerService {
         const connectionRes = await this.agentService.acceptConnection('alias', keyGuardRes.connectionData);
         Logger.log('2: Connection invitation created');
         if (false === await Services.waitForAcceptedConnection(connectionRes.connection_id, this.agentCaller)) {
-            throw new ProtocolException('AgentConnectionError', 'Connection was not accepted by newly created agent');
+            throw new ProtocolException(ProtocolErrorCode.CONNECTION_NOT_READY, 'Connection was not accepted by newly created agent');
         }
         Logger.log('3. Accepted connection invitation');
         const agentData = await this.issueCredentialAndWait(credDefProfilePath, connectionRes.connection_id, entityData);
@@ -174,10 +174,10 @@ export class IssuerService {
                     Logger.log('Credential accepted and deleted from issuers records');
                     return res;
                 }
-                throw new ProtocolException('IssueFailed', 'Issuing process failed', e);
+                throw new ProtocolException(ProtocolErrorCode.ISSUE_FAILED, 'Issuing process failed', e);
             }
         }
-        throw new ProtocolException('IssueFailed', 'Issuing process failed to complete', { state: res.state });
+        throw new ProtocolException(ProtocolErrorCode.ISSUE_FAILED, 'Issuing process failed to complete', { state: res.state });
     }
 
     /**

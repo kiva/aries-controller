@@ -53,7 +53,9 @@ export class SingleControllerHandler extends BaseControllerHandler implements IC
 
         // Lower case comparison to avoid false negatives
         if (institution !== process.env.AGENT_ID) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: institution doesn\'t match configured institution', null, 403);
+            throw new ProtocolException(
+                ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: institution doesn\'t match configured institution', null, 403
+            );
         }
         return institution;
     }

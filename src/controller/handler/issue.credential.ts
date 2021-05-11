@@ -5,6 +5,7 @@ import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { AgentGovernance } from '../agent.governance';
 import { CacheStore } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 
 /*
@@ -19,13 +20,13 @@ export class IssueCredential extends BaseAgentResponseHandler {
     private async checkPolicyForAction(governanceKey: string, cacheKey: string) {
         const permissionState = this.agentGovernance.peekPermission(IssueCredential.ISSUE_CREDENTIALS_URL, governanceKey);
         if (AgentGovernance.PERMISSION_DENY === permissionState) {
-            throw new ProtocolException('AgencyGovernance',`${governanceKey} governance doesnt not allow.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${governanceKey} governance doesnt not allow.`);
         }
 
         // if the cacheKey is in the cache then the agent has already accepted the request
         // when we only allow once, there is no need to continue with this message
         if (await this.cache.get<any>(cacheKey) && permissionState === AgentGovernance.PERMISSION_ONCE) {
-            throw new ProtocolException('AgencyGovernance',`${governanceKey} governance has already been used.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${governanceKey} governance has already been used.`);
         }
     }
 
@@ -73,7 +74,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         if (route !== 'topic' || topic !== 'issue_credential') {
-            throw new ProtocolException('issue_credential',`${route}/${topic} is not valid.`);
+            throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${route}/${topic} is not valid.`);
         }
 
         const readPermission = async (governanceKey: string, cacheKey: string) => {
