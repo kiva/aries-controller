@@ -20,7 +20,7 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
         const profile = await this.profileManager.get(agentId);
 
         if (!profile) {
-            throw new ProtocolException('NotRegistered', `No profile found for ${agentId}, need to register first`);
+            throw new ProtocolException(ProtocolErrorCode.NOT_REGISTERED, `No profile found for ${agentId}, need to register first`);
         }
 
         // The webhook url always points back to this controller, references the agent id
@@ -71,7 +71,7 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
      private getFromAgentHeader(): string {
         const agentHeader = this.req.headers.agent;
         if (!agentHeader) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No agent header', null, 403);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: No agent header', null, 403);
         }
         return agentHeader;
     }

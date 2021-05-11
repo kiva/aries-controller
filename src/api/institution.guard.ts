@@ -30,12 +30,12 @@ export class InstitutionGuard implements CanActivate {
         const req = context.switchToHttp().getRequest();
         const authHeader = req.headers.authorization;
         if (!authHeader) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No auth header', null, 403);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: No auth header', null, 403);
         }
 
         const token = authHeader.slice(7, authHeader.length);
         if (!token) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No token in auth header', null, 403);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: No token in auth header', null, 403);
         }
 
         let metaData;
@@ -45,12 +45,12 @@ export class InstitutionGuard implements CanActivate {
                 throw new Error();
             }
         } catch (e) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: Failed to decode JWT', null, 403);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: Failed to decode JWT', null, 403);
         }
 
         const institution: string = metaData['https://ekyc.sl.kiva.org/institution'];
         if (!institution) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: No institution in token metadata', null, 403);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: No institution in token metadata', null, 403);
         }
 
         if (process.env.ALLOW_ADMIN_INSTITUTION === 'true' && institution.toLowerCase() === 'admin') {
@@ -60,7 +60,7 @@ export class InstitutionGuard implements CanActivate {
 
         // Lower case comparison to avoid false negatives
         if (institution.toLowerCase() !== process.env.INSTITUTION.toLowerCase()) {
-            throw new ProtocolException('ForbiddenException', 'InstitutionGuard: institution doesn\'t match configured institution', null, 403);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: institution doesn\'t match configured institution', null, 403);
         }
         return true;
     }
