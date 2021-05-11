@@ -60,7 +60,9 @@ export class InstitutionGuard implements CanActivate {
 
         // Lower case comparison to avoid false negatives
         if (institution.toLowerCase() !== process.env.INSTITUTION.toLowerCase()) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: institution doesn\'t match configured institution', null, 403);
+            throw new ProtocolException(
+                ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: institution doesn\'t match configured institution', null, 403
+            );
         }
         return true;
     }
