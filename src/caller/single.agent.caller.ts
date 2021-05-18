@@ -79,7 +79,7 @@ export class SingleAgentCaller implements ICaller {
                 Logger.warn('Agent is down, restarting...');
                 await this.spinUpAgent();
                 // Single agents need a delay since they're slow to come up
-                ProtocolUtility.delay(3000);
+                await ProtocolUtility.delay(3000);
                 return await this.callAgent(method, route, params, data, false);
             }
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
