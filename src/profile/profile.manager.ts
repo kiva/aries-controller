@@ -22,7 +22,7 @@ export class ProfileManager  {
     }
 
     public async append(key: string, appendKey: string, appendValue: string): Promise<void> {
-        const data = this.cache.get(this.prefix + key);
+        const data = await this.cache.get(this.prefix + key);
         if (!data) {
 
         }
