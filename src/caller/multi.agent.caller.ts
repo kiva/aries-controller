@@ -83,7 +83,7 @@ export class MultiAgentCaller implements ICaller {
             const res = await this.http.requestWithRetry(req);
             return res.data;
         } catch (e) {
-            // If the multitenant responds with unauthorized, and we have a token (check above) that generally means it's not registered so we should retry
+            // If the multitenant responds with unauthorized, and we have a token (checked above), that generally means we should re-register
             if (retry && e.details === '401: Unauthorized') {
                 Logger.warn('Agent is not registered, re-registering...');
                 await this.spinUpAgent();
