@@ -42,9 +42,9 @@ jobs:
           command: |
             docker-compose -f docker-compose.dep.yml build
             docker-compose -f docker-compose.dep.yml up -d
-            sleep 20
+            sleep 40
             docker-compose up -d
-            sleep 60
+            sleep 120
       - run:
           name: Run tests
           command: |
