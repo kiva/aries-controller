@@ -1,4 +1,5 @@
 import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Logger } from 'protocol-common/logger';
 
 /**
  * Grouping calls here for convenience, eventually we will replace cache calls with DB calls
@@ -22,9 +23,10 @@ export class ProfileManager  {
     }
 
     public async append(key: string, appendKey: string, appendValue: string): Promise<void> {
-        const data = this.cache.get(this.prefix + key);
+        let data = await this.cache.get(this.prefix + key);
         if (!data) {
-
+            Logger.debug('profile data is empty');
+            data = {};
         }
         data[appendKey] = appendValue;
         await this.cache.set(this.prefix + key, data);

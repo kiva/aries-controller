@@ -53,7 +53,7 @@ export class MultiAgentCaller implements ICaller {
     /**
      * Calls a multitenant agent using the stored token
      */
-    public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
+    public async callAgent(method: any, route: string, params?: any, data?: any, retry = true): Promise<any> {
         // When calling the multi agent the admin api key is always from the env - it's the multitenant api key
         const adminApiKey = process.env.ADMIN_API_KEY;
         const agentId = this.controllerHandler.handleAgentId();
@@ -83,6 +83,12 @@ export class MultiAgentCaller implements ICaller {
             const res = await this.http.requestWithRetry(req);
             return res.data;
         } catch (e) {
+            // If the multitenant responds with unauthorized, and we have a token (checked above), that generally means we should re-register
+            if (retry && e.details === '401: Unauthorized') {
+                Logger.warn('Agent is not registered, re-registering...');
+                await this.spinUpAgent();
+                return await this.callAgent(method, route, params, data, false);
+            }
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
