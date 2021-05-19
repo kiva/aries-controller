@@ -347,9 +347,9 @@ export class IssuerService {
         const url = process.env.CREDENTIAL_RECORD_URL + '/revoke/' + credential_exchange_id;
         const today = new Date();
         this.callService('POST', url, {
-            revocation_reason: 'unknown', // TODO: add an optional reason field to revoke API request body
+            revocation_reason: null, // TODO: add an optional reason field to revoke API request body
             revocation_date: today,
-            revocation_id: 'unknown', // TODO: populate this field from the returned data (or by calling the issuer)
+            revocation_id: null, // TODO: populate this field from the returned data (or by calling the issuer)
         });
     }
 
