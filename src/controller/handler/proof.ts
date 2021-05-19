@@ -68,7 +68,6 @@ export class Proofs extends BaseAgentResponseHandler {
             req.headers.Authorization = 'Bearer ' + token;
         }
         const res = await this.http.requestWithRetry(req);
-        Logger.info(`getCredentialsByReferentId results`, res.data);
 
         const sorted = res.data.sort((a, b) => a.cred_info.referent.localeCompare(b.cred_info.referent));
         const credentials: any = {};
