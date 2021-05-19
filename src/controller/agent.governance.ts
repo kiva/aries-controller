@@ -6,6 +6,9 @@ import data from '../config/governence.json';
 /**
  * defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy webhook
  * definition.  return true or false.  true means default handlers (in this package) will not process the message
+ *
+ * TODO: do we want to pass governance into the callback so that implementations can be controlled through
+ *       governance data
  */
 export type ControllerCallback =
     (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<boolean>;
