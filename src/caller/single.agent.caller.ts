@@ -6,6 +6,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
 import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
  * Caller for a single agent
@@ -49,10 +50,10 @@ export class SingleAgentCaller implements ICaller {
     }
 
     /**
-     * Calls a single agent, which is on our docker network by agentId using
-     *
+     * Calls a single agent, which is on our docker network by agentId
+     * If the agent is down when we call, we attempt to spin it up and then retry the call one more time
      */
-    public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
+    public async callAgent(method: any, route: string, params?: any, data?: any, retry = true): Promise<any> {
         // For single agent callers, the api key will either be in the env (if single controller), or stored in the profile (for multi controller)
         // This logic is handled by the IControllerHandler instance
         const adminApiKey = await this.controllerHandler.handleAdminApiKey();
@@ -74,9 +75,15 @@ export class SingleAgentCaller implements ICaller {
             const res = await this.http.requestWithRetry(req);
             return res.data;
         } catch (e) {
+            if (retry && e.details && (e.details.code === 'ENOTFOUND' || e.details.code === 'ECONNREFUSED')) {
+                Logger.warn('Agent is down, restarting...');
+                await this.spinUpAgent();
+                // Single agents need a delay since they're slow to come up
+                await ProtocolUtility.delay(3000);
+                return await this.callAgent(method, route, params, data, false);
+            }
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
     }
-
 }
