@@ -345,7 +345,7 @@ export class IssuerService {
      */
     public async recordRevocation(credential_exchange_id : string, returnData : any) {
         const url = process.env.CREDENTIAL_RECORD_URL + '/revoke/' + credential_exchange_id;
-        const today = new Date()
+        const today = new Date();
         this.callService('POST', url, {
             revocation_reason: 'unknown', // TODO: add an optional reason field to revoke API request body
             revocation_date: today,
