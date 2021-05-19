@@ -331,7 +331,26 @@ export class IssuerService {
             cred_ex_id: credential_exchange_id,
             publish,
         };
-        return await this.agentCaller.callAgent('POST', 'revocation/revoke', null, data);
+        const ret = await this.agentCaller.callAgent('POST', 'revocation/revoke', null, data);
+
+        if (process.env.FLAG_RECORD_ISSUANCES === 'true') {
+            await this.recordRevocation(credential_exchange_id, ret);
+        }
+
+        return ret;
+    }
+
+    /**
+     * Informs the credential record service about a revocation
+     */
+    public async recordRevocation(credential_exchange_id : string, returnData : any) {
+        const url = process.env.CREDENTIAL_RECORD_URL + '/revoke/' + credential_exchange_id;
+        const today = new Date();
+        this.callService('POST', url, {
+            revocation_reason: null, // TODO: add an optional reason field to revoke API request body
+            revocation_date: today,
+            revocation_id: null, // TODO: populate this field from the returned data (or by calling the issuer)
+        });
     }
 
     /**
