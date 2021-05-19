@@ -2,12 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
 import data from '../config/governence.json';
 
-// defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy
-// webhook definition
-export type ControllerCallback =
-    (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<any>;
 
-type Registration = { topic: string, func: ControllerCallback, exceptionCount: number};
+/**
+ * defines the callback (function) called by AgentGovernance.invokeHandler.  The signature maps to acapy webhook
+ * definition.  return true or false.  true means default handlers (in this package) will not process the message
+ *
+ * TODO: do we want to pass governance into the callback so that implementations can be controlled through
+ *       governance data
+ */
+export type ControllerCallback =
+    (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<boolean>;
+
+type Registration = { id: string, topic: string, func: ControllerCallback, exceptionCount: number};
 
 /**
  * AgentGovernance manages the governance policy initialization and access control
@@ -113,22 +119,43 @@ export class AgentGovernance {
         }
     }
 
-    // register a callback if to receive notification that a particular message
-    // has been received by governance policy.  Note:  currently only the basic message handler
-    // consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
-    public registerHandler(topic: string, func: ControllerCallback) {
-        this.callbacks.push({topic, func, exceptionCount: 0});
+    /**
+     * register a callback if to receive notification that a particular message
+     * has been received by governance policy.  Note:  currently only the basic message handler
+     * consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
+     *
+     * @param id a value that makes debugging easier. duplicates will not break the system
+     * @param topic a value matching values sent by acapy webhook topic parameter
+     * @param func the callback, must be of type ControllerCallback
+     */
+    public registerHandler(id: string, topic: string, func: ControllerCallback) {
+        this.callbacks.push({id, topic, func, exceptionCount: 0});
     }
 
+    /**
+     * Iterate through all of the handlers registered and call the ones that match for the topic
+     * This function returns true if 1 or more of the handlers processed the message.  It does not guarantee
+     * that only 1 handler processed the message or that all of the handlers processed the message.
+     *
+     */
     public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                                body: any, token?: string) : Promise<any> {
+        let result: boolean = false;
         // tslint:disable-next-line:forin
         for (const index in this.callbacks) {
             const registration: Registration = this.callbacks[index];
-            Logger.debug(`callback found ${registration.topic}`, registration);
+            Logger.debug(`callback found topic: ${registration.topic} id: ${registration.id}`);
             if (registration.topic === topic) {
-                await registration.func(agentUrl, agentId, adminApiKey, route, topic, body, token);
+                const funResult: boolean = await registration.func(agentUrl, agentId, adminApiKey, route, topic, body, token);
+                if (funResult === true) {
+                    // only want to set this to true if a handler returns true.  it only needs to be set once but whatever
+                    result = true;
+                }
+
             }
         }
+        // returning true means at least 1 handler processed the message.  It doesn't mean that all handlers
+        // proceeded the message or that only 1 handler processed the message
+        return result;
     }
 }

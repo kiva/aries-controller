@@ -17,6 +17,12 @@ export class ProblemReport extends BaseAgentResponseHandler {
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         Logger.warn(`problem report from agent '${agentId}': ${JSON.stringify(body)}`);
+
+        // allow consumers to process proofs prior to and differently than provided by this handler.  If the callback
+        // returns true (explicitly), it means this handlers code should not be executed.
+        if (true === await this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token))
+            return;
+
         // Cache problem message by thread id
         if (body && body['~thread'] && body['explain-ltxt']) {
             const threadId = body['~thread'].thid;

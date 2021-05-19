@@ -69,6 +69,11 @@ export class Connections extends BaseAgentResponseHandler {
             throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${route}/${topic} is not valid.`);
         }
 
+        // allow consumers to process credentials prior to and differently than provided by this handler.  If the callback
+        // returns true (explicitly), it means this handlers code should not be executed.
+        if (true === await this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token))
+            return;
+
         const templatedCacheKey = `${agentId}-${body.state}-${body.initiator}`;
 
         // this webhook message indicates an agent received an connection

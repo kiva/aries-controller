@@ -72,7 +72,7 @@ describe('Governance tests', () => {
                 count ++;
                 return undefined;
             };
-        agentGovernance.registerHandler('something', customHandler);
+        agentGovernance.registerHandler('1','something', customHandler);
 
         const agentGovernance2 = AgentGovernanceFactory.useFactory();
         agentGovernance2.invokeHandler('', '', '', '', 'something', '');
@@ -89,7 +89,7 @@ describe('Governance tests', () => {
                 count ++;
                 return undefined;
             };
-        agentGovernance.registerHandler('something', customHandler);
+        agentGovernance.registerHandler('2','something', customHandler);
 
         const policyName = process.env.POLICY_NAME;
         process.env.POLICY_NAME = 'bob';
@@ -109,7 +109,7 @@ describe('Governance tests', () => {
                 return undefined;
             };
 
-        agentGovernance.registerHandler('bob', customHandler);
+        agentGovernance.registerHandler('3','bob', customHandler);
     });
 
     it('Can add second handler with same key successfully', () =>{
@@ -121,7 +121,7 @@ describe('Governance tests', () => {
                 return undefined;
             };
 
-        agentGovernance.registerHandler('bob', customHandler);
+        agentGovernance.registerHandler('4','bob', customHandler);
     });
 
     it('Can additional handler successfully', () =>{
@@ -133,7 +133,7 @@ describe('Governance tests', () => {
                 return undefined;
             };
 
-        agentGovernance.registerHandler('bob2', customHandler);
+        agentGovernance.registerHandler('5','bob2', customHandler);
     });
 
     it('Invoke custom handler successfully', async () =>{
@@ -146,7 +146,7 @@ describe('Governance tests', () => {
                 return undefined;
             };
 
-        agentGovernance.registerHandler('bob', customHandler);
+        agentGovernance.registerHandler('6','bob', customHandler);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
         expect(sum === 1);
     });
@@ -162,7 +162,7 @@ describe('Governance tests', () => {
                 return undefined;
             };
 
-        agentGovernance.registerHandler('bob', customHandler);
+        agentGovernance.registerHandler('7','bob', customHandler);
         await agentGovernance.invokeHandler('', '', '', '', 'not-bob', '');
         expect(sum === 0);
     });
@@ -191,9 +191,9 @@ describe('Governance tests', () => {
                 return undefined;
             };
 
-        agentGovernance.registerHandler('bob', customHandler1);
-        agentGovernance.registerHandler('bob', customHandler2);
-        agentGovernance.registerHandler('not-bob', customHandler3);
+        agentGovernance.registerHandler('8','bob', customHandler1);
+        agentGovernance.registerHandler('9','bob', customHandler2);
+        agentGovernance.registerHandler('10','not-bob', customHandler3);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
         expect(sum1 === 1);
         expect(sum2 === 1);

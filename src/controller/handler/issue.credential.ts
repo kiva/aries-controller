@@ -77,6 +77,11 @@ export class IssueCredential extends BaseAgentResponseHandler {
             throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${route}/${topic} is not valid.`);
         }
 
+        // allow consumers to process credentials prior to and differently than provided by this handler.  If the callback
+        // returns true (explicitly), it means this handlers code should not be executed.
+        if (true === await this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token))
+            return;
+
         const readPermission = async (governanceKey: string, cacheKey: string) => {
             this.agentGovernance.readPermission(IssueCredential.ISSUE_CREDENTIALS_URL, governanceKey);
             await this.cache.set(cacheKey, {});
