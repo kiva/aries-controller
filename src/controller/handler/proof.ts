@@ -68,6 +68,7 @@ export class Proofs extends BaseAgentResponseHandler {
             req.headers.Authorization = 'Bearer ' + token;
         }
         const res = await this.http.requestWithRetry(req);
+        Logger.info(`getCredentialsByReferentId results`, res.data);
 
         const sorted = res.data.sort((a, b) => a.cred_info.referent.localeCompare(b.cred_info.referent));
         const credentials: any = {};
@@ -125,6 +126,11 @@ export class Proofs extends BaseAgentResponseHandler {
         if (route !== 'topic' || topic !== 'present_proof') {
             throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE, `${route}/${topic} is not valid.`);
         }
+
+        // allow consumers to process proofs prior to and differently than provided by this handler.  If the callback
+        // returns true (explicitly), it means this handlers code should not be executed.
+        if (true === await this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token))
+            return;
 
         const readPermission = async (governanceKey: string, cacheKey: string) => {
             this.agentGovernance.readPermission(Proofs.PROOFS_URL, governanceKey);
