@@ -16,7 +16,6 @@ import { VerifyGetResDto } from './dtos/verify.get.res.dto';
 import { VerifyPostReqDto } from './dtos/verify.post.req.dto';
 import { VerifyPostResDto } from './dtos/verify.post.res.dto';
 import { RevokePostReqDto } from './dtos/revoke.post.req.dto';
-import { RevokePostResDto } from './dtos/revoke.post.res.dto';
 import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
 import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
@@ -165,7 +164,7 @@ export class ApiController {
      * Creates a credential definition with revocation passed on the passed in data
      */
     @Post('revoke')
-    public async revoke(@Body(new ProtocolValidationPipe()) body: RevokePostReqDto): Promise<RevokePostResDto> {
+    public async revoke(@Body(new ProtocolValidationPipe()) body: RevokePostReqDto): Promise<any> {
         return await this.issuerService.revokeCredential(body.credentialExchangeId, body.publish);
     }
 
