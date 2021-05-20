@@ -1,5 +1,5 @@
-import { IsObject, IsString, IsBoolean } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsString, IsBoolean } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export class RevokePostReqDto {
 
@@ -9,10 +9,11 @@ export class RevokePostReqDto {
     })
     @IsString() readonly credentialExchangeId: string;
 
-    @ApiProperty({
+    @ApiPropertyOptional({
         type: Boolean,
-        description: `Boolean that decides if this revoke credential should this credential be published to the ledger`
+        description: `Boolean that decides if this revoke credential should this credential be published to the ledger`,
+        default: true
     })
-    @IsBoolean() readonly publish: boolean;
+    @IsOptional() @IsBoolean() readonly publish: boolean;
 
 }
