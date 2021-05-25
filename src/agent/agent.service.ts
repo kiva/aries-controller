@@ -69,7 +69,7 @@ export class AgentService {
      *  Deletes connection between agents
      */
     public async deleteConnection(connectionId: string): Promise<any> {
-        return await this.agentCaller.callAgent('DELETE', `connection/${connectionId}`);
+        return await this.agentCaller.callAgent('DELETE', `connections/${connectionId}`);
     }
 
 
