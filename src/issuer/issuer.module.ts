@@ -5,6 +5,8 @@ import { GlobalCacheModule } from '../app/global.cache.module';
 import { AgentService } from '../agent/agent.service';
 import { CallerModule } from '../caller/caller.module';
 import { ProfileModule } from '../profile/profile.module';
+import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
+
 
 /**
  *
@@ -14,6 +16,7 @@ import { ProfileModule } from '../profile/profile.module';
         HttpModule,
         GlobalCacheModule,
         CallerModule.registerAsync(),
+        ControllerHandlerModule.registerAsync(),
         ProfileModule,
     ],
     controllers: [IssuerController],
