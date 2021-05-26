@@ -67,7 +67,11 @@ export class AppService {
 
         const agentService = await app.resolve(AgentService);
         try {
-            await agentService.reset();
+            if (process.env.MULTI_AGENT !== 'true') {
+                // If it's a single agent remove it first before starting
+                await agentService.spinDown();
+            }
+            await agentService.init();
         } catch (e) {
             Logger.log(`Failed to start agent, retrying... ${e.message}`, e);
             try {

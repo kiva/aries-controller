@@ -25,9 +25,8 @@ export class AgentService {
     /**
      * Resets an agent by first spinning down old instance and then spins up new instance
      */
-    public async reset(): Promise<any> {
+    public async spinDown(): Promise<any> {
         await this.agentCaller.spinDownAgent();
-        return await this.agentCaller.spinUpAgent();
     }
 
     public async openConnection(): Promise<any> {
