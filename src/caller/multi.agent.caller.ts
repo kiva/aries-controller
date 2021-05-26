@@ -5,7 +5,7 @@ import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
-import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { ProfileManager } from '../profile/profile.manager';
 
 /**
@@ -19,7 +19,7 @@ export class MultiAgentCaller implements ICaller {
     constructor(
         httpService: HttpService,
         private readonly profileManger: ProfileManager,
-        @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
+        @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }

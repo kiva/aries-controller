@@ -5,7 +5,7 @@ import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
-import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
@@ -18,7 +18,7 @@ export class SingleAgentCaller implements ICaller {
 
     constructor(
         httpService: HttpService,
-        @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
+        @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }

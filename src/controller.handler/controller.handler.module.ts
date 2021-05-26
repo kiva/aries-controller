@@ -4,6 +4,7 @@ import { GlobalCacheModule } from '../app/global.cache.module';
 import { MultiControllerHandler } from '../controller.handler/multi.controller.handler';
 import { SingleControllerHandler } from '../controller.handler/single.controller.handler';
 import { ProfileManager } from '../profile/profile.manager';
+import { CONTROLLER_HANDLER } from './controller.handler.interface';
 
 /**
  * Assembles the controller handler module based on single-controller multi-controller
@@ -21,12 +22,12 @@ import { ProfileManager } from '../profile/profile.manager';
             providers: [
                 ProfileManager,
                 {
-                    provide: 'CONTROLLER_HANDLER',
+                    provide: CONTROLLER_HANDLER,
                     useClass: controllerHandler
                 }
             ],
             exports: [
-                'CONTROLLER_HANDLER'
+                CONTROLLER_HANDLER
             ],
         };
     }
