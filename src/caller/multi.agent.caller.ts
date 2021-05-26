@@ -94,5 +94,20 @@ export class MultiAgentCaller implements ICaller {
         }
     }
 
-
+    /**
+     * Makes a call to the agency to spin down an agent in multitenancy
+     */
+     public async spinDownAgent(): Promise<any> {
+        const profile = await this.controllerHandler.loadValues();
+        const req: AxiosRequestConfig = {
+            method: 'DELETE',
+            url: process.env.AGENCY_URL + '/v2/multitenant',
+            data: {
+                walletName: profile.walletId,
+                walletKey: profile.walletKey,
+            }
+        };
+        const res = await this.http.requestWithRetry(req);
+        return res.data;
+    }
 }

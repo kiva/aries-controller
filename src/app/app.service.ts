@@ -57,7 +57,7 @@ export class AppService {
     }
 
     /**
-     * Try twice to spin up the agent, if it fails, quit
+     * Try twice to spin up the agent, if it fails, quit. The first time we reset the agent to remove any old running agents
      * Note we only want to spin up an agent on system start if it's single controller - for multicontroller we spin up on register
      */
     public static async initAgent(app: INestApplication) {
@@ -67,7 +67,7 @@ export class AppService {
 
         const agentService = await app.resolve(AgentService);
         try {
-            await agentService.init();
+            await agentService.reset();
         } catch (e) {
             Logger.log(`Failed to start agent, retrying... ${e.message}`, e);
             try {

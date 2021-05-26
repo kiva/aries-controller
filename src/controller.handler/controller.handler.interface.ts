@@ -1,3 +1,5 @@
+export const CONTROLLER_HANDLER = 'CONTROLLER_HANDLER';
+
 export interface IControllerHandler {
 
     /**
