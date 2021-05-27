@@ -5,7 +5,7 @@ import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
-import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { ProfileManager } from '../profile/profile.manager';
 
 /**
@@ -19,7 +19,7 @@ export class MultiAgentCaller implements ICaller {
     constructor(
         httpService: HttpService,
         private readonly profileManger: ProfileManager,
-        @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
+        @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }
@@ -94,5 +94,20 @@ export class MultiAgentCaller implements ICaller {
         }
     }
 
-
+    /**
+     * Makes a call to the agency to spin down an agent in multitenancy
+     */
+     public async spinDownAgent(): Promise<any> {
+        const profile = await this.controllerHandler.loadValues();
+        const req: AxiosRequestConfig = {
+            method: 'DELETE',
+            url: process.env.AGENCY_URL + '/v2/multitenant',
+            data: {
+                walletName: profile.walletId,
+                walletKey: profile.walletKey,
+            }
+        };
+        const res = await this.http.requestWithRetry(req);
+        return res.data;
+    }
 }

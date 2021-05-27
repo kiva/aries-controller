@@ -16,10 +16,17 @@ export class AgentService {
     ) {}
 
     /**
-     * TODO we could add some error handling/retry logic here if the agent doesn't spin up correctly the first time
+     * Spin up agent
      */
     public async init(): Promise<any> {
         return await this.agentCaller.spinUpAgent();
+    }
+
+    /**
+     * Resets an agent by first spinning down old instance and then spins up new instance
+     */
+    public async spinDown(): Promise<any> {
+        await this.agentCaller.spinDownAgent();
     }
 
     public async openConnection(): Promise<any> {

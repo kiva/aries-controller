@@ -8,7 +8,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
-import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
 
 /**
@@ -27,7 +27,7 @@ export class IssuerService {
     constructor(
         public readonly agentService: AgentService,
         @Inject(CALLER) private readonly agentCaller: ICaller,
-        @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
+        @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
         httpService: HttpService,
     ) {
         this.http = new ProtocolHttpService(httpService);

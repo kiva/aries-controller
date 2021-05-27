@@ -5,7 +5,7 @@ import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
-import { IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
@@ -18,13 +18,13 @@ export class SingleAgentCaller implements ICaller {
 
     constructor(
         httpService: HttpService,
-        @Inject('CONTROLLER_HANDLER') private readonly controllerHandler: IControllerHandler,
+        @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }
 
     /**
-     * Makes a call to the agency to spin up an agent, this can work in
+     * Makes a call to the agency to spin up an agent
      */
     public async spinUpAgent(): Promise<any> {
         const profile = await this.controllerHandler.loadValues();
@@ -85,5 +85,22 @@ export class SingleAgentCaller implements ICaller {
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
+    }
+
+    /**
+     * Makes a call to the agency to spin down an agent
+     */
+    public async spinDownAgent(): Promise<any> {
+        const profile = await this.controllerHandler.loadValues();
+        const req: AxiosRequestConfig = {
+            method: 'DELETE',
+            url: process.env.AGENCY_URL + '/v1/manager',
+            data: {
+                agentId: profile.agentId,
+            }
+        };
+        const res = await this.http.requestWithRetry(req);
+        Logger.log(`Successfully spun up agent ${profile.agentId}`);
+        return res.data;
     }
 }
