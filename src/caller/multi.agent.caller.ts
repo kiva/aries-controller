@@ -37,7 +37,7 @@ export class MultiAgentCaller implements ICaller {
                 walletKey: profile.walletKey,
                 label: profile.label,
                 controllerUrl: profile.controllerUrl,
-                ttl: 2147483, // This is the max ttl supported by setTimeout - TODO swap this to 0 when the agency is ready for it
+                ttl: 0, // never expire
                 autoConnect: false,
             }
         };
