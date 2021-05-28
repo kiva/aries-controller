@@ -15,7 +15,7 @@ export class ProfileManager  {
     ) { }
 
     public async save(key: string, value: any): Promise<void> {
-        await this.cache.set(this.prefix + key, value);
+        await this.cache.set(this.prefix + key, value, { ttl: Infinity });
     }
 
     public async get(key: string): Promise<any> {
@@ -29,7 +29,7 @@ export class ProfileManager  {
             data = {};
         }
         data[appendKey] = appendValue;
-        await this.cache.set(this.prefix + key, data);
+        await this.cache.set(this.prefix + key, data, { ttl: Infinity });
     }
 
 }
