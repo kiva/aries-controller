@@ -40,7 +40,7 @@ export class SingleAgentCaller implements ICaller {
                 agentId: profile.agentId,
                 label: profile.label,
                 useTailsServer: profile.useTailsServer,
-                ttl: 2147483, // This is the max ttl supported by setTimeout - TODO swap this to 0 when the agency is ready for it
+                ttl: 0, // live indefinitely
                 autoConnect: false,
             }
         };
