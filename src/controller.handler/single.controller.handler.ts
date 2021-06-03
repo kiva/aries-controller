@@ -1,15 +1,24 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { BaseControllerHandler } from './base.controller.handler';
 import { IControllerHandler } from './controller.handler.interface';
+import { ProfileManager } from '../profile/profile.manager';
+import { AgentContext } from 'protocol-common/agent.context';
+import { REQUEST } from '@nestjs/core';
+import { Request } from 'express';
 
 /**
  * Single controllers can fetch all values from env vars
  */
 @Injectable()
-export class SingleControllerHandler extends BaseControllerHandler implements IControllerHandler {
+export class SingleControllerHandler implements IControllerHandler {
+
+    constructor(
+        protected readonly profileManager: ProfileManager,
+        @Inject(REQUEST) protected readonly req: Request,
+        protected readonly agentContext: AgentContext
+    ) { }
 
     /**
      * Loads the values to use for the multi controller
@@ -32,32 +41,14 @@ export class SingleControllerHandler extends BaseControllerHandler implements IC
         };
     }
 
+    /**
+     * Single controllers must have an AGENT_ID configured as an env var
+     */
     public handleAgentId(): string {
         if (!process.env.AGENT_ID) {
-            throw new ProtocolException(ProtocolErrorCode.MISSING_CONFIGURATION, 'Must configure institution for this controller');
+            throw new ProtocolException(ProtocolErrorCode.MISSING_CONFIGURATION, 'Must configure AGENT_ID for this controller');
         }
-
-        // TODO change name to AgentId gaurd?
-        if (process.env.INSTITUTION_GUARD_ENABLED === 'false') {
-            Logger.debug('Allowing user since institution guard is disabled');
-            return process.env.AGENT_ID;
-        }
-
-        // Check Auth0 and pull from there
-        const institution = this.getFromAuthHeader();
-
-        if (process.env.ALLOW_ADMIN_INSTITUTION === 'true' && institution === 'admin') {
-            Logger.debug('Allowing admin user');
-            return institution;
-        }
-
-        // Lower case comparison to avoid false negatives
-        if (institution !== process.env.AGENT_ID) {
-            throw new ProtocolException(
-                ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: institution doesn\'t match configured institution', null, 403
-            );
-        }
-        return institution;
+        return process.env.AGENT_ID;
     }
 
     /**

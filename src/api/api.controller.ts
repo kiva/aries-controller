@@ -19,15 +19,15 @@ import { RevokePostReqDto } from './dtos/revoke.post.req.dto';
 import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
 import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
-import { InstitutionGuard } from './institution.guard';
+import { AgentGuard } from './agent.guard';
 
 /**
  * Contains API routes that we want exposed to the front end via the gateway
- * Has an InstitutionGuard to ensure the user is authorized to access this entity (eg kiva)
+ * Has an AgentGuard to ensure the user is authorized to access this entity (eg kiva)
  */
 @Controller('v2/api')
 @ApiTags('api')
-@UseGuards(InstitutionGuard)
+@UseGuards(AgentGuard)
 export class ApiController {
 
     /**
