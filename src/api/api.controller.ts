@@ -191,4 +191,12 @@ export class ApiController {
     public async checkRevokedState(@Param('credExId') credExId: string): Promise<any> {
         return await this.issuerService.checkRevokedState(credExId);
     }
+
+    /**
+     * Deletes a credential
+     */
+     @Delete('/connection/:connectionId}')
+     async DeleteConnection(@Param('connectionId') connectionId: string): Promise<any> {
+         return await this.agentService.deleteConnection(connectionId);
+     }
 }
