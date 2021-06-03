@@ -4,7 +4,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { IControllerHandler } from './controller.handler.interface';
 import { ProfileManager } from '../profile/profile.manager';
-import { AgentContext } from 'protocol-common/agent.context';
+import { AgentContext } from '../utility/agent.context';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 

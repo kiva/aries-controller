@@ -5,7 +5,7 @@ import { MultiControllerHandler } from '../controller.handler/multi.controller.h
 import { SingleControllerHandler } from '../controller.handler/single.controller.handler';
 import { ProfileManager } from '../profile/profile.manager';
 import { CONTROLLER_HANDLER } from './controller.handler.interface';
-import { AgentContext } from 'protocol-common/agent.context';
+import { AgentContext } from '../utility/agent.context';
 
 /**
  * Assembles the controller handler module based on single-controller multi-controller

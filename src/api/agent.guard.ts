@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ProtocolException } from 'protocol-common/protocol.exception';
-import { AgentContext } from 'protocol-common/agent.context';
+import { AgentContext } from '../utility/agent.context';
 
 /**
  * This guard ensures that the "agent" on the token matches the configured agentId (eg kiva)
