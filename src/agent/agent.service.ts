@@ -73,6 +73,14 @@ export class AgentService {
     }
 
     /**
+     *  Deletes connection between agents
+     */
+    public async deleteConnection(connectionId: string): Promise<any> {
+        return await this.agentCaller.callAgent('DELETE', `connections/${connectionId}`);
+    }
+
+
+    /**
      *   Common functionality for sending a basic message.  Built for transaction history system but can
      *   be used in any case for sending basic messages.
      *   @content {any} must be an object.  the format of content depends on the message. For transaction history, see the design doc.
