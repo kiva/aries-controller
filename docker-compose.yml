@@ -32,7 +32,7 @@ services:
             - "3030:3030"
         volumes:
             - ./:/www
-            - ../protocol-common/dist:/www/node_modules/protocol-common
+            # - ../protocol-common/dist:/www/node_modules/protocol-common
         networks:
             - agency-network
         tty: true

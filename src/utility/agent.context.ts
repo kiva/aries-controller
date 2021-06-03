@@ -56,7 +56,7 @@ export class AgentContext {
         if (!agentId) {
             throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: No agent attribute in token metadata', null, 403);
         }
-        
+
         return agentId;
     }
 
