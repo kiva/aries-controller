@@ -7,8 +7,15 @@ export interface ICaller {
      */
     spinUpAgent(): Promise<any>;
 
+
+
     /**
      * Makes an API call to an agent, specific implementations handle single vs multi agent
      */
     callAgent(method: any, route: string, params?: any, data?: any): Promise<any>;
+
+    /**
+     * Spins down an agent, specific implementations handle single vs multi agent
+     */
+    spinDownAgent(): Promise<any>;
 }
