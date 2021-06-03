@@ -1,5 +1,4 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import jwt from 'jsonwebtoken';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ProtocolException } from 'protocol-common/protocol.exception';
@@ -32,11 +31,11 @@ export class AgentGuard implements CanActivate {
         const req = context.switchToHttp().getRequest();
 
         const agentId = this.agentContext.getAgentId((process.env.AGENT_GUARD_ENABLED === 'true'));
-        
+
         if (agentId !== process.env.AGENT_ID) {
             throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentGuard: agent doesn\'t match configured agent', null, 403);
         }
-       
+
         return true;
     }
 }
