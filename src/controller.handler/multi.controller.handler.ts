@@ -1,16 +1,21 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { BaseControllerHandler } from './base.controller.handler';
 import { IControllerHandler } from './controller.handler.interface';
+import { ProfileManager } from '../profile/profile.manager';
+import { AgentContext } from '../utility/agent.context';
 
 /**
  * The handler for multi-controllers
  * The multi-controller loads it's values from the DB and it's AgentId from the request/auth token
  */
 @Injectable()
-export class MultiControllerHandler extends BaseControllerHandler implements IControllerHandler {
+export class MultiControllerHandler implements IControllerHandler {
+
+    constructor(
+        protected readonly profileManager: ProfileManager,
+        protected readonly agentContext: AgentContext
+    ) { }
 
     /**
      * Loads the values to use for the multi controller from the DB
@@ -43,13 +48,8 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
      * Otherwise (eg non-local) we get it from the Auth0 token
      */
     public handleAgentId(): string {
-        if (process.env.INSTITUTION_GUARD_ENABLED === 'false') {
-            Logger.debug('Allowing user since institution guard is disabled');
-            return this.getFromAgentHeader();
-        }
-
-        // Check Auth0 and pull from there
-        return this.getFromAuthHeader();
+        const guardEnabled = !(process.env.AGENT_GUARD_ENABLED === 'false');
+        return this.agentContext.getAgentId(guardEnabled);
     }
 
     /**
@@ -63,16 +63,5 @@ export class MultiControllerHandler extends BaseControllerHandler implements ICo
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, `No profile found for ${agentId}`);
         }
         return profile.adminApiKey;
-    }
-
-    /**
-     * This is just used for local testing
-     */
-     private getFromAgentHeader(): string {
-        const agentHeader = this.req.headers.agent;
-        if (!agentHeader) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'InstitutionGuard: No agent header', null, 403);
-        }
-        return agentHeader;
     }
 }

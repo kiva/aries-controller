@@ -75,7 +75,10 @@ export class SingleAgentCaller implements ICaller {
             const res = await this.http.requestWithRetry(req);
             return res.data;
         } catch (e) {
-            if (retry && e.details && (e.details.code === 'ENOTFOUND' || e.details.code === 'ECONNREFUSED')) {
+            if (
+                retry && e.details &&
+                (e.details.code === 'ENOTFOUND' || e.details.code === 'ECONNREFUSED' || (e.message && e.message.includes('EAI_AGAIN')))
+            ) {
                 Logger.warn('Agent is down, restarting...');
                 await this.spinUpAgent();
                 // Single agents need a delay since they're slow to come up
@@ -100,7 +103,7 @@ export class SingleAgentCaller implements ICaller {
             }
         };
         const res = await this.http.requestWithRetry(req);
-        Logger.log(`Successfully spun up agent ${profile.agentId}`);
+        Logger.log(`Successfully spun down agent ${profile.agentId}`);
         return res.data;
     }
 }

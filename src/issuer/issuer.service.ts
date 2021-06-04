@@ -68,7 +68,7 @@ export class IssuerService {
             updated_at: issuanceRecord.updated_at,
             credential_id: issuanceRecord.credential_id,
             revoc_reg_id: issuanceRecord.revoc_reg_id,
-            institution: this.controllerHandler.handleAgentId(),
+            institution: this.controllerHandler.handleAgentId(), // TODO change from institution to agentId in record-service
         });
     }
 

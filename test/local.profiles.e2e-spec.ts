@@ -11,7 +11,7 @@ describe('Profiles (e2e)', () => {
             imports: [ AppModule ]
         }).compile();
 
-        process.env.INSTITUTION_GUARD_ENABLED = 'false';
+        process.env.AGENT_GUARD_ENABLED = 'false';
         app = moduleFixture.createNestApplication();
         await app.init();
     });
