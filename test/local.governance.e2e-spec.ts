@@ -199,4 +199,78 @@ describe('Governance tests', () => {
         expect(sum2 === 1);
         expect(sum3 === 0);
     });
+
+    it('Register same callback id twice successfully', async() => {
+        let sum1: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler1: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum1 ++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('8','bob', customHandler1);
+        agentGovernance.registerHandler('8','bob', customHandler1);
+        await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
+        expect(sum1 === 1);
+    });
+
+    it('Register same callback id twice end of array successfully', async() => {
+        let sum1: number = 0;
+        let sum2: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler1: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum1++;
+                return undefined;
+            };
+        const customHandler2: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum2++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('8', 'bob', customHandler1);
+        agentGovernance.registerHandler('9', 'bob', customHandler2);
+        agentGovernance.registerHandler('9', 'bob', customHandler2);
+        await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
+        expect(sum1 === 1);
+        expect(sum2 === 1);
+    });
+
+    it('Register same callback id twice with new callback end of array successfully', async() => {
+        let sum1: number = 0;
+        let sum2: number = 0;
+        let sum3: number = 0;
+        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const customHandler1: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum1++;
+                return undefined;
+            };
+        const customHandler2: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum2++;
+                return undefined;
+            };
+        const customHandler3: ControllerCallback =
+            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
+             body: any, token?: string): Promise<any> => {
+                sum3 ++;
+                return undefined;
+            };
+
+        agentGovernance.registerHandler('8', 'bob', customHandler1);
+        agentGovernance.registerHandler('9', 'bob', customHandler2);
+        agentGovernance.registerHandler('9', 'bob', customHandler3);
+        await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
+        expect(sum1 === 1);
+        expect(sum2 === 0);
+        expect(sum3 === 1);
+    });
 });
