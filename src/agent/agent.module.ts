@@ -15,7 +15,9 @@ import { ProfileModule } from '../profile/profile.module';
         CallerModule.registerAsync(),
         ProfileModule
     ],
-    controllers: [AgentController],
+    controllers: [
+        AgentController
+    ],
     providers: [
         AgentService,
     ],

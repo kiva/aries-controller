@@ -1,12 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Logger } from 'protocol-common/logger';
+import { Injectable } from '@nestjs/common';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { IControllerHandler } from './controller.handler.interface';
 import { ProfileManager } from '../profile/profile.manager';
 import { AgentContext } from '../utility/agent.context';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
 
 /**
  * The handler for multi-controllers
@@ -17,7 +14,6 @@ export class MultiControllerHandler implements IControllerHandler {
 
     constructor(
         protected readonly profileManager: ProfileManager,
-        @Inject(REQUEST) protected readonly req: Request,
         protected readonly agentContext: AgentContext
     ) { }
 
@@ -52,7 +48,8 @@ export class MultiControllerHandler implements IControllerHandler {
      * Otherwise (eg non-local) we get it from the Auth0 token
      */
     public handleAgentId(): string {
-        return this.agentContext.getAgentId((process.env.AGENT_GUARD_ENABLED === 'true'));
+        const guardEnabled = !(process.env.AGENT_GUARD_ENABLED === 'false');
+        return this.agentContext.getAgentId(guardEnabled);
     }
 
     /**

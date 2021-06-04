@@ -5,35 +5,30 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { AgentContext } from '../utility/agent.context';
 
 /**
- * This guard ensures that the "agent" on the token matches the configured agentId (eg kiva)
- * The gateway has already verified the jwt so we just need to decode and extract metadata
+ * For single controllers we ensure the that the agent on the token matches the configured agentId (eg kiva)
+ * For multi controllers we just ensure that the token has a valid agent (since there is no configured agents)
  */
 @Injectable()
 export class AgentGuard implements CanActivate {
     constructor(
-        protected readonly agentContext: AgentContext
+        protected readonly agentContext: AgentContext,
     ) {}
 
     /**
-     * We only active is there's a valid auth header and it's metadata matches the configured agent
-     * We add lots of debug messages to help us figure out what when wrong if things fail
+     * The validation of the agent metadata on the token takes place in AgentContext
+     * This guard just ensures that for single controllers it matches the configured value
      */
     canActivate(context: ExecutionContext): boolean {
-        if (process.env.AGENT_GUARD_ENABLED === 'false') {
-            Logger.debug('AgentGuard: Allowing user since guard is disabled');
+        const guardEnabled = !(process.env.AGENT_GUARD_ENABLED === 'false');
+        if (!guardEnabled) {
+            Logger.debug('AgentGuard: Allowing request since guard is disabled');
             return true;
         }
 
-        if (!process.env.AGENT_ID) {
-            throw new ProtocolException(ProtocolErrorCode.MISSING_CONFIGURATION, 'Must configure agent for this controller');
-        }
+        const agentId = this.agentContext.getAgentId(guardEnabled);
 
-        const req = context.switchToHttp().getRequest();
-
-        const agentId = this.agentContext.getAgentId((process.env.AGENT_GUARD_ENABLED === 'true'));
-
-        if (agentId !== process.env.AGENT_ID) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentGuard: agent doesn\'t match configured agent', null, 403);
+        if (process.env.MULTI_CONTROLLER !== 'true' && agentId !== process.env.AGENT_ID) {
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentGuard: agent doesn\'t match configured agent for single controller', null, 403);
         }
 
         return true;

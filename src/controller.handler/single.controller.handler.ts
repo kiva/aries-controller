@@ -1,12 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Logger } from 'protocol-common/logger';
+import { Injectable } from '@nestjs/common';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { IControllerHandler } from './controller.handler.interface';
 import { ProfileManager } from '../profile/profile.manager';
 import { AgentContext } from '../utility/agent.context';
-import { REQUEST } from '@nestjs/core';
-import { Request } from 'express';
 
 /**
  * Single controllers can fetch all values from env vars
@@ -16,7 +13,6 @@ export class SingleControllerHandler implements IControllerHandler {
 
     constructor(
         protected readonly profileManager: ProfileManager,
-        @Inject(REQUEST) protected readonly req: Request,
         protected readonly agentContext: AgentContext
     ) { }
 
