@@ -129,6 +129,11 @@ export class AgentGovernance {
      * @param func the callback, must be of type ControllerCallback
      */
     public registerHandler(id: string, topic: string, func: ControllerCallback) {
+        const removeIndex: number = this.callbacks.map((item: Registration) => { return item.id; }).indexOf(id);
+        if (-1 < removeIndex) {
+            this.callbacks.splice(removeIndex, 1, {id, topic, func, exceptionCount: 0});
+            return;
+        }
         this.callbacks.push({id, topic, func, exceptionCount: 0});
     }
 
