@@ -124,7 +124,7 @@ export class AgentGovernance {
      * has been received by governance policy.  Note:  currently only the basic message handler
      * consumes invokeHandler (below).  TODO if we have more use cases, then we should move the invocation higher up
      *
-     * @param id a value that makes debugging easier. duplicates will not break the system
+     * @param id a value that makes debugging easier. duplicates will be replaced!!!!
      * @param topic a value matching values sent by acapy webhook topic parameter
      * @param func the callback, must be of type ControllerCallback
      */
