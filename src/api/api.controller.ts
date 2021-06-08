@@ -195,7 +195,7 @@ export class ApiController {
     /**
      * Deletes a credential
      */
-     @Delete('/connection/:connectionId}')
+     @Delete('connection/:connectionId')
      async DeleteConnection(@Param('connectionId') connectionId: string): Promise<any> {
          return await this.agentService.deleteConnection(connectionId);
      }
