@@ -68,10 +68,17 @@ export class Proofs extends BaseAgentResponseHandler {
             req.headers.Authorization = 'Bearer ' + token;
         }
         const res = await this.http.requestWithRetry(req);
-
-        const sorted = res.data.sort((a, b) => a.cred_info.referent.localeCompare(b.cred_info.referent));
+        // We'd like to present the list of credentials with newest issued first, however issue time is not exposed
+        // The closest we can come is the cred_rev_id since this is an integer that increments sequentially (but only for revocable credentials)
+        // So this will sort revocable credentials newest first and leave non-revocable ones in the order they were returned
+        const sorted = res.data.sort((a, b) => {
+            if (a.cred_info.cred_rev_id) {
+                return b.cred_info.cred_rev_id - a.cred_info.cred_rev_id;
+            }
+            return 0;
+        });
+        // We then take the first credential that matches any given requested attribute
         const credentials: any = {};
-
         if (sorted) {
             for (const item of sorted) {
                 for (const referent of item.presentation_referents) {
@@ -81,7 +88,6 @@ export class Proofs extends BaseAgentResponseHandler {
                 }
             }
         }
-
         return credentials;
     }
 
