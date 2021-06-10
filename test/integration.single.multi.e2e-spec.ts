@@ -159,10 +159,10 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             method: 'POST',
             route: 'connections/receive-invitation',
-            data: {
-                alias: 'sasc',
-                invitation: sascInvitation,
-            }
+            params: {
+                alias: 'sasc'
+            },
+            data: sascInvitation
         }
         return request(mamcUrl)
             .post('/v2/api/agent')
@@ -214,7 +214,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             .set('agent', 'mamcagent')
             .send(data)
             .expect((res) => {
-                expect(res.status).toBe(200);
+                expect(res.status).toBe(201);
                 expect(res.body.state).toBe('response');
             });
     });
