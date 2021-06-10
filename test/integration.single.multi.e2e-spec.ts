@@ -155,13 +155,17 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('mamc accepts invitation from sasc', async () => {
+    it('mamc accepts invitation from sasc (using agent call endpoint)', async () => {
         const data = {
-            alias: 'sasc',
-            invitation: sascInvitation,
+            method: 'POST',
+            route: 'connections/receive-invitation',
+            data: {
+                alias: 'sasc',
+                invitation: sascInvitation,
+            }
         }
         return request(mamcUrl)
-            .post('/v1/agent/accept-connection')
+            .post('/v2/api/agent')
             .set('agent', 'mamcagent')
             .send(data)
             .expect((res) => {
@@ -200,10 +204,15 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('mamc checks connection status', async () => {
+    it('mamc checks connection status (using agent call endpoint)', async () => {
+        const data = {
+            method: 'GET',
+            route: `connections/${mamcConnectionId}`
+        }
         return request(mamcUrl)
-            .get(`/v2/api/connection/${mamcConnectionId}`)
+            .post(`/v2/api/agent`)
             .set('agent', 'mamcagent')
+            .send(data)
             .expect((res) => {
                 expect(res.status).toBe(200);
                 expect(res.body.state).toBe('response');
