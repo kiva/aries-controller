@@ -79,6 +79,13 @@ export class AgentService {
         return await this.agentCaller.callAgent('DELETE', `connections/${connectionId}`);
     }
 
+    /**
+     * Just a pass through function to the underlying agentCaller
+     */
+    public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
+        return await this.agentCaller.callAgent(method, route, params, data);
+    }
+
 
     /**
      *   Common functionality for sending a basic message.  Built for transaction history system but can
