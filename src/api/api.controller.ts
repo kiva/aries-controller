@@ -195,8 +195,18 @@ export class ApiController {
     /**
      * Deletes a credential
      */
-     @Delete('connection/:connectionId')
-     async DeleteConnection(@Param('connectionId') connectionId: string): Promise<any> {
-         return await this.agentService.deleteConnection(connectionId);
-     }
+    @Delete('connection/:connectionId')
+    public async deleteConnection(@Param('connectionId') connectionId: string): Promise<any> {
+        return await this.agentService.deleteConnection(connectionId);
+    }
+
+    /**
+     * Generic pass through call from frontend to agent
+     * For common calls we want to simplify things for the UI which is why we have the custom routes above
+     * This endpoint allows us to expose all of aca-py's functionality for tests, scripts, etc without having to define custom routes for each
+     */
+    @Post('agent/call')
+    public async callAgent(@Body(new ProtocolValidationPipe()) body: any): Promise<any> {
+        return await this.agentService.callAgent(body.method, body.route, body.params, body.data);
+    }
 }
