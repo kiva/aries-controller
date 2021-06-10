@@ -2,11 +2,11 @@ import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 enum HttpMethods {
-    GET,
-    POST,
-    PATCH,
-    PUT,
-    DELETE
+    GET = 'GET',
+    POST = 'POST',
+    PATCH = 'PATCH',
+    PUT = 'PUT',
+    DELETE = 'DELETE'
 }
 
 export class AgentCallReqDto {

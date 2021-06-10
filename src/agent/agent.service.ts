@@ -82,7 +82,8 @@ export class AgentService {
     /**
      * Just a pass through function to the underlying agentCaller
      */
-    public async callAgent(method: any, route: string, params?: any, data?: any) {
+    public async callAgent(method: any, route: string, params?: any, data?: any): Promise<any> {
+        Logger.log('method', method);
         return await this.agentCaller.callAgent(method, route, params, data);
     }
 

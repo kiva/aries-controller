@@ -20,6 +20,7 @@ import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
 import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
 import { AgentGuard } from './agent.guard';
+import { AgentCallReqDto } from './dtos/agent.call.req.dto';
 
 /**
  * Contains API routes that we want exposed to the front end via the gateway
@@ -205,8 +206,8 @@ export class ApiController {
      * For common calls we want to simplify things for the UI which is why we have the custom routes above
      * This endpoint allows us to expose all of aca-py's functionality for tests, scripts, etc without having to define custom routes for each
      */
-    @Post('agent/call')
-    public async callAgent(@Body(new ProtocolValidationPipe()) body: any): Promise<any> {
+    @Post('agent')
+    public async callAgent(@Body(new ProtocolValidationPipe()) body: AgentCallReqDto): Promise<any> {
         return await this.agentService.callAgent(body.method, body.route, body.params, body.data);
     }
 }
