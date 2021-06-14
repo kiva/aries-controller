@@ -52,7 +52,8 @@ export class AgentContext {
             throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: Failed to decode JWT', null, 403);
         }
 
-        const agentId: string = metaData.agent;
+        // Custom claims on a OIDC-compliant requires a URI namespace, for generic protocol metadata in Auth0 we use https://protocol.kiva.org/
+        const agentId: string = metaData['https://protocol.kiva.org/agent'];
         if (!agentId) {
             throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: No agent attribute in token metadata', null, 403);
         }
