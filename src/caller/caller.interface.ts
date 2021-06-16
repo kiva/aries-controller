@@ -7,8 +7,6 @@ export interface ICaller {
      */
     spinUpAgent(): Promise<any>;
 
-
-
     /**
      * Makes an API call to an agent, specific implementations handle single vs multi agent
      */

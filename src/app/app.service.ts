@@ -61,11 +61,12 @@ export class AppService {
      * Note we only want to spin up an agent on system start if it's single controller - for multicontroller we spin up on register
      */
     public static async initAgent(app: INestApplication) {
+        const agentService = await app.resolve(AgentService);
+        agentService.initProfilesFromDisk();
         if (process.env.MULTI_CONTROLLER === 'true') {
             return;
         }
 
-        const agentService = await app.resolve(AgentService);
         try {
             if (process.env.MULTI_AGENT !== 'true') {
                 // If it's a single agent remove it first before starting

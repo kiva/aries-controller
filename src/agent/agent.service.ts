@@ -106,4 +106,8 @@ export class AgentService {
         await this.profileManager.save(body.agentId, body);
         return await this.init();
     }
+
+    public async initProfilesFromDisk(): Promise<void> {
+        await this.profileManager.initFromDisk();
+    }
 }

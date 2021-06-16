@@ -8,6 +8,7 @@ import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * TODO maybe more of the kyc logic should be moved in here
@@ -22,12 +23,16 @@ export class VerifierService {
         httpService: HttpService,
         @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
+        private readonly profileManager: ProfileManager,
     ) {
         this.http = new ProtocolHttpService(httpService);
     }
 
     public async verify(proofProfilePath: string, connectionId: string): Promise<any> {
-        const proofProfile = Services.getProfile(proofProfilePath);
+        const proofProfile = await this.profileManager.get(proofProfilePath);
+        if (!proofProfilePath) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, `No stored profile for ${proofProfilePath}`);
+        }
         proofProfile.connection_id = connectionId;
         return await this.agentCaller.callAgent('POST', 'present-proof/send-request', null, proofProfile);
     }

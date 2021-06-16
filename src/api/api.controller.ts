@@ -1,7 +1,6 @@
 import { Get, Controller, Post, Param, Body, Query, Delete, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
-import { Services } from '../utility/services';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
 import { VerifierService } from '../verifier/verifier.service';
@@ -20,7 +19,9 @@ import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
 import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
 import { AgentGuard } from './agent.guard';
+import { ProfilesPostReqDto } from './dtos/profiles.post.req.dto';
 import { AgentCallReqDto } from './dtos/agent.call.req.dto';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Contains API routes that we want exposed to the front end via the gateway
@@ -38,6 +39,7 @@ export class ApiController {
         private readonly agentService: AgentService,
         private readonly issuerService: IssuerService,
         private readonly verifierService: VerifierService,
+        private readonly profileManager: ProfileManager,
     ) {}
 
     /**
@@ -142,7 +144,7 @@ export class ApiController {
      */
     @Get('profiles')
     public getProfiles(@Query('endsWith') endsWith: string): any {
-        return Services.getAllProfiles(endsWith);
+        return this.profileManager.getAllProfiles(endsWith);
     }
 
     /**
@@ -150,7 +152,23 @@ export class ApiController {
      */
     @Get('profiles/proofs')
     public getProfileProofs(): any {
-        return Services.getAllProfiles('proof.request.json');
+        return this.profileManager.getAllProfiles('proof.request.json');
+    }
+
+    /**
+     * Saves a new profile by profile name
+     */
+    @Post('profiles')
+    public saveProfile(@Body(new ProtocolValidationPipe()) body: ProfilesPostReqDto): any {
+        return this.profileManager.save(body.profileName, body.profile);
+    }
+
+    /**
+     * Deletes a profile by profile name
+     */
+    @Delete('profiles/:profileName')
+    public deleteProfile(@Param('profileName') profileName: string): any {
+        return this.profileManager.delete(profileName);
     }
 
     /**
