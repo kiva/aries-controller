@@ -1,7 +1,6 @@
 import { Get, Controller, Post, Param, Body, Query, Delete, UseGuards } from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { ProtocolValidationPipe } from 'protocol-common/validation/protocol.validation.pipe';
-import { Services } from '../utility/services';
 import { AgentService } from '../agent/agent.service';
 import { IssuerService } from '../issuer/issuer.service';
 import { VerifierService } from '../verifier/verifier.service';
@@ -21,7 +20,7 @@ import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
 import { AgentGuard } from './agent.guard';
 import { ProfilesPostReqDto } from './dtos/profiles.post.req.dto';
-import { AgentCallReqDto } from './dtos/agent.call.req.dto copy';
+import { AgentCallReqDto } from './dtos/agent.call.req.dto';
 import { ProfileManager } from '../profile/profile.manager';
 
 /**
@@ -162,6 +161,14 @@ export class ApiController {
     @Post('profiles')
     public saveProfile(@Body(new ProtocolValidationPipe()) body: ProfilesPostReqDto): any {
         return this.profileManager.save(body.profileName, body.profile);
+    }
+
+    /**
+     * Deletes a profile by profile name
+     */
+    @Delete('profiles/:profileName')
+    public deleteProfile(@Param('profileName') profileName: string): any {
+        return this.profileManager.delete(profileName);
     }
 
     /**

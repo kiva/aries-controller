@@ -10,7 +10,6 @@ import { HttpConstants } from 'protocol-common/http-context/http.constants';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
-import { ProfileManager } from 'profile/profile.manager';
 
 /**
  * All external traffic will be routed through gateway so no need for things like rate-limiting here

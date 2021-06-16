@@ -45,7 +45,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Add profile 1', async () => {
+    it('Add profile 2', async () => {
         const data = {
             "profileName": "profile2.json",
             "profile": profile2
@@ -65,6 +65,23 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
                 expect(res.status).toBe(200);
                 expect(res.body['profile1.json']).toStrictEqual(profile1);
                 expect(res.body['profile2.json']).toStrictEqual(profile2);
+            });
+    });
+
+    it('Delete profile 1', async () => {
+        return request(sascUrl)
+            .delete('/v2/api/profiles/profile1.json')
+            .expect((res) => {
+                expect(res.status).toBe(200);
+            });
+    });
+
+    it('Fetch profiles', async () => {
+        return request(sascUrl)
+            .get('/v2/api/profiles')
+            .expect((res) => {
+                expect(res.status).toBe(200);
+                expect(res.body['profile1.json']).toBeUndefined();
             });
     });
 });
