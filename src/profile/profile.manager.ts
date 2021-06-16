@@ -29,6 +29,10 @@ export class ProfileManager  {
         return await this.cache.get(this.prefix + key);
     }
 
+    public async delete(key: string): Promise<void> {
+        await this.cache.del(this.prefix + key);
+    }
+
     /**
      * Appends appendValue to existing object buy appendKey
      */
@@ -63,6 +67,10 @@ export class ProfileManager  {
      */
     public async getAllProfiles(endsWithString?: string): Promise<any> {
         const keys = await this.get(this.keysKey);
+        if (!keys) {
+            Logger.debug('No profiles keys');
+            return {};
+        }
         const profiles = {};
         for (const key of keys) {
             if (!endsWithString || (endsWithString && key.endsWith(endsWithString))) {

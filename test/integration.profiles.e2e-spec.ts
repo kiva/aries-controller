@@ -22,6 +22,16 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         jest.setTimeout(20000);
     });
 
+    it('Returns profiles from disk', () => {
+        return request(sascUrl)
+        .get('/v2/api/profiles')
+        .expect(200)
+        .expect((res) => {
+            console.log(res.body);
+            expect(res.body['profile.json']).toStrictEqual({'example': 'profile'});
+        });
+    });
+
     it('Add profile 1', async () => {
         const data = {
             "profileName": "profile1.json",
@@ -53,8 +63,8 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             .get('/v2/api/profiles')
             .expect((res) => {
                 expect(res.status).toBe(200);
-                expect(res.body['profile1.json']).toBe(profile1);
-                expect(res.body['profile12.json']).toBe(profile2);
+                expect(res.body['profile1.json']).toStrictEqual(profile1);
+                expect(res.body['profile2.json']).toStrictEqual(profile2);
             });
     });
 });
