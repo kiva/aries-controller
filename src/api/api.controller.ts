@@ -20,7 +20,9 @@ import { GuardianIssuePostReqDto } from './dtos/guardian.issue.post.req.dto';
 import { GuardianEnrollPostReqDto } from './dtos/guardian.enroll.post.req.dto';
 import { GuardianEnrollPostResDto } from './dtos/guardian.enroll.post.res.dto';
 import { AgentGuard } from './agent.guard';
-import { AgentCallReqDto } from './dtos/agent.call.req.dto';
+import { ProfilesPostReqDto } from './dtos/profiles.post.req.dto';
+import { AgentCallReqDto } from './dtos/agent.call.req.dto copy';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Contains API routes that we want exposed to the front end via the gateway
@@ -38,6 +40,7 @@ export class ApiController {
         private readonly agentService: AgentService,
         private readonly issuerService: IssuerService,
         private readonly verifierService: VerifierService,
+        private readonly profileManager: ProfileManager,
     ) {}
 
     /**
@@ -139,6 +142,7 @@ export class ApiController {
     /**
      * Returns all profiles indexed by profile name
      * There's an optional param endsWith, eg to get all proof requests use: ?endsWith=proof.request.json
+     * TODO currently this only loads profiles from disk, we also want to support loading profiles from cache
      */
     @Get('profiles')
     public getProfiles(@Query('endsWith') endsWith: string): any {
@@ -151,6 +155,15 @@ export class ApiController {
     @Get('profiles/proofs')
     public getProfileProofs(): any {
         return Services.getAllProfiles('proof.request.json');
+    }
+
+    /**
+     * Returns all profiles indexed by profile name
+     * There's an optional param endsWith, eg to get all proof requests use: ?endsWith=proof.request.json
+     */
+    @Post('profiles')
+    public saveProfile(@Body(new ProtocolValidationPipe()) body: ProfilesPostReqDto): any {
+        return this.profileManager.save(body.profileName, body.profile);
     }
 
     /**

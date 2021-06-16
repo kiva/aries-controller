@@ -10,6 +10,7 @@ import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
+import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -29,6 +30,7 @@ export class IssuerService {
         @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
         httpService: HttpService,
+        private readonly profileManager: ProfileManager,
     ) {
         this.http = new ProtocolHttpService(httpService);
         this.validator = new Validator();
@@ -38,7 +40,7 @@ export class IssuerService {
      * Issue a credential to existing connection using a cred def profile path and some entity data which can be formatted to Aries attributes
      */
     public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
-        const [credentialData, credDefAttributes, validation] = this.getCredDefAndSchemaData(credDefProfilePath);
+        const [credentialData, credDefAttributes, validation] = await this.getCredDefAndSchemaData(credDefProfilePath);
         this.validateEntityData(validation, entityData);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
 
@@ -234,8 +236,11 @@ export class IssuerService {
     /**
      * TODO better error handling
      */
-    private getCredDefAndSchemaData(credDefProfilePath: string): any {
-        const credDefProfile = Services.getProfile(credDefProfilePath);
+    private async getCredDefAndSchemaData(credDefProfilePath: string): Promise<any> {
+        const credDefProfile = await this.profileManager.get(credDefProfilePath);
+        if (!credDefProfile) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, `No stored profile for ${credDefProfilePath}`);
+        }
         const attributes = credDefProfile.attributes;
         const validation = credDefProfile.validation;
         delete credDefProfile.validation;
