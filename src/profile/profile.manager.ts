@@ -54,7 +54,7 @@ export class ProfileManager  {
         if (!data.includes(appendValue)) {
             data.push(appendValue);
         }
-        await this.cache.set(this.prefix + key, data, { ttl: Infinity });   
+        await this.cache.set(this.prefix + key, data, { ttl: Infinity });
     }
 
     /**
