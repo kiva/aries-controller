@@ -13,7 +13,7 @@ export class ProfilesPostReqDto {
 
     @ApiProperty({
         type: Object,
-        description: `The profile in JSON format, generally with the top level attributes: DEFAULT, DEV, QA, SAND, and PROD`
+        description: `The profile in JSON format`
     })
     readonly profile: any;
 }

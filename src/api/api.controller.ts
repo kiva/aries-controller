@@ -142,11 +142,10 @@ export class ApiController {
     /**
      * Returns all profiles indexed by profile name
      * There's an optional param endsWith, eg to get all proof requests use: ?endsWith=proof.request.json
-     * TODO currently this only loads profiles from disk, we also want to support loading profiles from cache
      */
     @Get('profiles')
     public getProfiles(@Query('endsWith') endsWith: string): any {
-        return Services.getAllProfiles(endsWith);
+        return this.profileManager.getAllProfiles(endsWith);
     }
 
     /**
@@ -154,12 +153,11 @@ export class ApiController {
      */
     @Get('profiles/proofs')
     public getProfileProofs(): any {
-        return Services.getAllProfiles('proof.request.json');
+        return this.profileManager.getAllProfiles('proof.request.json');
     }
 
     /**
-     * Returns all profiles indexed by profile name
-     * There's an optional param endsWith, eg to get all proof requests use: ?endsWith=proof.request.json
+     * Saves a new profile by profile name
      */
     @Post('profiles')
     public saveProfile(@Body(new ProtocolValidationPipe()) body: ProfilesPostReqDto): any {
