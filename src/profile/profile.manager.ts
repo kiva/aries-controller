@@ -1,6 +1,6 @@
 import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
-import { Services } from 'utility/services';
+import { Services } from '../utility/services';
 
 /**
  * All our controllers have access to a persistent file store and a cache module so we use that to store profiles
