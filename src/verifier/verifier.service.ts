@@ -53,7 +53,6 @@ export class VerifierService {
                 Logger.log('Proof record state verified');
                 return res;
             }
-            await this.handleProblemReport(res.thread_id);
             await ProtocolUtility.delay(1000);
         }
         throw new ProtocolException(ProtocolErrorCode.PROOF_FAILED_NO_RESPONSE, 'Proof exchange never completed');
@@ -61,32 +60,37 @@ export class VerifierService {
 
     /**
      * If a problem report web hook has come it it will be cached by thread id
-     * If it's a known json parsable exception throw a ProtocolException, otherwise log and continue on
+     * If the problem report was sent from a kiva process it will be json encoded with a specific error code we can use in a ProtocolException
+     * Otherwise we throw a generic problem report exception
      */
     private async handleProblemReport(threadId: string) {
         const problemReport: string = await this.cache.get(threadId);
         if (problemReport) {
-            let exception;
             try {
-                exception = JSON.parse(problemReport);
+                const exception = JSON.parse(problemReport);
+                if (exception && exception.code && exception.message) {
+                    throw new ProtocolException(exception.code, exception.message);
+                } else {
+                    Logger.warn('Unknown problem report: ', problemReport);
+                    throw new ProtocolException('ProblemReport', problemReport);
+                }
             } catch (e) {
                 Logger.warn('Unparsable JSON in problem report: ', problemReport);
+                throw new ProtocolException('ProblemReport', problemReport);
+            } finally {
+                // Clean out cache when done processing
+                await this.cache.del(threadId);
             }
-            if (exception && exception.code && exception.message) {
-                throw new ProtocolException(exception.code, exception.message);
-            } else {
-                Logger.warn('Unknown problem report: ', problemReport);
-            }
-            // Clean out cache when done processing
-            await this.cache.del(threadId);
         }
     }
 
     /**
-     * Calls agent to get presentation record by id
+     * Gets the presentation exchange data, and checks if there's any problem report
      */
-    public async checkPresEx(presExId: string): Promise<any> {
-        return await this.agentCaller.callAgent('GET', `present-proof/records/${presExId}`);
+     public async checkPresEx(presExId: string): Promise<any> {
+        const res = await this.agentCaller.callAgent('GET', `present-proof/records/${presExId}`);
+        await this.handleProblemReport(res.thread_id);
+        return res;
     }
 
     /**
