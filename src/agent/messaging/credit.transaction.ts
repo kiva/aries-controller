@@ -23,4 +23,8 @@ export class CreditTransaction<T> {
      * transaction data, specific to use case
      */
     public readonly transaction: T;
+
+    constructor(data?: Partial<CreditTransaction<T>>) {
+        Object.assign(this, data);
+    }
 }
