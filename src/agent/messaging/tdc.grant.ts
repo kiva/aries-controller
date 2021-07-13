@@ -23,4 +23,8 @@ export class TdcGrant {
      * TDC assigned Id for the Fsp, public to the TRO
      */
     public readonly tdcFspId: string;
+
+    constructor(data?: Partial<TdcGrant>) {
+        Object.assign(this, data);
+    }
 }

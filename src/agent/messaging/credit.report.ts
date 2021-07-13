@@ -27,4 +27,8 @@ export class CreditReport<T> {
      * report data is unique to use case
      */
     public readonly report: T[];
+
+    constructor(data?: Partial<CreditReport<T>>) {
+        Object.assign(this, data);
+    }
 }

@@ -28,4 +28,8 @@ export class TransactionRequest<T> {
      * transaction format is unique to use case
      */
     public readonly transactions: T[];
+
+    constructor(data?: Partial<TransactionRequest<T>>) {
+        Object.assign(this, data);
+    }
 }
