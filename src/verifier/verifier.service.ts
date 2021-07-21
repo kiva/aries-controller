@@ -65,21 +65,23 @@ export class VerifierService {
      */
     private async handleProblemReport(threadId: string) {
         const problemReport: string = await this.cache.get(threadId);
+        let exception;
         if (problemReport) {
             try {
-                const exception = JSON.parse(problemReport);
-                if (exception && exception.code && exception.message) {
-                    throw new ProtocolException(exception.code, exception.message);
-                } else {
-                    Logger.warn('Unknown problem report: ', problemReport);
-                    throw new ProtocolException('ProblemReport', problemReport);
-                }
+                exception = JSON.parse(problemReport);
             } catch (e) {
                 Logger.warn('Unparsable JSON in problem report: ', problemReport);
                 throw new ProtocolException('ProblemReport', problemReport);
             } finally {
                 // Clean out cache when done processing
                 await this.cache.del(threadId);
+            }
+
+            if (exception && exception.code && exception.message) {
+                throw new ProtocolException(exception.code, exception.message);
+            } else {
+                Logger.warn('Unknown problem report: ', problemReport);
+                throw new ProtocolException('ProblemReport', problemReport);
             }
         }
     }
