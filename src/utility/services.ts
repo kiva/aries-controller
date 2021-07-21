@@ -54,7 +54,12 @@ export class Services {
         const files = {};
         for (const fileName of fileNames) {
             if (!endsWithString || (endsWithString && fileName.endsWith(endsWithString))) {
-                files[fileName] = Services.getProfile(fileName);
+                try {
+                    const profile = Services.getProfile(fileName);
+                    files[fileName] = profile;
+                } catch (e) {
+                    Logger.warn(`Unable to load profile file "${fileName}", skipping...`, e.message);
+                }
             }
         }
         return files;
