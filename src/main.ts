@@ -15,5 +15,6 @@ async function bootstrap() {
 
     await AppService.initAgent(app);
 }
+
 bootstrap();
 export { app };
