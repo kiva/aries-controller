@@ -57,7 +57,8 @@ export class AppService {
     }
 
     /**
-     * Try twice to spin up the agent, if it fails, quit. The first time we reset the agent to remove any old running agents
+     * Try twice to spin up the agent, if it fails, quit
+     * Register shutdown signals to shut down agent when controller shuts down
      * Note we only want to spin up an agent on system start if it's single controller - for multicontroller we spin up on register
      */
     public static async initAgent(app: INestApplication) {
@@ -68,10 +69,6 @@ export class AppService {
         }
 
         try {
-            if (process.env.MULTI_AGENT !== 'true') {
-                // If it's a single agent remove it first before starting
-                await agentService.spinDown();
-            }
             await agentService.init();
         } catch (e) {
             Logger.log(`Failed to start agent, retrying... ${e.message}`, e);
@@ -86,5 +83,15 @@ export class AppService {
                 }
             }
         }
+
+        // Shut down agent on controller shutdown
+        // Note: attempted the nestjs method of using OnApplicationShutdown but it didn't work so manually tying into the shut down signals
+        process.on('SIGINT', async function onSigint() {
+            agentService.spinDown();
+        });
+
+        process.on('SIGTERM', function onSigterm() {
+            agentService.spinDown();
+        });
     }
 }
