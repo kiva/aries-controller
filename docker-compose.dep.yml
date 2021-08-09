@@ -83,7 +83,7 @@ services:
             - POSTGRES_PASSWORD=dbpass
 
     multitenant:
-        image: bcgovimages/aries-cloudagent:py36-1.15-1_0.6.0
+        image: bcgovimages/aries-cloudagent:py36-1.16-1_0.7.0
         container_name: ac-multitenant
         networks:
           - agency-network
