@@ -38,7 +38,7 @@ services:
                 ipv4_address: 10.0.0.2
 
     aries-guardianship-agency:
-        image: kivaprotocol/aries-guardianship-agency:0.0.39
+        image: kivaprotocol/aries-guardianship-agency:latest
         container_name: ac-guardianship-agency
         working_dir: /www
         ports:
