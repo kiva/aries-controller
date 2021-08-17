@@ -228,4 +228,12 @@ export class ApiController {
     public async callAgent(@Body(new ProtocolValidationPipe()) body: AgentCallReqDto): Promise<any> {
         return await this.agentService.callAgent(body.method, body.route, body.params, body.data);
     }
+
+    /**
+     * Registers a new agent (multi controller only)
+     */
+    @Post('agent/register')
+    public async registerController(@Body() body: any): Promise<any> {
+        return await this.agentService.registerController(body);
+    }
 }
