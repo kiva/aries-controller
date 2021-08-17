@@ -22,6 +22,7 @@ import { AgentGuard } from './agent.guard';
 import { ProfilesPostReqDto } from './dtos/profiles.post.req.dto';
 import { AgentCallReqDto } from './dtos/agent.call.req.dto';
 import { ProfileManager } from '../profile/profile.manager';
+import { AgentRegisterReqDto } from './dtos/agent.register.req.dto';
 
 /**
  * Contains API routes that we want exposed to the front end via the gateway
@@ -227,5 +228,13 @@ export class ApiController {
     @Post('agent')
     public async callAgent(@Body(new ProtocolValidationPipe()) body: AgentCallReqDto): Promise<any> {
         return await this.agentService.callAgent(body.method, body.route, body.params, body.data);
+    }
+
+    /**
+     * Registers a new agent (multi controller only)
+     */
+    @Post('agent/register')
+    public async registerController(@Body(new ProtocolValidationPipe()) body: AgentRegisterReqDto): Promise<any> {
+        return await this.agentService.registerController(body);
     }
 }

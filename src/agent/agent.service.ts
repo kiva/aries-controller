@@ -1,6 +1,8 @@
 import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
-import { CALLER, ICaller } from '../caller/caller.interface';
 import { Logger } from 'protocol-common/logger';
+import { ProtocolException } from 'protocol-common/protocol.exception';
+import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { CALLER, ICaller } from '../caller/caller.interface';
 import { ProfileManager } from '../profile/profile.manager';
 
 /**
@@ -100,9 +102,16 @@ export class AgentService {
     }
 
     /**
-     * Saves a newly registered wallet and spins up it's agent
+     * Saves new controller data to the profile manager and spins up it's agent
      */
     public async registerController(body: any) {
+        if (process.env.MULTI_CONTROLLER !== 'true') {
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, `Can only register in multi-controller mode`);
+        }
+        const exists = await this.profileManager.get(body.agentId);
+        if (exists) {
+            throw new ProtocolException(ProtocolErrorCode.DUPLICATE_ENTRY, `Agent id ${body.agentId} is already registered`);
+        }
         await this.profileManager.save(body.agentId, body);
         return await this.init();
     }
