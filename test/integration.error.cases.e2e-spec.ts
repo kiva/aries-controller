@@ -52,11 +52,11 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             "walletId": "mamcwalletid",
             "walletKey": "mamcwalletkey",
             "label": "Multi agent multi controller",
-            "agentId": "mamcagent",
+            "agentId": "mamcagent2",
         }
         return request(mamcUrl)
             .post('/v1/agent/register')
-            .set('agent', 'mamcagent')
+            .set('agent', 'mamcagent2')
             .send(data)
             .expect((res) => {
                 expect(res.status).toBe(201);
@@ -67,7 +67,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     it('Init connection with multi agent multi controller (sanity check)', async () => {
         return request(mamcUrl)
             .post('/v2/api/connection')
-            .set('agent', 'mamcagent')
+            .set('agent', 'mamcagent2')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.invitation).toBeDefined();
@@ -91,7 +91,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         await ProtocolUtility.delay(500);
         return request(mamcUrl)
             .post('/v2/api/connection')
-            .set('agent', 'mamcagent')
+            .set('agent', 'mamcagent2')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.invitation).toBeDefined();
