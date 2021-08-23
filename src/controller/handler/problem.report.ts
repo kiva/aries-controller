@@ -24,9 +24,9 @@ export class ProblemReport extends BaseAgentResponseHandler {
             return;
 
         // Cache problem message by thread id
-        if (body && body['~thread'] && body['explain-ltxt']) {
+        if (body && body['~thread'] && body.description) {
             const threadId = body['~thread'].thid;
-            await this.cache.set(threadId, body['explain-ltxt']);
+            await this.cache.set(threadId, body.description);
         }
         return 'ok';
     }

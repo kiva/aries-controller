@@ -49,6 +49,9 @@ export class VerifierService {
         while (waitMS > ProtocolUtility.timeDelta(new Date(), startOf)) {
             // Check proof exchange
             const res = await this.checkPresEx(presExId);
+            if (res.error_msg) {
+                await this.handleErrorMsg(res.error_msg);
+            }
             if (res.state === 'verified') {
                 Logger.log('Proof record state verified');
                 return res;
@@ -59,29 +62,33 @@ export class VerifierService {
     }
 
     /**
-     * If a problem report web hook has come it it will be cached by thread id
-     * If the problem report was sent from a kiva process it will be json encoded with a specific error code we can use in a ProtocolException
-     * Otherwise we throw a generic problem report exception
+     * In aca-py 0.6 we used to handle the problem report directly via webhook
+     * In aca-py 0.7 the problem report webhook doesn't trigger, instead there's an error_msg field on the presentation
+     * Also, aca-py can add it's own custom strings to the front of the error msgs, so we have to parse those out to get to our JSON error
      */
-    private async handleProblemReport(threadId: string) {
-        const problemReport: string = await this.cache.get(threadId);
+    private async handleErrorMsg(errorMsg: string) {
         let exception;
-        if (problemReport) {
+        if (errorMsg) {
             try {
-                exception = JSON.parse(problemReport);
-            } catch (e) {
-                Logger.warn('Unparsable JSON in problem report: ', problemReport);
-                throw new ProtocolException('ProblemReport', problemReport);
-            } finally {
-                // Clean out cache when done processing
-                await this.cache.del(threadId);
+                // First try to parse error msg directly
+                exception = JSON.parse(errorMsg);
+            } catch (e1) {
+                try {
+                    // If that doesn't work, try removing any prefixes added by aca-py
+                    const subErrorMsg = errorMsg.substring(errorMsg.indexOf(': ') + 1);
+                    exception = JSON.parse(subErrorMsg);
+                } catch (e2) {
+                    // If that still doesn't work it's truely unparseable
+                    Logger.warn('Unparsable JSON in problem report: ', errorMsg);
+                    throw new ProtocolException('ProblemReport', errorMsg);
+                }
             }
 
             if (exception && exception.code && exception.message) {
                 throw new ProtocolException(exception.code, exception.message);
             } else {
-                Logger.warn('Unknown problem report: ', problemReport);
-                throw new ProtocolException('ProblemReport', problemReport);
+                Logger.warn('Unknown problem report: ', errorMsg);
+                throw new ProtocolException('ProblemReport', errorMsg);
             }
         }
     }
@@ -91,7 +98,9 @@ export class VerifierService {
      */
      public async checkPresEx(presExId: string): Promise<any> {
         const res = await this.agentCaller.callAgent('GET', `present-proof/records/${presExId}`);
-        await this.handleProblemReport(res.thread_id);
+        if (res.error_msg) {
+            await this.handleErrorMsg(res.error_msg);
+        }
         return res;
     }
 
