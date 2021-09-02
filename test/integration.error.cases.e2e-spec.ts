@@ -11,6 +11,8 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     const sascUrl = 'http://localhost:3030';
     const mamcUrl = 'http://localhost:3033';
     const agencyUrl = 'http://localhost:3010';
+    let walletId: string;
+    let walletKey: string;
 
     beforeAll(async () => {
         jest.setTimeout(20000);
@@ -49,8 +51,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Register multi agent in multi controller', async () => {
         const data = {
-            "walletId": "mamcwalletid",
-            "walletKey": "mamcwalletkey",
             "label": "Multi agent multi controller",
             "agentId": "mamcagent2",
         }
@@ -60,7 +60,9 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             .send(data)
             .expect((res) => {
                 expect(res.status).toBe(201);
-                expect(res.body.success).toBe(true);
+                expect(res.body.agentId).toBe('mamcagent2');
+                walletId = res.body.walletId;
+                walletKey = res.body.walletKey;
             });
     });
 
@@ -76,8 +78,8 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Unregister agent with agency', async () => {
         const data = {
-            "walletName": "mamcwalletid",
-            "walletKey": "mamcwalletkey",
+            "walletName": walletId,
+            "walletKey": walletKey,
         }
         return request(agencyUrl)
             .delete('/v2/multitenant')
