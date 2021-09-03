@@ -29,12 +29,9 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Register single agent in multi controller', async () => {
         const data = {
-            "walletId": "samcwalletid",
-            "walletKey": "samcwalletkey",
             "seed": "0000000000000000000000000Random1",
             "label": "Single agent multi controller",
             "useTailsServer": false,
-            "agentId": "samcagent",
             "adminApiKey": "samcAdminApiKey"
         }
         return request(samcUrl)
@@ -50,10 +47,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     it('Register multi agent in multi controller', async () => {
         // Note that multi agents don't need seed, useTailsServer or adminApiKey
         const data = {
-            "walletId": "mamcwalletid",
-            "walletKey": "mamcwalletkey",
             "label": "Multi agent multi controller",
-            "agentId": "mamcagent",
         }
         return request(mamcUrl)
             .post('/v1/agent/register')
@@ -61,7 +55,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             .send(data)
             .expect((res) => {
                 expect(res.status).toBe(201);
-                expect(res.body.success).toBe(true);
+                expect(res.body.agentId).toBe('mamcagent');
             });
     });
 
