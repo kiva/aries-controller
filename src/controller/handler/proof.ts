@@ -173,7 +173,7 @@ export class Proofs extends BaseAgentResponseHandler {
                 const problemReportReq: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
                 // We send JSON encoded code & message to allow easily throwing a protocol exception
                 problemReportReq.data = {
-                    explain_ltxt: JSON.stringify({
+                    description: JSON.stringify({
                         code: ProtocolErrorCode.PROOF_FAILED_UNFULFILLED,
                         message: 'No credentials found to match proof request'
                     })
@@ -201,7 +201,7 @@ export class Proofs extends BaseAgentResponseHandler {
             for (const predicateKey in presentationRequest.requested_predicates) {
                 if (credentials[predicateKey]) {
                     requested_predicates[predicateKey] = {
-                        cred_id: credentials[predicateKey].cred_info.referent
+                        cred_id: credentials[predicateKey].cred_info.referent,
                     };
                 }
             }
