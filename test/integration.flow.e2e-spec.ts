@@ -43,7 +43,7 @@ describe('Tests simplified example flow', () => {
 
     it('Request mamc be registered as endorser', async () => {
         return request(mamcUrl)
-            .post('/v2/api/request/endorser')
+            .post('/v2/api/endorser/request')
             .set('agent', 'mamcagent2')
             .expect((res) => {
                 expect(res.status).toBe(201);

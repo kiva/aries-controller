@@ -90,6 +90,7 @@ services:
             - PORT=3033
             - SELF_URL=http://ma-mc-controller:3033
             - ADMIN_API_KEY=adminApiKey
+            - STEWARD_URL=http://sa-sc-controller:3030
         build:
             context: .
             dockerfile: Dockerfile
