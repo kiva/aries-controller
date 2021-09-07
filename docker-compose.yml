@@ -16,7 +16,7 @@ services:
             - MULTI_CONTROLLER=false
             - WALLET_ID=sascwallet
             - WALLET_KEY=sascwalletkey
-            - SEED=0000000000000000000000000Random1
+            - SEED=000000000000000000000000Steward1
             - AGENT_ID=sascagent
             - PORT=3030
             - SELF_URL=http://sa-sc-controller:3030
