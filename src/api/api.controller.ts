@@ -239,7 +239,7 @@ export class ApiController {
     }
 
     /**
-     * Makes a call to a configured steward to onboard self as an endorser
+     * Makes a call to a configured steward to onboard the current agent as an endorser
      */
     @Post('endorser/request')
     public async requestEndorser(): Promise<any> {

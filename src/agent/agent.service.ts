@@ -131,6 +131,4 @@ export class AgentService {
     public async initProfilesFromDisk(): Promise<void> {
         await this.profileManager.initFromDisk();
     }
-
-
 }
