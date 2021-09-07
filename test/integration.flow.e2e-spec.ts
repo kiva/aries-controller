@@ -20,11 +20,11 @@ describe('Tests simplified example flow', () => {
         }
         return request(mamcUrl)
             .post('/v2/api/agent/register')
-            .set('agent', 'mamcagent2')
+            .set('agent', 'mamcagent3')
             .send(data)
             .expect((res) => {
                 expect(res.status).toBe(201);
-                expect(res.body.agentId).toBe('mamcagent2');
+                expect(res.body.agentId).toBe('mamcagent3');
             });
     });
 
@@ -44,7 +44,7 @@ describe('Tests simplified example flow', () => {
     it('Request mamc be registered as endorser', async () => {
         return request(mamcUrl)
             .post('/v2/api/endorser/request')
-            .set('agent', 'mamcagent2')
+            .set('agent', 'mamcagent3')
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.success).toBe(true);
