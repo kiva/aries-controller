@@ -1,13 +1,31 @@
-import { IsString } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
- * The only required field is agentId, the rest are optional and comprise the agent properties
+ * Fields to register an agent
  */
 export class AgentRegisterReqDto {
 
     @ApiProperty({
-        description: `Internal agentId (must be unique)`
+        description: `Label for agent (can be multiple words)`
     })
-    @IsString() readonly agentId: string;
+    @IsString() readonly label: string;
+
+    @ApiProperty({
+        description: `Single agent only. Pass a seed to use for DID generation (Optional)`,
+        required: false,
+    })
+    @IsString() @IsOptional() readonly seed: string;
+
+    @ApiProperty({
+        description: `Single agent only. Pass an adminApiKey to use for controlling the individual agent (Optional)`,
+        required: false,
+    })
+    @IsString() @IsOptional() readonly adminApiKey: string;
+
+    @ApiProperty({
+        description: `Single agent only. Whether the agent should be configured to use a tails server (Optional)`,
+        required: false,
+    })
+    @IsString() @IsOptional() readonly useTailsServer: string;
 }

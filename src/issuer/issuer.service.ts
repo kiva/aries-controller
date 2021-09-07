@@ -422,4 +422,41 @@ export class IssuerService {
             revoc_reg_id: record.revoc_reg_id || null,
         };
     }
+
+    /**
+     * Requests that a configured Steward onboard the DID associated with this controller with an Endorser role (so they can issue credentials)
+     * TODO right now the steward will automatically approve - eventually we want some manual process for the Steward to decide on approvals
+     */
+    public async requestEndorser(): Promise<any> {
+        if (!process.env.STEWARD_URL) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_NODE_ENVIRONMENT, 'Environment variable STEWARD_URL is missing');
+        }
+
+        // Get primary DID info
+        const didInfo = await this.agentCaller.callAgent('GET', `wallet/did`);
+        if (!didInfo.results || didInfo.results.length < 1) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No did found');
+        }
+        const did = didInfo.results[0].did;
+        const verkey = didInfo.results[0].verkey;
+
+        // Request that steward onboard this DID as an Endorser
+        const agentId = this.controllerHandler.handleAgentId();
+        const req: AxiosRequestConfig = {
+            method: 'POST',
+            url: process.env.STEWARD_URL + '/v1/steward/endorser',
+            data: {
+                did,
+                verkey,
+                alias: agentId
+            }
+        };
+        await this.http.requestWithRetry(req);
+
+        // Save the did and verkey data to profile for later use
+        await this.profileManager.append(agentId, 'did', did);
+        await this.profileManager.append(agentId, 'verkey', verkey);
+
+        return { success: true };
+    }
 }
