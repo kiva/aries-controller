@@ -422,4 +422,51 @@ export class IssuerService {
             revoc_reg_id: record.revoc_reg_id || null,
         };
     }
+
+    /**
+     * Fetches a registered DID or creates a new one
+     * Then requests that a configured Steward onboard the DID with the Endorser role (so they can issue credentials)
+     * Then publicizes the DID for the agent so they can make public calls
+     * TODO right now the steward will automatically approve - eventually we want some manual process for the Steward to decide on approvals
+     */
+    public async requestEndorser(): Promise<any> {
+        if (!process.env.STEWARD_URL) {
+            throw new ProtocolException(ProtocolErrorCode.INVALID_NODE_ENVIRONMENT, 'Environment variable STEWARD_URL is missing');
+        }
+
+        // If there's already a DID registered, use that one, otherwise create a new one.
+        let didInfo;
+        let res = await this.agentCaller.callAgent('GET', `wallet/did`);
+        if (res.results && res.results.length > 0) {
+            didInfo = res.results[0];
+        } else {
+            // Create a new did
+            res = await this.agentCaller.callAgent('POST', `wallet/did/create`);
+            didInfo = res.result;
+        }
+        const did = didInfo.did;
+        const verkey = didInfo.verkey;
+
+        // Request that steward onboard this DID as an Endorser
+        const agentId = this.controllerHandler.handleAgentId();
+        const req: AxiosRequestConfig = {
+            method: 'POST',
+            url: process.env.STEWARD_URL + '/v1/steward/endorser',
+            data: {
+                did,
+                verkey,
+                alias: agentId
+            }
+        };
+        await this.http.requestWithRetry(req);
+
+        // Publicize DID
+        await this.agentCaller.callAgent('POST', `wallet/did/public`, { did });
+
+        // Save the did and verkey data to profile for later use
+        await this.profileManager.append(agentId, 'did', did);
+        await this.profileManager.append(agentId, 'verkey', verkey);
+
+        return { success: true };
+    }
 }

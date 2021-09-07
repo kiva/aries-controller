@@ -237,4 +237,12 @@ export class ApiController {
     public async registerController(@Body(new ProtocolValidationPipe()) body: AgentRegisterReqDto): Promise<any> {
         return await this.agentService.registerController(body);
     }
+
+    /**
+     * Makes a call to a configured steward to onboard the current agent as an endorser
+     */
+    @Post('endorser/request')
+    public async requestEndorser(): Promise<any> {
+        return await this.issuerService.requestEndorser();
+    }
 }
