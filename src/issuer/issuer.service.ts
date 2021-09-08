@@ -476,21 +476,25 @@ export class IssuerService {
      * TODO check is a certain schema/creddef profile already exists and throw and exception if so
      */
     public async addSchemaAndCredDef(body: SchemaCredDefReqDto): Promise<any> {
+        // Set defauts
+        const schemaVersion = body.schemaVersion ?? '1.0.0';
+        const schemaProfileName = body.schemaProfileName ?? `${body.schemaName}.schema.json`;
+        const tag = body.tag ?? 'tag1';
+        const supportRevocation = body.supportRevocation ?? false;
+        const revocationRegistrySize  = body.revocationRegistrySize ?? 100;
+        const credDefProfileName = body.credDefProfileName ?? `${body.schemaName}.cred.def.json`;
+
         // Create schema
         let schemaId = body.schemaId;
         if (!schemaId) {
-            const schemaVersion = body.schemaVersion ?? '1.0.0';
             const data = {
                 schema_name: body.schemaName,
                 schema_version: schemaVersion,
                 attributes: body.attributes,
             };
             const schemaRes = await this.agentCaller.callAgent('POST', 'schemas', null, data);
-            Logger.log(' schemaRes ', schemaRes);
             schemaId = schemaRes.schema_id;
-
-            // Save the schema for good measure but we may not end up needing it down the line
-            const schemaProfileName = body.schemaProfileName ?? `${body.schemaName}.schema.json`;
+            // Save the schema to profiles
             await this.profileManager.save(schemaProfileName, {
                 schema_name: body.schemaName,
                 schema_version: schemaVersion,
@@ -500,21 +504,17 @@ export class IssuerService {
             });
         }
 
-        const tag = body.tag ?? 'tag1';
-        const supportRevocation = body.supportRevocation ?? false;
-        const revocationRegistrySize  = body.revocationRegistrySize ?? 100;
+        // Create cred def
         const credDefRes = await this.createCredDef(schemaId, tag, supportRevocation, revocationRegistrySize);
-        Logger.log(' credDefRes ! ', credDefRes);
         const credDefId = credDefRes.credential_definition_id;
-
-        // Save the cred def to issue against later
-        const credDefProfileName = body.credDefProfileName ?? `${body.schemaName}.cred.def.json`;
+        // Save the cred def to profiles
         await this.profileManager.save(credDefProfileName, {
             schema_name: body.schemaName,
             schema_id: schemaId,
             comment: body.credDefcomment || '',
             attributes: body.attributes,
-            cred_def_id: credDefId
+            cred_def_id: credDefId,
+            credential_proposal: {}
         });
 
         return {
