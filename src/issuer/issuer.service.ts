@@ -11,6 +11,7 @@ import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
 import { ProfileManager } from '../profile/profile.manager';
+import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -468,5 +469,58 @@ export class IssuerService {
         await this.profileManager.append(agentId, 'verkey', verkey);
 
         return { success: true };
+    }
+
+    /**
+     * TODO ensure no spaces in schema name
+     * TODO check is a certain schema/creddef profile already exists and throw and exception if so
+     */
+    public async addSchemaAndCredDef(body: SchemaCredDefReqDto): Promise<any> {
+        // Create schema
+        let schemaId = body.schemaId;
+        if (!schemaId) {
+            const schemaVersion = body.schemaVersion ?? '1.0.0';
+            const data = {
+                schema_name: body.schemaName,
+                schema_version: schemaVersion,
+                attributes: body.attributes,
+            };
+            const schemaRes = await this.agentCaller.callAgent('POST', 'schemas', null, data);
+            Logger.log(' schemaRes ', schemaRes);
+            schemaId = schemaRes.schema_id;
+
+            // Save the schema for good measure but we may not end up needing it down the line
+            const schemaProfileName = body.schemaProfileName ?? `${body.schemaName}.schema.json`;
+            await this.profileManager.save(schemaProfileName, {
+                schema_name: body.schemaName,
+                schema_version: schemaVersion,
+                schema_id: schemaId,
+                comment: body.schemaComment || '',
+                attributes: body.attributes,
+            });
+        }
+
+        const tag = body.tag ?? 'tag1';
+        const supportRevocation = body.supportRevocation ?? false;
+        const revocationRegistrySize  = body.revocationRegistrySize ?? 100;
+        const credDefRes = await this.createCredDef(schemaId, tag, supportRevocation, revocationRegistrySize);
+        Logger.log(' credDefRes ! ', credDefRes);
+        const credDefId = credDefRes.credential_definition_id;
+
+        // Save the cred def to issue against later
+        const credDefProfileName = body.credDefProfileName ?? `${body.schemaName}.cred.def.json`;
+        await this.profileManager.save(credDefProfileName, {
+            schema_name: body.schemaName,
+            schema_id: schemaId,
+            comment: body.credDefcomment || '',
+            attributes: body.attributes,
+            cred_def_id: credDefId
+        });
+
+        return {
+            schemaId,
+            credDefId,
+            success: true
+        };
     }
 }

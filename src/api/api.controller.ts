@@ -23,6 +23,7 @@ import { ProfilesPostReqDto } from './dtos/profiles.post.req.dto';
 import { AgentCallReqDto } from './dtos/agent.call.req.dto';
 import { ProfileManager } from '../profile/profile.manager';
 import { AgentRegisterReqDto } from './dtos/agent.register.req.dto';
+import { SchemaCredDefReqDto } from './dtos/schema.cred.def.req.dto';
 
 /**
  * Contains API routes that we want exposed to the front end via the gateway
@@ -244,5 +245,13 @@ export class ApiController {
     @Post('endorser/request')
     public async requestEndorser(): Promise<any> {
         return await this.issuerService.requestEndorser();
+    }
+
+    /**
+     * Convenience function for adding a schema and a cred def at the same time and saving the profile
+     */
+    @Post('schema-cred-def')
+    public async addSchemaAndCredDef(@Body(new ProtocolValidationPipe()) body: SchemaCredDefReqDto): Promise<any> {
+        return await this.issuerService.addSchemaAndCredDef(body);
     }
 }

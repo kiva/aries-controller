@@ -9,6 +9,7 @@ describe('Tests simplified example flow', () => {
 
     const sascUrl = 'http://localhost:3030';
     const mamcUrl = 'http://localhost:3033';
+    let schemaId;
 
     beforeAll(async () => {
         jest.setTimeout(20000);
@@ -48,6 +49,47 @@ describe('Tests simplified example flow', () => {
             .expect((res) => {
                 expect(res.status).toBe(201);
                 expect(res.body.success).toBe(true);
+            });
+    });
+
+    it('Create schema and cred def', async () => {
+        const data = {
+            schemaName: 'TestSchema',
+            attributes: [
+                'attrib1',
+                'attrib2'
+            ]
+        }
+        return request(mamcUrl)
+            .post('/v2/api/schema-cred-def')
+            .set('agent', 'mamcagent3')
+            .send(data)
+            .expect((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body.schemaId).toBeDefined();
+                expect(res.body.credDefId).toBeDefined();
+                schemaId = res.body.schemaId;
+            });
+    });
+
+    it('Create cred def using existing schema', async () => {
+        const data = {
+            schemaName: 'TestSchema',
+            schemaId,
+            tag: 'tag2',
+            attributes: [
+                'attrib1',
+                'attrib2'
+            ]
+        }
+        return request(mamcUrl)
+            .post('/v2/api/schema-cred-def')
+            .set('agent', 'mamcagent3')
+            .send(data)
+            .expect((res) => {
+                expect(res.status).toBe(201);
+                expect(res.body.schemaId).toBeDefined();
+                expect(res.body.credDefId).toContain('tag2');
             });
     });
    
