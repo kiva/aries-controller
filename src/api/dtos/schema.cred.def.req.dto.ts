@@ -1,16 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsBoolean, IsInt, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsBoolean, IsInt, IsOptional, IsString, Matches } from 'class-validator';
 
 export class SchemaCredDefReqDto {
 
     @ApiProperty({
         type: String,
-        description: `Schema name, should contain no spaces`
+        description: `Schema name, should be a simple name, eg no spaces or special characters except .-_`
     })
-    @IsString() readonly schemaName: string;
+    @IsString() @Matches(/^[a-zA-Z0-9.-_]+$/) readonly schemaName: string;
 
     @ApiProperty({
-        type: Object,
+        type: Array,
         description: `Array list of attribute names`,
         isArray: true
     })
@@ -36,7 +36,7 @@ export class SchemaCredDefReqDto {
         description: `(Optional) Provide a schema profile name to save to profile, by default it takes the schema name and added '.schema.json'`,
         required: false
     })
-    @IsOptional() @IsString() readonly schemaProfileName: string;
+    @IsOptional() @IsString() @Matches(/^[a-zA-Z0-9.-_]+$/) readonly schemaProfileName: string;
 
     @ApiProperty({
         type: String,
@@ -61,7 +61,7 @@ export class SchemaCredDefReqDto {
     @IsOptional() @IsBoolean() readonly supportRevocation: boolean;
 
     @ApiProperty({
-        type: String,
+        type: Number,
         description: `(Optional) The revocation registry size, only set if support revocation is true`,
         required: false
     })
@@ -79,6 +79,6 @@ export class SchemaCredDefReqDto {
         description: `(Optional) Provide a custom cred def profile name. By default this will be the schema name plus .cred.def.json`,
         required: false
     })
-    @IsOptional() @IsString() readonly credDefProfileName: string;
+    @IsOptional() @IsString() @Matches(/^[a-zA-Z0-9.-_]+$/) readonly credDefProfileName: string;
 
 }
