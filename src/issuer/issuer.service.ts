@@ -474,7 +474,7 @@ export class IssuerService {
     /**
      * Convenince endpoint that combines both creating a schema and creating a cred def
      * If a schemaId is provided then we use that for the cred def, and don't create a new schema
-     * @tothink it's possible to override an existing profile, which is ok, but maybe we could display a warning or something (or provide a separate function)
+     * @tothink it's possible to override an existing profile, which could be ok, but maybe we could display a warning or something
      */
     public async addSchemaAndCredDef(body: SchemaCredDefReqDto): Promise<any> {
         // Set defauts
