@@ -14,7 +14,7 @@ describe('Tests simplified example flow', () => {
     let presentationExchangeId
 
     beforeAll(async () => {
-        jest.setTimeout(30000);
+        jest.setTimeout(60000);
     });
 
     it('Register multi agent in multi controller', async () => {
