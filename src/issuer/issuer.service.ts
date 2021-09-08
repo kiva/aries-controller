@@ -11,6 +11,7 @@ import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
 import { ProfileManager } from '../profile/profile.manager';
+import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -468,5 +469,59 @@ export class IssuerService {
         await this.profileManager.append(agentId, 'verkey', verkey);
 
         return { success: true };
+    }
+
+    /**
+     * Convenince endpoint that combines both creating a schema and creating a cred def
+     * If a schemaId is provided then we use that for the cred def, and don't create a new schema
+     * @tothink it's possible to override an existing profile, which could be ok, but maybe we could display a warning or something
+     */
+    public async addSchemaAndCredDef(body: SchemaCredDefReqDto): Promise<any> {
+        // Set defauts
+        const schemaVersion = body.schemaVersion ?? '1.0.0';
+        const schemaProfileName = body.schemaProfileName ?? `${body.schemaName}.schema.json`;
+        const tag = body.tag ?? 'tag1';
+        const supportRevocation = body.supportRevocation ?? false;
+        const revocationRegistrySize  = body.revocationRegistrySize ?? 100;
+        const credDefProfileName = body.credDefProfileName ?? `${body.schemaName}.cred.def.json`;
+
+        // Create schema
+        let schemaId = body.schemaId;
+        if (!schemaId) {
+            const data = {
+                schema_name: body.schemaName,
+                schema_version: schemaVersion,
+                attributes: body.attributes,
+            };
+            const schemaRes = await this.agentCaller.callAgent('POST', 'schemas', null, data);
+            schemaId = schemaRes.schema_id;
+            // Save the schema to profiles
+            await this.profileManager.save(schemaProfileName, {
+                schema_name: body.schemaName,
+                schema_version: schemaVersion,
+                schema_id: schemaId,
+                comment: body.schemaComment || '',
+                attributes: body.attributes,
+            });
+        }
+
+        // Create cred def
+        const credDefRes = await this.createCredDef(schemaId, tag, supportRevocation, revocationRegistrySize);
+        const credDefId = credDefRes.credential_definition_id;
+        // Save the cred def to profiles
+        await this.profileManager.save(credDefProfileName, {
+            schema_name: body.schemaName,
+            schema_id: schemaId,
+            comment: body.credDefcomment || '',
+            attributes: body.attributes,
+            cred_def_id: credDefId,
+            credential_proposal: {}
+        });
+
+        return {
+            schemaId,
+            credDefId,
+            success: true
+        };
     }
 }
