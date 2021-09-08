@@ -1,5 +1,4 @@
 import request from 'supertest';
-import { Logger } from 'protocol-common/logger';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
@@ -15,7 +14,7 @@ describe('Tests simplified example flow', () => {
     let presentationExchangeId
 
     beforeAll(async () => {
-        jest.setTimeout(20000);
+        jest.setTimeout(30000);
     });
 
     it('Register multi agent in multi controller', async () => {
