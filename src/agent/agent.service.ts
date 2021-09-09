@@ -129,6 +129,10 @@ export class AgentService {
     }
 
     public async initProfilesFromDisk(): Promise<void> {
-        await this.profileManager.initFromDisk();
+        try {
+            await this.profileManager.initFromDisk();
+        } catch (e) {
+            Logger.warn('Failed to load profiles, this is ok if no profiles folder is included', e);
+        }
     }
 }

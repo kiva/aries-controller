@@ -1,6 +1,6 @@
 {
   "name": "aries-controller",
-  "version": "1.0.75",
+  "version": "1.0.76",
   "description": "Generic controller for aries agents",
   "license": "Apache-2.0",
   "type": "commonjs",

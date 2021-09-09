@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 /**
@@ -27,5 +27,5 @@ export class AgentRegisterReqDto {
         description: `Single agent only. Whether the agent should be configured to use a tails server (Optional)`,
         required: false,
     })
-    @IsString() @IsOptional() readonly useTailsServer: string;
+    @IsBoolean() @IsOptional() readonly useTailsServer: boolean;
 }
