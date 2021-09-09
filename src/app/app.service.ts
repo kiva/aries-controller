@@ -46,13 +46,17 @@ export class AppService {
     }
 
     /**
-     * Find a give profile JSON and load values into env vars
+     * Find a give profile JSON and load values into env vars (note: generic controllers won't have profiles)
      * @tothink there are a few different ways we could handle these profiles: files, loaded in code directly, database, etc
      */
     public static loadProfile() {
-        const profile = Services.getProfile('profile.json');
-        for (const key of Object.keys(profile)) {
-            process.env[key.toUpperCase()] = profile[key];
+        try {
+            const profile = Services.getProfile('profile.json');
+            for (const key of Object.keys(profile)) {
+                process.env[key.toUpperCase()] = profile[key];
+            }
+        } catch (e) {
+            Logger.warn('Failed to load profile, this is ok if no profile file is included', e);
         }
     }
 
