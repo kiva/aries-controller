@@ -39,11 +39,13 @@ export class MultiAgentCaller implements ICaller {
                 controllerUrl: profile.controllerUrl,
                 ttl: 0, // live indefinitely
                 autoConnect: false,
+                returnToken: true
             }
         };
         const res = await this.http.requestWithRetry(req);
         Logger.log(`Successfully spun up agent ${profile.agentId}`);
         if (!res || !res.data || !res.data.token) {
+            Logger.warn('No token', res.data);
             throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `No token after spinning up agent ${profile.agentId}`);
         }
         await this.profileManger.append(profile.agentId, 'token', res.data.token);
