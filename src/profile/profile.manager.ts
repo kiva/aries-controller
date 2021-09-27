@@ -9,8 +9,8 @@ import { Services } from '../utility/services';
 @Injectable()
 export class ProfileManager  {
 
-    readonly prefix = 'profile_';
-    readonly keysKey = 'keys';
+    protected prefix = 'profile_';
+    protected keysKey = 'keys';
 
     constructor(
         @Inject(CACHE_MANAGER) protected readonly cache: CacheStore,

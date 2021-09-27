@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { IControllerHandler } from './controller.handler.interface';
-import { ProfileManager } from '../profile/profile.manager';
 import { AgentContext } from '../utility/agent.context';
+import { SecretsManager } from '../profile/secrets.manager';
 
 /**
  * The handler for multi-controllers
@@ -13,7 +13,7 @@ import { AgentContext } from '../utility/agent.context';
 export class MultiControllerHandler implements IControllerHandler {
 
     constructor(
-        protected readonly profileManager: ProfileManager,
+        protected readonly secretsManager: SecretsManager,
         protected readonly agentContext: AgentContext
     ) { }
 
@@ -22,7 +22,7 @@ export class MultiControllerHandler implements IControllerHandler {
      */
     public async loadValues(): Promise<any> {
         const agentId = this.handleAgentId();
-        const profile = await this.profileManager.get(agentId);
+        const profile = await this.secretsManager.get(agentId);
 
         if (!profile) {
             throw new ProtocolException(ProtocolErrorCode.NOT_REGISTERED, `No profile found for ${agentId}, need to register first`);
@@ -58,7 +58,7 @@ export class MultiControllerHandler implements IControllerHandler {
      */
     public async handleAdminApiKey(agentId?: string): Promise<string> {
         agentId = agentId ?? this.handleAgentId();
-        const profile = await this.profileManager.get(agentId);
+        const profile = await this.secretsManager.get(agentId);
         if (!profile) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, `No profile found for ${agentId}`);
         }

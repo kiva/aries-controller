@@ -6,6 +6,7 @@ import { SingleControllerHandler } from '../controller.handler/single.controller
 import { ProfileManager } from '../profile/profile.manager';
 import { CONTROLLER_HANDLER } from './controller.handler.interface';
 import { AgentContext } from '../utility/agent.context';
+import { SecretsManager } from '../profile/secrets.manager';
 
 /**
  * Assembles the controller handler module based on single-controller multi-controller
@@ -21,7 +22,7 @@ import { AgentContext } from '../utility/agent.context';
                 ProfileModule,
             ],
             providers: [
-                ProfileManager,
+                SecretsManager,
                 AgentContext,
                 {
                     provide: CONTROLLER_HANDLER,

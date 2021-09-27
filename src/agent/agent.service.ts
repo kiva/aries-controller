@@ -4,8 +4,9 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { LOWER_CASE_LETTERS, NUMBERS, randomString } from 'protocol-common/random.string.generator';
 import { CALLER, ICaller } from '../caller/caller.interface';
-import { ProfileManager } from '../profile/profile.manager';
 import { CONTROLLER_HANDLER, IControllerHandler } from '../controller.handler/controller.handler.interface';
+import { ProfileManager } from '../profile/profile.manager';
+import { SecretsManager } from '../profile/secrets.manager';
 
 /**
  * TODO abstract out a base service that includes things like making connections
@@ -15,9 +16,9 @@ export class AgentService {
 
     constructor(
         private readonly profileManager: ProfileManager,
+        private readonly secretsManager: SecretsManager,
         @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
-        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
     ) {}
 
     /**
@@ -119,11 +120,14 @@ export class AgentService {
         if (exists) {
             throw new ProtocolException(ProtocolErrorCode.DUPLICATE_ENTRY, `Agent id ${profile.agentId} is already registered`);
         }
+        // Save profile with non-secret data
+        await this.profileManager.save(profile.agentId, profile);
 
         profile.walletId = randomString(32, LOWER_CASE_LETTERS + NUMBERS);
         profile.walletKey = randomString(32);
 
-        await this.profileManager.save(profile.agentId, profile);
+        // Save secrets
+        await this.secretsManager.save(profile.agentId, profile);
         await this.init();
         return profile;
     }
