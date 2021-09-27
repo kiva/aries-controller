@@ -116,17 +116,12 @@ export class AgentService {
         }
 
         profile.agentId = this.controllerHandler.handleAgentId();
-        const exists = await this.profileManager.get(profile.agentId);
+        const exists = await this.secretsManager.get(profile.agentId);
         if (exists) {
             throw new ProtocolException(ProtocolErrorCode.DUPLICATE_ENTRY, `Agent id ${profile.agentId} is already registered`);
         }
-        // Save profile with non-secret data
-        await this.profileManager.save(profile.agentId, profile);
-
         profile.walletId = randomString(32, LOWER_CASE_LETTERS + NUMBERS);
         profile.walletKey = randomString(32);
-
-        // Save secrets
         await this.secretsManager.save(profile.agentId, profile);
         await this.init();
         return profile;

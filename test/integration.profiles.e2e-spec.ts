@@ -27,7 +27,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         .get('/v2/api/profiles')
         .expect(200)
         .expect((res) => {
-            console.log(res.body);
             expect(res.body['profile.json']).toStrictEqual({'example': 'profile'});
         });
     });
