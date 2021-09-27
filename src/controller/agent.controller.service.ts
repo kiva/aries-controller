@@ -4,7 +4,6 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentGovernance } from './agent.governance';
 import { HandlersFactory } from './handler/handlers.factory';
-import { ProfileManager } from '../profile/profile.manager';
 import { SecretsManager } from '../profile/secrets.manager';
 
 /**
