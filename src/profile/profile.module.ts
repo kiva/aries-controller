@@ -4,7 +4,7 @@ import { ProfileManager } from './profile.manager';
 import { SecretsManager } from './secrets.manager';
 
 /**
- * For simplicity 
+ * For simplicity we have the ProfileModule export both the Profile and Secrets managers
  */
 @Module({
     imports: [

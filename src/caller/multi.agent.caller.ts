@@ -48,7 +48,6 @@ export class MultiAgentCaller implements ICaller {
             Logger.warn('No token', res.data);
             throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `No token after spinning up agent ${profile.agentId}`);
         }
-        Logger.log('APPENDING TOKEN');
         await this.secretsManger.append(profile.agentId, 'token', res.data.token);
         return res.data;
     }
