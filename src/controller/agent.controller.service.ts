@@ -4,7 +4,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentGovernance } from './agent.governance';
 import { HandlersFactory } from './handler/handlers.factory';
-import { ProfileManager } from '../profile/profile.manager';
+import { SecretsManager } from '../profile/secrets.manager';
 
 /**
  * Handler for ACAPY "webhook" endpoints, which allows agents to automatically respond to agent messages
@@ -17,7 +17,7 @@ export class AgentControllerService {
 
     constructor(
         httpService: HttpService,
-        private readonly profileManager: ProfileManager,
+        private readonly secretsManager: SecretsManager,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
         @Inject('AGENT_GOVERNANCE') private readonly agentGovernance: AgentGovernance) {
         this.http = new ProtocolHttpService(httpService);
@@ -29,7 +29,7 @@ export class AgentControllerService {
      *      This work if captured in this ticket: https://kiva.atlassian.net/browse/PRO-3012
      */
     public async handleRequest(agentId: string, route: string, topic: string, body: any) {
-        const profile: any = await this.profileManager.get(agentId);
+        const profile: any = await this.secretsManager.get(agentId);
 
         // Logic for adminApiKey - eventually this will all be handled by ICaller
         let adminApiKey;

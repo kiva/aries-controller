@@ -6,7 +6,7 @@ import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
-import { ProfileManager } from '../profile/profile.manager';
+import { SecretsManager } from '../profile/secrets.manager';
 
 /**
  * Handles all calls to the multitenant aca-py agent
@@ -18,7 +18,7 @@ export class MultiAgentCaller implements ICaller {
 
     constructor(
         httpService: HttpService,
-        private readonly profileManger: ProfileManager,
+        private readonly secretsManger: SecretsManager,
         @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
     ) {
         this.http = new ProtocolHttpService(httpService);
@@ -48,7 +48,7 @@ export class MultiAgentCaller implements ICaller {
             Logger.warn('No token', res.data);
             throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `No token after spinning up agent ${profile.agentId}`);
         }
-        await this.profileManger.append(profile.agentId, 'token', res.data.token);
+        await this.secretsManger.append(profile.agentId, 'token', res.data.token);
         return res.data;
     }
 
@@ -59,7 +59,7 @@ export class MultiAgentCaller implements ICaller {
         // When calling the multi agent the admin api key is always from the env - it's the multitenant api key
         const adminApiKey = process.env.ADMIN_API_KEY;
         const agentId = this.controllerHandler.handleAgentId();
-        const profile = await this.profileManger.get(agentId);
+        const profile = await this.secretsManger.get(agentId);
         if (!profile) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No profile, agent has not been registered');
         }
