@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { AgentControllerService } from './agent.controller.service';
 import { AgentControllerController } from './agent.controller.controller';
 import { GlobalCacheModule } from '../app/global.cache.module';

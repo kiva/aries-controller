@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { VerifierService } from './verifier.service';
 import { VerifierController } from './verifier.controller';
 import { AgentModule } from '../agent/agent.module';

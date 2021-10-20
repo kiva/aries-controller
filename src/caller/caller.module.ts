@@ -1,11 +1,11 @@
-import { Module, HttpModule, DynamicModule } from '@nestjs/common';
+import { Module, DynamicModule } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { MultiAgentCaller } from './multi.agent.caller';
-import { GlobalCacheModule } from '../app/global.cache.module';
 import { SingleAgentCaller } from './single.agent.caller';
 import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
 import { CALLER } from './caller.interface';
 import { ProfileModule } from '../profile/profile.module';
-import { ProfileManager } from '../profile/profile.manager';
+
 
 /**
  * Assembles the caller module based on whether we're configured for multi-agent or single-agent

@@ -1,4 +1,5 @@
-import { Module, HttpModule } from '@nestjs/common';
+import { Module } from '@nestjs/common';
+import { HttpModule } from '@nestjs/axios';
 import { IssuerService } from './issuer.service';
 import { IssuerController } from './issuer.controller';
 import { GlobalCacheModule } from '../app/global.cache.module';
