@@ -39,10 +39,10 @@
   },
   "dependencies": {
     "@nestjs/axios": "0.0.2",
-    "@nestjs/common": "^8.1.0",
-    "@nestjs/core": "^8.0.6",
+    "@nestjs/common": "^8.0.6",
+    "@nestjs/core": "8.0.6",
     "@nestjs/platform-express": "^8.0.6",
-    "@nestjs/swagger": "^4.8.0",
+    "@nestjs/swagger": "^5.1.0",
     "axios": "^0.21.4",
     "cache-manager": "^3.4.0",
     "cache-manager-fs-hash": "^0.0.9",

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from 'protocol-common/config.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { Reflector } from 'protocol-common/node_modules/@nestjs/core';
 import { LoggingInterceptor } from 'protocol-common/logging.interceptor';
 import { AppService } from './app.service';
 import { AppController } from './app.controller';
@@ -29,6 +30,7 @@ import { ApiModule } from '../api/api.module';
     controllers: [AppController],
     providers: [
       AppService,
+      Reflector,
       {
           provide: APP_INTERCEPTOR,
           useClass: LoggingInterceptor
