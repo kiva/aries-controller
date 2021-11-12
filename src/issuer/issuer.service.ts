@@ -10,7 +10,8 @@ import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
-import { fromBuffer } from 'file-type';
+import fileType from 'file-type';
+// const fileType = require('file-type');
 import { ProfileManager } from '../profile/profile.manager';
 import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 
@@ -19,6 +20,8 @@ import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
  * TODO need to figure out rollbacks - ie if one part fails need to roll back any saved data
  * Note we're using jsonschema here instead of class-validator because even though class-validator says they support json schemas
  *      it doesn't currently work, and in their road map their planning to deprecate it.
+ * Note we're using v12 of file-type because after that they switch to await/async and jsonschema doesn't support that
+ *      do not upgrade unless you want to refactor
  */
 @Injectable()
 export class IssuerService {
@@ -191,7 +194,7 @@ export class IssuerService {
     /**
      * Validates entity data against any validation schema provided in the cred def
      */
-    private validateEntityData(entityData: any, validationSchema: any): Promise<void> {
+    public validateEntityData(entityData: any, validationSchema: any): Promise<void> {
         if (!validationSchema) {
             return;
         }
@@ -204,30 +207,28 @@ export class IssuerService {
 
     /**
      * Decodes either base64 or hex string and determines if it has an image mime-type
-     * The validator doesn't support async functions so we can't use await in fromBuffer :(
+     * Wasn't sure the best way to test whether the string is hex vs base64 so we encode and then decode and see if it matches
      */
     public validatePhoto(input: string): boolean {
-        // Load string into buffer, first trying hex encoding then base64
-        let buf: Buffer;
-        try {
-            buf = Buffer.from(input, 'hex');
-        } catch(e) {
-            try {
-                buf = Buffer.from(input, 'base64');
-            } catch (e2) {
-                Logger.warn('Failed to buffer photo, not hex or base64', e2.message);
-                return false;
+        if (!input) {
+            return false;
+        }
+
+        // Try hex encoding first, then base64 encoding
+        let buf = Buffer.from(input, 'hex');
+        let testString = buf.toString('hex');
+        if (input.toLowerCase() !== testString.toLowerCase()) {
+            Logger.debug('Photo not hex');
+            buf = Buffer.from(input, 'base64');
+            testString = buf.toString('base64');
+            if (input !== testString) {
+                Logger.warn('Photo input isnt hex or base64 encoded');
             }
         }
 
-        // Return the Promise result of fromBuffer
-        const asyncResult = fromBuffer(buf).then(type => {
-            return type.mime.includes('image');
-        }).catch(reason => {
-            Logger.warn('Failed determine mime-type', reason);
-            return false;
-        });
-        return Promise.call(asyncResult);
+        const type = fileType(buf);
+        Logger.log('Photo mime-type', type);
+        return type ? type.mime.includes('image') : false;
     }
 
     /**
