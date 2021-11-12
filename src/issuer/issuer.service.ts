@@ -10,6 +10,7 @@ import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
+import { fromBuffer } from 'file-type';
 import { ProfileManager } from '../profile/profile.manager';
 import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 
@@ -35,6 +36,7 @@ export class IssuerService {
     ) {
         this.http = new ProtocolHttpService(httpService);
         this.validator = new Validator();
+        this.validator.customFormats.photo = this.validatePhoto;
     }
 
     /**
@@ -198,6 +200,34 @@ export class IssuerService {
         if (result.errors.length > 0) {
             throw new ProtocolException(ProtocolErrorCode.VALIDATION_EXCEPTION, 'Errors on schema validation', result.errors);
         }
+    }
+
+    /**
+     * Decodes either base64 or hex string and determines if it has an image mime-type
+     * The validator doesn't support async functions so we can't use await in fromBuffer :(
+     */
+    public validatePhoto(input: string): boolean {
+        // Load string into buffer, first trying hex encoding then base64
+        let buf: Buffer;
+        try {
+            buf = Buffer.from(input, 'hex');
+        } catch(e) {
+            try {
+                buf = Buffer.from(input, 'base64');
+            } catch (e2) {
+                Logger.warn('Failed to buffer photo, not hex or base64', e2.message);
+                return false;
+            }
+        }
+
+        // Return the Promise result of fromBuffer
+        const asyncResult = fromBuffer(buf).then(type => {
+            return type.mime.includes('image');
+        }).catch(reason => {
+            Logger.warn('Failed determine mime-type', reason);
+            return false;
+        });
+        return Promise.call(asyncResult);
     }
 
     /**

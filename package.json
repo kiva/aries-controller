@@ -48,6 +48,7 @@
     "class-validator": "^0.12.2",
     "crypto-js": "^4.0.0",
     "crypto-random-string": "^3.3.1",
+    "file-type": "^16.5.3",
     "jsonschema": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "protocol-common": "0.1.47",
