@@ -11,7 +11,6 @@ import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
 import fileType from 'file-type';
-// const fileType = require('file-type');
 import { ProfileManager } from '../profile/profile.manager';
 import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 
