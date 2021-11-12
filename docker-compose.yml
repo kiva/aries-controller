@@ -37,71 +37,71 @@ services:
             - agency-network
         tty: true
 
-    # sa-mc-controller:
-    #     environment:
-    #         - MULTI_AGENT=false
-    #         - MULTI_CONTROLLER=true
-    #         - PORT=3031
-    #         - SELF_URL=http://sa-mc-controller:3031
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     command: npm run start:debug
-    #     image: sa-mc-controller
-    #     container_name: sa-mc-controller
-    #     working_dir: /www
-    #     ports:
-    #         - "3031:3031"
-    #     volumes:
-    #         - ./:/www
-    #     networks:
-    #         - agency-network
-    #     tty: true
+    sa-mc-controller:
+        environment:
+            - MULTI_AGENT=false
+            - MULTI_CONTROLLER=true
+            - PORT=3031
+            - SELF_URL=http://sa-mc-controller:3031
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: npm run start:debug
+        image: sa-mc-controller
+        container_name: sa-mc-controller
+        working_dir: /www
+        ports:
+            - "3031:3031"
+        volumes:
+            - ./:/www
+        networks:
+            - agency-network
+        tty: true
 
-    # ma-sc-controller:
-    #     environment:
-    #         - MULTI_AGENT=true
-    #         - MULTI_CONTROLLER=false
-    #         - WALLET_ID=mascwallet
-    #         - WALLET_KEY=mascwalletkey
-    #         - AGENT_ID=mascagent
-    #         - PORT=3032
-    #         - SELF_URL=http://ma-sc-controller:3032
-    #         - ADMIN_API_KEY=adminApiKey
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     command: npm run start:debug
-    #     image: ma-sc-controller
-    #     container_name: ma-sc-controller
-    #     working_dir: /www
-    #     ports:
-    #         - "3032:3032"
-    #     volumes:
-    #         - ./:/www
-    #     networks:
-    #         - agency-network
-    #     tty: true
+    ma-sc-controller:
+        environment:
+            - MULTI_AGENT=true
+            - MULTI_CONTROLLER=false
+            - WALLET_ID=mascwallet
+            - WALLET_KEY=mascwalletkey
+            - AGENT_ID=mascagent
+            - PORT=3032
+            - SELF_URL=http://ma-sc-controller:3032
+            - ADMIN_API_KEY=adminApiKey
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: npm run start:debug
+        image: ma-sc-controller
+        container_name: ma-sc-controller
+        working_dir: /www
+        ports:
+            - "3032:3032"
+        volumes:
+            - ./:/www
+        networks:
+            - agency-network
+        tty: true
 
-    # ma-mc-controller:
-    #     environment:
-    #         - MULTI_AGENT=true
-    #         - MULTI_CONTROLLER=true
-    #         - PORT=3033
-    #         - SELF_URL=http://ma-mc-controller:3033
-    #         - ADMIN_API_KEY=adminApiKey
-    #         - STEWARD_URL=http://sa-sc-controller:3030
-    #     build:
-    #         context: .
-    #         dockerfile: Dockerfile
-    #     command: npm run start:debug
-    #     image: ma-mc-controller
-    #     container_name: ma-mc-controller
-    #     working_dir: /www
-    #     ports:
-    #         - "3033:3033"
-    #     volumes:
-    #         - ./:/www
-    #     networks:
-    #         - agency-network
-    #     tty: true
+    ma-mc-controller:
+        environment:
+            - MULTI_AGENT=true
+            - MULTI_CONTROLLER=true
+            - PORT=3033
+            - SELF_URL=http://ma-mc-controller:3033
+            - ADMIN_API_KEY=adminApiKey
+            - STEWARD_URL=http://sa-sc-controller:3030
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: npm run start:debug
+        image: ma-mc-controller
+        container_name: ma-mc-controller
+        working_dir: /www
+        ports:
+            - "3033:3033"
+        volumes:
+            - ./:/www
+        networks:
+            - agency-network
+        tty: true
