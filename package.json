@@ -1,6 +1,6 @@
 {
   "name": "aries-controller",
-  "version": "1.0.80",
+  "version": "1.0.81",
   "description": "Generic controller for aries agents",
   "license": "Apache-2.0",
   "type": "commonjs",
@@ -48,6 +48,7 @@
     "class-validator": "^0.12.2",
     "crypto-js": "^4.0.0",
     "crypto-random-string": "^3.3.1",
+    "file-type": "12.4.2",
     "jsonschema": "^1.4.0",
     "jsonwebtoken": "^8.5.1",
     "protocol-common": "0.1.47",

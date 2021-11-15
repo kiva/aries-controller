@@ -10,6 +10,7 @@ import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { Validator } from 'jsonschema';
+import fileType from 'file-type';
 import { ProfileManager } from '../profile/profile.manager';
 import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 
@@ -18,6 +19,8 @@ import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
  * TODO need to figure out rollbacks - ie if one part fails need to roll back any saved data
  * Note we're using jsonschema here instead of class-validator because even though class-validator says they support json schemas
  *      it doesn't currently work, and in their road map their planning to deprecate it.
+ * Note we're using v12 of file-type because after that they switch to await/async and jsonschema doesn't support that
+ *      do not upgrade unless you want to refactor
  */
 @Injectable()
 export class IssuerService {
@@ -35,6 +38,7 @@ export class IssuerService {
     ) {
         this.http = new ProtocolHttpService(httpService);
         this.validator = new Validator();
+        this.validator.customFormats.photo = this.validatePhoto;
     }
 
     /**
@@ -189,7 +193,7 @@ export class IssuerService {
     /**
      * Validates entity data against any validation schema provided in the cred def
      */
-    private validateEntityData(entityData: any, validationSchema: any): Promise<void> {
+    public validateEntityData(entityData: any, validationSchema: any): Promise<void> {
         if (!validationSchema) {
             return;
         }
@@ -198,6 +202,32 @@ export class IssuerService {
         if (result.errors.length > 0) {
             throw new ProtocolException(ProtocolErrorCode.VALIDATION_EXCEPTION, 'Errors on schema validation', result.errors);
         }
+    }
+
+    /**
+     * Decodes either base64 or hex string and determines if it has an image mime-type
+     * Wasn't sure the best way to test whether the string is hex vs base64 so we encode and then decode and see if it matches
+     */
+    public validatePhoto(input: string): boolean {
+        if (!input) {
+            return false;
+        }
+
+        // Try hex encoding first, then base64 encoding
+        let buf = Buffer.from(input, 'hex');
+        let testString = buf.toString('hex');
+        if (input.toLowerCase() !== testString.toLowerCase()) {
+            Logger.debug('Photo not hex');
+            buf = Buffer.from(input, 'base64');
+            testString = buf.toString('base64');
+            if (input !== testString) {
+                Logger.warn('Photo input isnt hex or base64 encoded');
+            }
+        }
+
+        const type = fileType(buf);
+        Logger.log('Photo mime-type', type);
+        return type ? type.mime.includes('image') : false;
     }
 
     /**
