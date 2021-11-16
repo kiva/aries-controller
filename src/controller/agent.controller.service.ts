@@ -1,4 +1,5 @@
-import { Injectable, HttpService, Inject, CACHE_MANAGER, CacheStore } from '@nestjs/common';
+import { Injectable, Inject, CACHE_MANAGER, CacheStore } from '@nestjs/common';
+import { HttpService } from '@nestjs/axios';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
