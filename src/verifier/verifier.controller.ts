@@ -1,5 +1,6 @@
-import { Controller, Body, Post, Param, Get } from '@nestjs/common';
+import { Controller, Body, Post, Param, Get, Ip } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { Logger } from 'protocol-common/logger';
 import { VerifierService } from './verifier.service';
 
 /**
@@ -9,14 +10,43 @@ import { VerifierService } from './verifier.service';
 @ApiTags('verifier')
 export class VerifierController {
 
+    private rate_limit_list: { ip: string, count: number }[] = [];
+    private list_created_at: Date = new Date();
+
     constructor(private readonly verifierService: VerifierService) {}
+
+    private checkAndLogIp(ipAddress: string): void {
+        // step 1: we are interested in the number of requests over time.  so
+        // check how long its been since we started collecting Ips and reset the list
+        // if the time span has been exceeded.
+        const timeSpan: number = (new Date().getTime() - this.list_created_at.getTime()) / 1000;
+        if (timeSpan > (process.env.RATE_LIMIT_TIME_SPAN_SECS || 30)) {
+            this.list_created_at = new Date();
+            this.rate_limit_list = [];
+        }
+
+        // step 2: collect count for this ip address.
+        const index: number = this.rate_limit_list.findIndex(e => e.ip === ipAddress);
+        if (-1 === index) {
+            this.rate_limit_list.push({ip: ipAddress, count: 1});
+            return;
+        }
+        const count = this.rate_limit_list[index].count + 1;
+        this.rate_limit_list[index] = {ip: ipAddress, count};
+
+        // step 3: record if IP address requests exceed expected limit
+        if (count > (process.env.RATE_LIMIT || 10)) {
+            Logger.warn(`ip address requests exceeding set limit`);
+        }
+    }
 
     /**
      * Verify using the given proof path and connection id
      * Useful for mobile verifications
      */
     @Post('verify')
-    public async verify(@Body() body: any): Promise<any> {
+    public async verify(@Ip() ipAddress: string, @Body() body: any): Promise<any> {
+        this.checkAndLogIp(ipAddress);
         return await this.verifierService.verify(body.proof_profile_path, body.connection_id);
     }
 
