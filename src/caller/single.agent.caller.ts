@@ -7,6 +7,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { ICaller } from './caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { Constants } from 'protocol-common/constants';
 
 /**
  * Caller for a single agent
@@ -86,6 +87,9 @@ export class SingleAgentCaller implements ICaller {
                 return await this.callAgent(method, route, params, data, false);
             }
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
+            if (process.env.NODE_ENV === Constants.PROD) {
+                throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent call failed`);
+            }
             throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
         }
     }
