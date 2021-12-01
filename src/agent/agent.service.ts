@@ -1,4 +1,4 @@
-import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
@@ -23,8 +23,13 @@ export class AgentService {
 
     /**
      * Spin up agent
+     * If AGENCY_DEPLOY is unset then we still deploy, only if explicitly set to false do we not deploy
+     * This maintains the status quo by default, and we can set each controller to false as we update each agent deployment
      */
     public async init(): Promise<any> {
+        if (process.env.AGENCY_DEPLOY === 'false') {
+            return null;
+        }
         return await this.agentCaller.spinUpAgent();
     }
 
