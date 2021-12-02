@@ -51,6 +51,56 @@ jobs:
               exit 1;
             fi
 
+  protocol-integration-tests:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - run:
+          name: Pull protocol-integration-tests
+          command: git clone https://github.com/kiva/protocol-integration-tests ./
+      - run:
+          name: Setup environment
+          command: |
+            ./scripts/setup_env.sh
+            echo $AUTH0_ENV | base64 --decode >> .env
+            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+      - run:
+          name: Node npm setup
+          command: |
+            nvm install v14.15.1
+            node -v
+            nvm alias default v14.15.1
+      - run:
+          name: Get ACAPy
+          command: docker pull bcgovimages/aries-cloudagent:py36-1.16-1_0.7.1
+      - run:
+          name: Override for gateway image
+          command: ./scripts/setup_override.sh -r aries-controller -s demo-controller -f docker-compose.demo.yml
+      - run:
+          name: Start docker compose and wait for readiness
+          command: |
+            docker system prune -f
+            docker-compose -f docker-compose.yml build --no-cache
+            docker-compose -f docker-compose.yml up -d
+            sleep 20
+            docker-compose -f docker-compose.yml logs
+      - run:
+          name: Healthcheck services
+          command: ./scripts/healthstack.sh
+      - run:
+          name: Setup integration tests
+          command: |
+            npm install
+            ./scripts/setup_fixtures.sh
+      - run:
+          name: Running integration tests
+          command: |
+            if ! npm run test ; then
+              echo "Tests failed. Server logs:";
+              docker-compose -f docker-compose.yml logs;
+              exit 1;
+            fi
+
   npm-publish:
     executor:
       name: node/default
@@ -59,7 +109,33 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build
-      - run: ./publish.sh
+      - run: ./scripts/publish.sh
+
+  push-to-dev:
+    machine:
+      image: ubuntu-1604:201903-01
+    parameters:
+      tag:
+        default: latest
+        description: Tag of target services to push to dev
+        type: string
+      service:
+        description: Name of service to push to dev
+        type: string
+      helm-charts:
+        description: Location of the helm charts to be used in this deployment
+        type: string
+    steps:
+      - checkout
+      - kube-orb/install
+      - kube-orb/install-kubeconfig:
+          kubeconfig: KUBECONFIG_BASE64
+      - aws-eks/install-aws-iam-authenticator
+      - helm/install-helm-client:
+          version: v3.2.4
+      - run:
+          name: Deploy service to dev cloud
+          command: helm upgrade --install <<parameters.service>> <<parameters.helm-charts>> --set image.tag=<<parameters.tag>>
 
 workflows:
   build-test-publish:
@@ -74,15 +150,24 @@ workflows:
           filters: # run for all branches AND tags
             tags:
               only: /.*/
-      - npm-publish:
+      - protocol-integration-tests:
           requires:
             - build-and-test
+          filters: # only run for semver tagged versions
+            tags:
+              only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
+            branches:
+              ignore: /.*/
+      - npm-publish:
+          requires:
+            - integration-test
           filters: # only run on main
             branches:
               only: main
       - docker/publish:
           requires:
             - integration-test
+            - protocol-integration-tests
           filters: # only run for semver tagged versions
             tags:
               only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
@@ -92,7 +177,23 @@ workflows:
           dockerfile: Dockerfile.production
           image: kivaprotocol/aries-controller
           tag: << pipeline.git.tag >>,latest
+      - push-to-dev:
+          context:
+            - continuous-deployment-dev
+          requires:
+            - docker/publish
+          filters: # only run for semver tagged versions
+            tags:
+              only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
+            branches:
+              ignore: /.*/
+          tag: << pipeline.git.tag >>
+          service: demo-controller
+          helm-charts: helm-config
 
 orbs:
   node: circleci/node@1.1.6
   docker: circleci/docker@1.3.0
+  kube-orb: circleci/kubernetes@0.11.1
+  aws-eks: circleci/aws-eks@1.0.1
+  helm: circleci/helm@1.2.0
