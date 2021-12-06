@@ -1,6 +1,19 @@
 version: 2.1
 
 jobs:
+  test-env-var:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - run:
+          name: Source env var
+          command: |
+            source scripts/set_local_version.sh
+            echo $LOCAL_VERSION
+      - run:
+          name: Show local version
+          command: echo $LOCAL_VERSION
+
   build-and-test:
     executor:
       name: node/default
@@ -109,7 +122,23 @@ jobs:
       - checkout
       - run: npm install
       - run: npm run build
-      - run: ./scripts/publish.sh
+      - run: echo 'export LOCAL_VERSION=$(jq -r '.version' package.json)' >> $BASH_ENV
+      - run: ./scripts/publish.sh $LOCAL_VERSION
+
+  docker-publish:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - docker/build:
+          dockerfile: Dockerfile.production
+          image: kivaprotocol/aries-controller
+          tag: << pipeline.git.tag >>,latest # TODO: change this, use env var
+      - docker/push:
+          image: kivaprotocol/aries-controller
+          tag: << pipeline.git.tag >>,latest # TODO: change this, use env var
+      - docker/update-description:
+          image: kivaprotocol/aries-controller
 
   push-to-dev:
     machine:
@@ -140,16 +169,20 @@ jobs:
 workflows:
   build-test-publish:
     jobs:
-      - build-and-test:
+      - test-env-var:
           filters: # run for all branches AND tags
             tags:
               only: /.*/
+      - build-and-test:
+          filters: # run for all branches AND tags
+            branches:
+              only: main
       - integration-test:
           requires:
             - build-and-test
           filters: # run for all branches AND tags
-            tags:
-              only: /.*/
+            branches:
+              only: main
       - protocol-integration-tests:
           requires:
             - build-and-test
