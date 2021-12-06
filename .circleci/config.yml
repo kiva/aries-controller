@@ -14,7 +14,7 @@ jobs:
             echo $LOCAL_VERSION
       - run:
           name: Show local version
-          command: echo $LOCAL_VERSION
+          command: echo "LOCAL_VERSION = $LOCAL_VERSION"
 
   build-and-test:
     executor:
