@@ -9,8 +9,7 @@ jobs:
       - run:
           name: Source env var
           command: |
-            source scripts/set_local_version.sh
-            cat scripts/set_local_version.sh >> $BASH_ENV
+            cat scripts/set_local_version_env_var.sh >> $BASH_ENV
             echo $LOCAL_VERSION
       - run:
           name: Show local version
