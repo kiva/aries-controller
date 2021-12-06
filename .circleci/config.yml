@@ -10,7 +10,7 @@ jobs:
           name: Source env var
           command: |
             source scripts/set_local_version.sh
-            echo "export LOCAL_VERSION=$LOCAL_VERSION" >> $BASH_ENV
+            cat scripts/set_local_version.sh >> $BASH_ENV
             echo $LOCAL_VERSION
       - run:
           name: Show local version
