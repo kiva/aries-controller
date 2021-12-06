@@ -7,12 +7,15 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Source env var
+          name: Get and show local version within one step
           command: |
-            cat scripts/set_local_version_env_var.sh >> $BASH_ENV
-            echo $LOCAL_VERSION
+            source scripts/set_local_version_env_var.sh
+            echo "LOCAL_VERSION = $LOCAL_VERSION"
       - run:
-          name: Show local version
+          name: Get local version for cross-step communication
+          command: cat scripts/set_local_version_env_var.sh >> $BASH_ENV
+      - run:
+          name: Show local version from cross-step-communication
           command: echo "LOCAL_VERSION = $LOCAL_VERSION"
 
   build-and-test:
@@ -121,23 +124,33 @@ jobs:
       tag: '14.15.1'
     steps:
       - checkout
-      - run: npm install
-      - run: npm run build
-      - run: echo 'export LOCAL_VERSION=$(jq -r '.version' package.json)' >> $BASH_ENV
-      - run: ./scripts/publish.sh $LOCAL_VERSION
+      - run:
+          name: Install npm dependencies for aries-controller
+          command: npm install
+      - run:
+          name: Build aries-controller
+          command: npm run build
+      - run:
+          name: Publish built aries-controller package to npm registry
+          command: |
+            source scripts/set_local_version_env_var.sh
+            ./scripts/publish.sh $LOCAL_VERSION
 
   docker-publish:
     machine:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
+      - run:
+          name: Get local version of aries-controller
+          command: cat scripts/set_local_version_env_var.sh >> $BASH_ENV
       - docker/build:
           dockerfile: Dockerfile.production
           image: kivaprotocol/aries-controller
-          tag: << pipeline.git.tag >>,latest # TODO: change this, use env var
+          tag: $LOCAL_VERSION,latest
       - docker/push:
           image: kivaprotocol/aries-controller
-          tag: << pipeline.git.tag >>,latest # TODO: change this, use env var
+          tag: $LOCAL_VERSION,latest
       - docker/update-description:
           image: kivaprotocol/aries-controller
 
@@ -145,10 +158,6 @@ jobs:
     machine:
       image: ubuntu-1604:201903-01
     parameters:
-      tag:
-        default: latest
-        description: Tag of target services to push to dev
-        type: string
       service:
         description: Name of service to push to dev
         type: string
@@ -165,7 +174,9 @@ jobs:
           version: v3.2.4
       - run:
           name: Deploy service to dev cloud
-          command: helm upgrade --install <<parameters.service>> <<parameters.helm-charts>> --set image.tag=<<parameters.tag>>
+          command: |
+            source scripts/set_local_version_env_var.sh
+            helm upgrade --install <<parameters.service>> <<parameters.helm-charts>> --set image.tag=$LOCAL_VERSION
 
 workflows:
   build-test-publish:
@@ -221,7 +232,6 @@ workflows:
               only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
             branches:
               ignore: /.*/
-          tag: << pipeline.git.tag >>
           service: demo-controller
           helm-charts: helm-config
 
