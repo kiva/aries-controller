@@ -1,23 +1,6 @@
 version: 2.1
 
 jobs:
-  test-env-var:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - checkout
-      - run:
-          name: Get and show local version within one step
-          command: |
-            source scripts/set_local_version_env_var.sh
-            echo "LOCAL_VERSION = $LOCAL_VERSION"
-      - run:
-          name: Get local version for cross-step communication
-          command: cat scripts/set_local_version_env_var.sh >> $BASH_ENV
-      - run:
-          name: Show local version from cross-step-communication
-          command: echo "LOCAL_VERSION = $LOCAL_VERSION"
-
   build-and-test:
     executor:
       name: node/default
@@ -181,20 +164,16 @@ jobs:
 workflows:
   build-test-publish:
     jobs:
-      - test-env-var:
+      - build-and-test:
           filters: # run for all branches AND tags
             tags:
               only: /.*/
-      - build-and-test:
-          filters: # run for all branches AND tags
-            branches:
-              only: main
       - integration-test:
           requires:
             - build-and-test
           filters: # run for all branches AND tags
-            branches:
-              only: main
+            tags:
+              only: /.*/
       - protocol-integration-tests:
           requires:
             - build-and-test
@@ -206,10 +185,11 @@ workflows:
       - npm-publish:
           requires:
             - integration-test
+            - protocol-integration-tests
           filters: # only run on main
             branches:
               only: main
-      - docker/publish:
+      - docker-publish:
           requires:
             - integration-test
             - protocol-integration-tests
@@ -218,15 +198,12 @@ workflows:
               only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
             branches:
               ignore: /.*/
-          update-description: true
-          dockerfile: Dockerfile.production
-          image: kivaprotocol/aries-controller
-          tag: << pipeline.git.tag >>,latest
       - push-to-dev:
           context:
             - continuous-deployment-dev
           requires:
-            - docker/publish
+            - npm-publish
+            - docker-publish
           filters: # only run for semver tagged versions
             tags:
               only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
