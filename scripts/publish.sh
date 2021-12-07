@@ -2,11 +2,9 @@
 set -ex
 
 # Allow providing a version manually instead of inferring it from package.json
-((localVersion))
+localVersion=$(jq -r '.version' package.json)
 if [ $# -gt 0 ]; then
   localVersion=$1
-else
-  localVersion=$(jq -r '.version' package.json)
 fi
 remoteVersion=$(npm show aries-controller version)
 
