@@ -7,26 +7,16 @@ commands:
       - run:
           name: Check if version of aries-controller is updated
           command: |
-            source scripts/check_version_is_updated.sh
+            source scripts/check_aries_controller_version.sh
             if [ $VERSION_IS_UPDATED = false ] ; then
               echo 'Version is not updated.'
               circleci-agent step halt
             else
               echo 'Version is updated.'
-              cat scripts/check_version_is_updated.sh >> $BASH_ENV
+              cat scripts/check_aries_controller_version.sh >> $BASH_ENV
             fi
 
 jobs:
-  test-failure:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - checkout
-      - check-aries-controller-version
-      - run:
-          name: Should only run if there is an update
-          command: echo "NEW_VERSION = $NEW_VERSION"
-
   build-and-test:
     executor:
       name: node/default
@@ -186,20 +176,16 @@ jobs:
 workflows:
   build-test-publish:
     jobs:
-      - test-failure:
+      - build-and-test:
           filters: # run for all branches AND tags
             tags:
               only: /.*/
-      - build-and-test:
-          filters: # run for all branches AND tags
-            branches:
-              only: main
       - integration-test:
           requires:
             - build-and-test
           filters: # run for all branches AND tags
-            branches:
-              only: main
+            tags:
+              only: /.*/
       - protocol-integration-tests:
           requires:
             - build-and-test
