@@ -7,7 +7,7 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Check if local version of aries-controller is an update
+          name: Check if version of aries-controller is updated
           command: |
             source scripts/check_version_is_updated.sh
             if [ $VERSION_IS_UPDATED = false ] ; then
@@ -16,6 +16,9 @@ jobs:
             else
               echo 'Version is updated.'
             fi
+      - run:
+          name: Should not run if there is no update
+          command: echo 'This should not be here if the version is not updated.'
 
   build-and-test:
     executor:
