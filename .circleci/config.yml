@@ -1,11 +1,9 @@
 version: 2.1
 
-jobs:
-  test-failure:
-    machine:
-      image: ubuntu-1604:201903-01
+commands:
+  check-aries-controller-version:
+    description: Check if there is an update to the version of aries-controller. If there is, set the NEW_VERSION env var.
     steps:
-      - checkout
       - run:
           name: Check if version of aries-controller is updated
           command: |
@@ -15,10 +13,19 @@ jobs:
               circleci-agent step halt
             else
               echo 'Version is updated.'
+              cat scripts/check_version_is_updated.sh >> $BASH_ENV
             fi
+
+jobs:
+  test-failure:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - checkout
+      - check-aries-controller-version
       - run:
-          name: Should not run if there is no update
-          command: echo 'This should not be here if the version is not updated.'
+          name: Should only run if there is an update
+          command: echo "NEW_VERSION = $NEW_VERSION"
 
   build-and-test:
     executor:
@@ -126,6 +133,7 @@ jobs:
       tag: '14.15.1'
     steps:
       - checkout
+      - check-aries-controller-version
       - run:
           name: Install npm dependencies for aries-controller
           command: npm install
@@ -134,25 +142,21 @@ jobs:
           command: npm run build
       - run:
           name: Publish built aries-controller package to npm registry
-          command: |
-            source scripts/set_local_version_env_var.sh
-            ./scripts/publish.sh $LOCAL_VERSION
+          command: ./scripts/publish.sh $NEW_VERSION
 
   docker-publish:
     machine:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - run:
-          name: Get local version of aries-controller
-          command: cat scripts/set_local_version_env_var.sh >> $BASH_ENV
+      - check-aries-controller-version
       - docker/build:
           dockerfile: Dockerfile.production
           image: kivaprotocol/aries-controller
-          tag: $LOCAL_VERSION,latest
+          tag: $NEW_VERSION,latest
       - docker/push:
           image: kivaprotocol/aries-controller
-          tag: $LOCAL_VERSION,latest
+          tag: $NEW_VERSION,latest
       - docker/update-description:
           image: kivaprotocol/aries-controller
 
@@ -168,6 +172,7 @@ jobs:
         type: string
     steps:
       - checkout
+      - check-aries-controller-version
       - kube-orb/install
       - kube-orb/install-kubeconfig:
           kubeconfig: KUBECONFIG_BASE64
@@ -176,9 +181,7 @@ jobs:
           version: v3.2.4
       - run:
           name: Deploy service to dev cloud
-          command: |
-            source scripts/set_local_version_env_var.sh
-            helm upgrade --install <<parameters.service>> <<parameters.helm-charts>> --set image.tag=$LOCAL_VERSION
+          command: helm upgrade --install <<parameters.service>> <<parameters.helm-charts>> --set image.tag=$NEW_VERSION
 
 workflows:
   build-test-publish:
