@@ -2,11 +2,9 @@
 set -ex
 
 # Allow providing a version manually instead of inferring it from package.json
-((localVersion))
+localVersion=$(jq -r '.version' package.json)
 if [ $# -gt 0 ]; then
   localVersion=$1
-else
-  localVersion=$(jq -r '.version' package.json)
 fi
 remoteVersion=$(npm show aries-controller version)
 
@@ -21,6 +19,6 @@ else
   # The .npmrc file is only needed for publish and can cause issues when left around, so manually adding here
   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > dist/.npmrc
   cd dist
-  npm publish --verbose
+#  npm publish --verbose
   cd ..
 fi
