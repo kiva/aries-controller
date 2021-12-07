@@ -164,11 +164,6 @@ jobs:
 workflows:
   build-test-publish:
     jobs:
-      - npm-publish:
-          name: test-npm-publish
-          filters: # run for all branches AND tags
-            tags:
-              only: /.*/
       - build-and-test:
           filters: # run for all branches AND tags
             tags:
