@@ -187,6 +187,8 @@ workflows:
             tags:
               only: /.*/
       - protocol-integration-tests:
+          context:
+            - integration-test-context
           requires:
             - build-and-test
           filters: # only run for semver tagged versions
