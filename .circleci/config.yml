@@ -1,6 +1,18 @@
 version: 2.1
 
 jobs:
+  test-failure:
+    machine:
+      image: ubuntu-1604:201903-01
+    steps:
+      - run:
+          name: Check if local version of aries-controller is an update
+          command: |
+            source scripts/check_version_is_updated.sh
+            if [ $VERSION_IS_UPDATED = false ] ; then
+              circleci-agent step halt
+            fi
+
   build-and-test:
     executor:
       name: node/default
@@ -164,24 +176,26 @@ jobs:
 workflows:
   build-test-publish:
     jobs:
-      - build-and-test:
+      - test-failure:
           filters: # run for all branches AND tags
             tags:
               only: /.*/
+      - build-and-test:
+          filters: # run for all branches AND tags
+            branches:
+              only: main
       - integration-test:
           requires:
             - build-and-test
           filters: # run for all branches AND tags
-            tags:
-              only: /.*/
+            branches:
+              only: main
       - protocol-integration-tests:
           requires:
             - build-and-test
           filters: # only run for semver tagged versions
-            tags:
-              only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
             branches:
-              ignore: /.*/
+              only: main
       - npm-publish:
           requires:
             - integration-test
@@ -194,10 +208,8 @@ workflows:
             - integration-test
             - protocol-integration-tests
           filters: # only run for semver tagged versions
-            tags:
-              only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
             branches:
-              ignore: /.*/
+              only: main
       - push-to-dev:
           context:
             - continuous-deployment-dev
@@ -205,10 +217,8 @@ workflows:
             - npm-publish
             - docker-publish
           filters: # only run for semver tagged versions
-            tags:
-              only: /^([0-9]+)\.([0-9]+)\.([0-9]+)/
             branches:
-              ignore: /.*/
+              only: main
           service: demo-controller
           helm-charts: helm-config
 
