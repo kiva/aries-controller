@@ -140,6 +140,7 @@ jobs:
     steps:
       - checkout
       - check-aries-controller-version
+      - docker/check
       - docker/build:
           dockerfile: Dockerfile.production
           image: kivaprotocol/aries-controller
