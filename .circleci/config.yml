@@ -5,12 +5,16 @@ jobs:
     machine:
       image: ubuntu-1604:201903-01
     steps:
+      - checkout
       - run:
           name: Check if local version of aries-controller is an update
           command: |
             source scripts/check_version_is_updated.sh
             if [ $VERSION_IS_UPDATED = false ] ; then
+              echo 'Version is not updated.'
               circleci-agent step halt
+            else
+              echo 'Version is updated.'
             fi
 
   build-and-test:
