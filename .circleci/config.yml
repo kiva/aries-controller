@@ -118,40 +118,46 @@ jobs:
             fi
 
   publish-packages-and-push-to-dev:
-    executor:
-      name: node/default
-      tag: '14.15.1'
+    machine:
+      image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - check-aries-controller-version
+      - run:
+          name: Node npm setup
+          command: |
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            nvm install v14.15.1
+            node -v
+            nvm alias default v14.15.1
+#      - check-aries-controller-version
       - docker/check
+      - docker/build:
+          dockerfile: Dockerfile.production
+          image: kivaprotocol/aries-controller
+          tag: $NEW_VERSION,latest
       - run:
           name: Install npm dependencies for aries-controller
           command: npm install
       - run:
           name: Build aries-controller
           command: npm run build
-      - run:
-          name: Publish built aries-controller package to npm registry
-          command: ./scripts/publish.sh $NEW_VERSION
-      - docker/build:
-          dockerfile: Dockerfile.production
-          image: kivaprotocol/aries-controller
-          tag: $NEW_VERSION,latest
-      - docker/push:
-          image: kivaprotocol/aries-controller
-          tag: $NEW_VERSION,latest
-      - docker/update-description:
-          image: kivaprotocol/aries-controller
-      - kube-orb/install
+#      - run:
+#          name: Publish built aries-controller package to npm registry
+#          command: ./scripts/publish.sh $NEW_VERSION
+#      - docker/push:
+#          image: kivaprotocol/aries-controller
+#          tag: $NEW_VERSION,latest
+#      - docker/update-description:
+#          image: kivaprotocol/aries-controller
+#      - kube-orb/install
       - kube-orb/install-kubeconfig:
           kubeconfig: KUBECONFIG_BASE64
       - aws-eks/install-aws-iam-authenticator
       - helm/install-helm-client:
           version: v3.2.4
-      - run:
-          name: Deploy service to dev cloud
-          command: helm upgrade --install demo-controller helm-config --set image.tag=$NEW_VERSION
+#      - run:
+#          name: Deploy service to dev cloud
+#          command: helm upgrade --install demo-controller helm-config --set image.tag=$NEW_VERSION
 
 workflows:
   build-test-publish:
@@ -177,12 +183,14 @@ workflows:
       - publish-packages-and-push-to-dev:
           context:
             - continuous-deployment-dev
-          requires:
-            - integration-test
-            - protocol-integration-tests
+#          requires:
+#            - integration-test
+#            - protocol-integration-tests
           filters: # only run on main
-            branches:
-              only: main
+            tags:
+              only: /.*/
+#            branches:
+#              only: main
 
 orbs:
   node: circleci/node@1.1.6
