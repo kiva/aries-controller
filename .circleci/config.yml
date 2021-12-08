@@ -10,6 +10,7 @@ commands:
             source scripts/check_aries_controller_version.sh
             if [ $VERSION_IS_UPDATED = false ] ; then
               echo 'Version is not updated.'
+              cat scripts/check_aries_controller_version.sh >> $BASH_ENV
             else
               echo 'Version is updated.'
               cat scripts/check_aries_controller_version.sh >> $BASH_ENV
