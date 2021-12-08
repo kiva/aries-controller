@@ -10,7 +10,6 @@ commands:
             source scripts/check_aries_controller_version.sh
             if [ $VERSION_IS_UPDATED = false ] ; then
               echo 'Version is not updated.'
-              circleci-agent step halt
             else
               echo 'Version is updated.'
               cat scripts/check_aries_controller_version.sh >> $BASH_ENV
@@ -129,7 +128,7 @@ jobs:
             nvm install v14.15.1
             node -v
             nvm alias default v14.15.1
-#      - check-aries-controller-version
+      - check-aries-controller-version
       - docker/check
       - docker/build:
           dockerfile: Dockerfile.production
