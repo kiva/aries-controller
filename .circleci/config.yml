@@ -10,7 +10,7 @@ commands:
             source scripts/check_aries_controller_version.sh
             if [ $VERSION_IS_UPDATED = false ] ; then
               echo 'Version is not updated.'
-              cat scripts/check_aries_controller_version.sh >> $BASH_ENV
+              circleci-agent step halt
             else
               echo 'Version is updated.'
               cat scripts/check_aries_controller_version.sh >> $BASH_ENV
@@ -141,23 +141,23 @@ jobs:
       - run:
           name: Build aries-controller
           command: npm run build
-#      - run:
-#          name: Publish built aries-controller package to npm registry
-#          command: ./scripts/publish.sh $NEW_VERSION
-#      - docker/push:
-#          image: kivaprotocol/aries-controller
-#          tag: $NEW_VERSION,latest
-#      - docker/update-description:
-#          image: kivaprotocol/aries-controller
-#      - kube-orb/install
+      - run:
+          name: Publish built aries-controller package to npm registry
+          command: ./scripts/publish.sh $NEW_VERSION
+      - docker/push:
+          image: kivaprotocol/aries-controller
+          tag: $NEW_VERSION,latest
+      - docker/update-description:
+          image: kivaprotocol/aries-controller
+      - kube-orb/install
       - kube-orb/install-kubeconfig:
           kubeconfig: KUBECONFIG_BASE64
       - aws-eks/install-aws-iam-authenticator
       - helm/install-helm-client:
           version: v3.2.4
-#      - run:
-#          name: Deploy service to dev cloud
-#          command: helm upgrade --install demo-controller helm-config --set image.tag=$NEW_VERSION
+      - run:
+          name: Deploy service to dev cloud
+          command: helm upgrade --install demo-controller helm-config --set image.tag=$NEW_VERSION
 
 workflows:
   build-test-publish:
@@ -183,14 +183,12 @@ workflows:
       - publish-packages-and-push-to-dev:
           context:
             - continuous-deployment-dev
-#          requires:
-#            - integration-test
-#            - protocol-integration-tests
+          requires:
+            - integration-test
+            - protocol-integration-tests
           filters: # only run on main
-            tags:
-              only: /.*/
-#            branches:
-#              only: main
+            branches:
+              only: main
 
 orbs:
   node: circleci/node@1.1.6
