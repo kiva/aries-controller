@@ -117,13 +117,14 @@ jobs:
               exit 1;
             fi
 
-  npm-publish:
+  publish-packages-and-push-to-dev:
     executor:
       name: node/default
       tag: '14.15.1'
     steps:
       - checkout
       - check-aries-controller-version
+      - docker/check
       - run:
           name: Install npm dependencies for aries-controller
           command: npm install
@@ -133,14 +134,6 @@ jobs:
       - run:
           name: Publish built aries-controller package to npm registry
           command: ./scripts/publish.sh $NEW_VERSION
-
-  docker-publish:
-    machine:
-      image: ubuntu-1604:201903-01
-    steps:
-      - checkout
-      - check-aries-controller-version
-      - docker/check
       - docker/build:
           dockerfile: Dockerfile.production
           image: kivaprotocol/aries-controller
@@ -150,20 +143,6 @@ jobs:
           tag: $NEW_VERSION,latest
       - docker/update-description:
           image: kivaprotocol/aries-controller
-
-  push-to-dev:
-    machine:
-      image: ubuntu-1604:201903-01
-    parameters:
-      service:
-        description: Name of service to push to dev
-        type: string
-      helm-charts:
-        description: Location of the helm charts to be used in this deployment
-        type: string
-    steps:
-      - checkout
-      - check-aries-controller-version
       - kube-orb/install
       - kube-orb/install-kubeconfig:
           kubeconfig: KUBECONFIG_BASE64
@@ -172,7 +151,7 @@ jobs:
           version: v3.2.4
       - run:
           name: Deploy service to dev cloud
-          command: helm upgrade --install <<parameters.service>> <<parameters.helm-charts>> --set image.tag=$NEW_VERSION
+          command: helm upgrade --install demo-controller helm-config --set image.tag=$NEW_VERSION
 
 workflows:
   build-test-publish:
@@ -195,31 +174,15 @@ workflows:
           filters: # only run for semver tagged versions
             branches:
               only: main
-      - npm-publish:
+      - publish-packages-and-push-to-dev:
+          context:
+            - continuous-deployment-dev
           requires:
             - integration-test
             - protocol-integration-tests
           filters: # only run on main
             branches:
               only: main
-      - docker-publish:
-          requires:
-            - integration-test
-            - protocol-integration-tests
-          filters: # only run for semver tagged versions
-            branches:
-              only: main
-      - push-to-dev:
-          context:
-            - continuous-deployment-dev
-          requires:
-            - npm-publish
-            - docker-publish
-          filters: # only run for semver tagged versions
-            branches:
-              only: main
-          service: demo-controller
-          helm-charts: helm-config
 
 orbs:
   node: circleci/node@1.1.6
