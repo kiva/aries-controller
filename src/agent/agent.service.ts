@@ -101,6 +101,7 @@ export class AgentService {
     /**
      *   Common functionality for sending a basic message.  Built for transaction history system but can
      *   be used in any case for sending basic messages.
+     *
      *   @content {any} must be an object.  the format of content depends on the message. For transaction history, see the design doc.
      *   @connectionID {string} connection Id associated with the agent receiving the message
      */
@@ -117,13 +118,13 @@ export class AgentService {
      */
     public async registerController(profile: any) {
         if (process.env.MULTI_CONTROLLER !== 'true') {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, `Can only register in multi-controller mode`);
+            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'Can only register in multi-controller mode');
         }
 
         profile.agentId = this.controllerHandler.handleAgentId();
         const exists = await this.secretsManager.get(profile.agentId);
         if (exists) {
-            throw new ProtocolException(ProtocolErrorCode.DUPLICATE_ENTRY, `Agent id ${profile.agentId} is already registered`);
+            throw new ProtocolException(ProtocolErrorCode.DUPLICATE_ENTRY, `Agent id ${profile.agentId as string} is already registered`);
         }
         profile.walletId = randomString(32, LOWER_CASE_LETTERS + NUMBERS);
         profile.walletKey = randomString(32);

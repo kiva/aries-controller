@@ -8,7 +8,7 @@ import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 export class Proofs extends BaseAgentResponseHandler {
-    private static PROOFS_URL: string = 'present-proof';
+    private static PROOFS_URL = 'present-proof';
 
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
         super();
@@ -125,7 +125,7 @@ export class Proofs extends BaseAgentResponseHandler {
         topic will be "present_proof"
      */
     public async handleAcapyWebhookMsg(
-        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: Body, token?: string
     ): Promise<any> {
 
         if (route !== 'topic' || topic !== 'present_proof') {
@@ -143,7 +143,7 @@ export class Proofs extends BaseAgentResponseHandler {
         };
 
         if (body.role === 'verifier' && body.state === 'presentation_received') {
-            const action: string = 'verify-presentation';
+            const action = 'verify-presentation';
             const templatedCacheKey = `${agentId}-${body.role}-${body.presentation_exchange_id}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
@@ -157,7 +157,7 @@ export class Proofs extends BaseAgentResponseHandler {
 
         if (body.role === 'prover' && body.state === 'request_received') {
             const presentationExchangeId: string = body.presentation_exchange_id;
-            const action: string = 'send-presentation';
+            const action = 'send-presentation';
             const templatedCacheKey = `${agentId}-${body.role}-${presentationExchangeId}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
@@ -216,5 +216,27 @@ export class Proofs extends BaseAgentResponseHandler {
 
         Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
         return;
+    }
+}
+
+interface Body {
+    thread_id: string
+    auto_present: boolean
+    role: string
+    state: string
+    presentation_exchange_id: string
+    connection_id: string
+    initiator: string
+    trace: boolean
+    created_at: string
+    updated_at: string
+    presentation_request: {
+        name: string
+        version: string
+        requested_attributes: {
+            score: any[]
+        }
+        requested_predicates: any
+        nonce: string
     }
 }

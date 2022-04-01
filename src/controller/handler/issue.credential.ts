@@ -12,7 +12,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
     Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections
  */
 export class IssueCredential extends BaseAgentResponseHandler {
-    private static ISSUE_CREDENTIALS_URL: string = 'issue-credential';
+    private static ISSUE_CREDENTIALS_URL = 'issue-credential';
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
         super();
     }
@@ -71,7 +71,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
         issuer credential_acked
     */
     public async handleAcapyWebhookMsg(
-        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: Body, token?: string
     ): Promise<any> {
         if (route !== 'topic' || topic !== 'issue_credential') {
             throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${route}/${topic} is not valid.`);
@@ -102,7 +102,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
         // Not sure why, but sometimes the role for issuer comes back as undefined
         if ((body.role === 'issuer' || body.role === undefined) && body.state === 'request_received') {
             if (body.auto_issue === true) {
-                Logger.info(`Not requesting issuer to issue credential, because auto_issue is true`);
+                Logger.info('Not requesting issuer to issue credential, because auto_issue is true');
                 return;
             }
             const action = 'issue';
@@ -136,5 +136,28 @@ export class IssueCredential extends BaseAgentResponseHandler {
 
         Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
         return;
+    }
+}
+
+interface Body {
+    credential_proposal_dict: object
+    role: string
+    initiator: string
+    thread_id: string
+    credential_offer: object
+    auto_issue: boolean
+    trace: boolean
+    connection_id: string
+    updated_at: string
+    credential_definition_id: string
+    state: string
+    auto_offer: boolean
+    auto_remove: boolean
+    credential_exchange_id: string
+    created_at: string
+    schema_id: string
+    credential_offer_dict: {
+        [index: string]: any
+        credential_preview: any
     }
 }

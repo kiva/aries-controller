@@ -46,7 +46,7 @@ export class SingleAgentCaller implements ICaller {
             }
         };
         const res = await this.http.requestWithRetry(req);
-        Logger.log(`Successfully spun up agent ${profile.agentId}`);
+        Logger.log(`Successfully spun up agent ${profile.agentId as string}`);
         return res.data;
     }
 
@@ -88,9 +88,9 @@ export class SingleAgentCaller implements ICaller {
             }
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             if (process.env.NODE_ENV === Constants.PROD) {
-                throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent call failed`);
+                throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, 'Agent call failed');
             }
-            throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
+            throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message as string}`, { agentRoute: route, ex: e.details });
         }
     }
 
@@ -107,7 +107,7 @@ export class SingleAgentCaller implements ICaller {
             }
         };
         const res = await this.http.requestWithRetry(req);
-        Logger.log(`Successfully spun down agent ${profile.agentId}`);
+        Logger.log(`Successfully spun down agent ${profile.agentId as string}`);
         return res.data;
     }
 }

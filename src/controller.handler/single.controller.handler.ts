@@ -24,7 +24,7 @@ export class SingleControllerHandler implements IControllerHandler {
         const agentId = this.handleAgentId();
         // The webhook url always points back to this controller, references the agent id
         const webhookUrl = `${process.env.SELF_URL}/v1/controller/${agentId}`;
-        return {
+        return Promise.resolve({
             agentId,
             walletId: process.env.WALLET_ID,
             walletKey: process.env.WALLET_KEY,
@@ -34,7 +34,7 @@ export class SingleControllerHandler implements IControllerHandler {
             // below are just needed for single agents
             seed: process.env.SEED,
             useTailsServer: (process.env.USE_TAILS_SERVER === 'true'),
-        };
+        });
     }
 
     /**
@@ -51,6 +51,6 @@ export class SingleControllerHandler implements IControllerHandler {
      * For single controllers the api key is saved as an env var
      */
     public async handleAdminApiKey(): Promise<string> {
-        return process.env.ADMIN_API_KEY;
+        return Promise.resolve(process.env.ADMIN_API_KEY);
     }
 }

@@ -10,7 +10,7 @@ import { VerifierService } from './verifier.service';
 @ApiTags('verifier')
 export class VerifierController {
 
-    private rate_limit_list: { ip: string, count: number }[] = [];
+    private rate_limit_list: { ip: string; count: number }[] = [];
     private list_created_at: Date = new Date();
 
     constructor(private readonly verifierService: VerifierService) {}
@@ -36,7 +36,7 @@ export class VerifierController {
 
         // step 3: record if IP address requests exceed expected limit
         if (count > (process.env.RATE_LIMIT || 10)) {
-            Logger.warn(`ip address requests exceeding set limit`);
+            Logger.warn('ip address requests exceeding set limit');
         }
     }
 

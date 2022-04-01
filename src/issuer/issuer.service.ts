@@ -46,7 +46,7 @@ export class IssuerService {
      */
     public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
         const [credentialData, credDefAttributes, validation] = await this.getCredDefAndSchemaData(credDefProfilePath);
-        this.validateEntityData(validation, entityData);
+        await this.validateEntityData(validation, entityData);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
 
         const ret = await this.issueCredentialSend(credentialData, connectionId, attributes);
@@ -61,9 +61,9 @@ export class IssuerService {
     /**
      * Record the issued credential using the external credential record service
      */
-    public async recordCredential(entityData: any, issuanceRecord: any) {
+    public async recordCredential(entityData: any, issuanceRecord: any): Promise<void> {
         const url = process.env.CREDENTIAL_RECORD_URL;
-        this.callService('POST', url, {
+        await this.callService('POST', url, {
             entityData,
             connection_id: issuanceRecord.connection_id,
             schema_id: issuanceRecord.schema_id,
@@ -76,6 +76,8 @@ export class IssuerService {
             credential_id: issuanceRecord.credential_id,
             revoc_reg_id: issuanceRecord.revoc_reg_id,
             institution: this.controllerHandler.handleAgentId(), // TODO change from institution to agentId in record-service
+        }).catch(e => {
+            Logger.warn(e.message);
         });
     }
 
@@ -94,7 +96,11 @@ export class IssuerService {
             return res.data;
         } catch (e) {
             Logger.warn(`Service call failed to ${url} with ${JSON.stringify(data)}`, e);
-            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `Service call failed: ${e.message}`, { url, ex: e.details });
+            throw new ProtocolException(
+                ProtocolErrorCode.INTERNAL_SERVER_ERROR,
+                `Service call failed: ${e.message as string}`,
+                { url, ex: e.details }
+            );
         }
     }
 
@@ -208,7 +214,7 @@ export class IssuerService {
      * Decodes either base64 or hex string and determines if it has an image mime-type
      * Wasn't sure the best way to test whether the string is hex vs base64 so we encode and then decode and see if it matches
      */
-    public validatePhoto(input: string): boolean {
+    public validatePhoto = (input: string): boolean => {
         if (!input) {
             return false;
         }
@@ -228,7 +234,7 @@ export class IssuerService {
         const type = fileType(buf);
         Logger.log('Photo mime-type', type);
         return type ? type.mime.includes('image') : false;
-    }
+    };
 
     /**
      * Formats entity data in the form of an object into a set of attributes that can be used by Aries, using the cred def attributes as a guide
@@ -382,10 +388,11 @@ export class IssuerService {
     /**
      * Informs the credential record service about a revocation
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     public async recordRevocation(credential_exchange_id : string, returnData : any) {
         const url = process.env.CREDENTIAL_RECORD_URL + '/revoke/' + credential_exchange_id;
         const today = new Date();
-        this.callService('POST', url, {
+        await this.callService('POST', url, {
             revocation_reason: null, // TODO: add an optional reason field to revoke API request body
             revocation_date: today,
             revocation_id: null, // TODO: populate this field from the returned data (or by calling the issuer)
@@ -411,7 +418,7 @@ export class IssuerService {
      *   connection_id, role, state, thread_id
      */
     public async getAllRecords(): Promise<any> {
-        const records = await this.agentCaller.callAgent('GET', `issue-credential/records`);
+        const records = await this.agentCaller.callAgent('GET', 'issue-credential/records');
         const formatted = [];
         for (const record of records.results) {
             formatted.push(this.formatRecord(record));
@@ -467,12 +474,12 @@ export class IssuerService {
 
         // If there's already a DID registered, use that one, otherwise create a new one.
         let didInfo;
-        let res = await this.agentCaller.callAgent('GET', `wallet/did`);
+        let res = await this.agentCaller.callAgent('GET', 'wallet/did');
         if (res.results && res.results.length > 0) {
             didInfo = res.results[0];
         } else {
             // Create a new did
-            res = await this.agentCaller.callAgent('POST', `wallet/did/create`);
+            res = await this.agentCaller.callAgent('POST', 'wallet/did/create');
             didInfo = res.result;
         }
         const did = didInfo.did;
@@ -492,7 +499,7 @@ export class IssuerService {
         await this.http.requestWithRetry(req);
 
         // Publicize DID
-        await this.agentCaller.callAgent('POST', `wallet/did/public`, { did });
+        await this.agentCaller.callAgent('POST', 'wallet/did/public', { did });
 
         // Save the did and verkey data to profile for later use
         await this.profileManager.append(agentId, 'did', did);
@@ -504,6 +511,7 @@ export class IssuerService {
     /**
      * Convenince endpoint that combines both creating a schema and creating a cred def
      * If a schemaId is provided then we use that for the cred def, and don't create a new schema
+     *
      * @tothink it's possible to override an existing profile, which could be ok, but maybe we could display a warning or something
      */
     public async addSchemaAndCredDef(body: SchemaCredDefReqDto): Promise<any> {

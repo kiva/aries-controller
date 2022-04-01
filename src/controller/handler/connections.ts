@@ -11,7 +11,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
     Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections
 */
 export class Connections extends BaseAgentResponseHandler {
-    private static CONNECTIONS_URL: string = 'connections';
+    private static CONNECTIONS_URL = 'connections';
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
         super();
     }
@@ -58,7 +58,7 @@ export class Connections extends BaseAgentResponseHandler {
         topic will be "connections"
     */
     public async handleAcapyWebhookMsg(
-        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: Body, token?: string
     ): Promise<any> {
         const readPermission = async (governanceKey: string, cacheKey: string) => {
             this.agentGovernance.readPermission('connections', governanceKey);
@@ -110,4 +110,18 @@ export class Connections extends BaseAgentResponseHandler {
         Logger.debug(`doing nothing for '${agentId}': route '${route}'; topic '${topic}'; rfc23_state '${body.rfc23_state}';`, body);
         return;
     }
+}
+
+interface Body {
+    connection_id: string
+    their_role: string
+    state: string
+    invitation_key: string
+    routing_state: string
+    accept: string
+    created_at: string
+    rfc23_state: string
+    updated_at: string
+    invitation_mode: string
+    initiator: string
 }

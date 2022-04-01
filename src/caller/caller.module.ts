@@ -1,11 +1,9 @@
 import { Module, HttpModule, DynamicModule } from '@nestjs/common';
 import { MultiAgentCaller } from './multi.agent.caller';
-import { GlobalCacheModule } from '../app/global.cache.module';
 import { SingleAgentCaller } from './single.agent.caller';
 import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
 import { CALLER } from './caller.interface';
 import { ProfileModule } from '../profile/profile.module';
-import { ProfileManager } from '../profile/profile.manager';
 
 /**
  * Assembles the caller module based on whether we're configured for multi-agent or single-agent
@@ -15,7 +13,7 @@ import { ProfileManager } from '../profile/profile.manager';
  export class CallerModule {
     static async registerAsync(): Promise<DynamicModule> {
         const agentCaller = (process.env.MULTI_AGENT === 'true') ? MultiAgentCaller : SingleAgentCaller;
-        return {
+        const dynamicModule: DynamicModule = {
             module: CallerModule,
             imports: [
                 ControllerHandlerModule.registerAsync(),
@@ -32,5 +30,6 @@ import { ProfileManager } from '../profile/profile.manager';
                 CALLER
             ],
         };
+        return Promise.resolve(dynamicModule);
     }
  }

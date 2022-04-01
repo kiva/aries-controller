@@ -44,10 +44,10 @@ export class MultiAgentCaller implements ICaller {
             }
         };
         const res = await this.http.requestWithRetry(req);
-        Logger.log(`Successfully spun up agent ${profile.agentId}`);
+        Logger.log(`Successfully spun up agent ${profile.agentId as string}`);
         if (!res || !res.data || !res.data.token) {
             Logger.warn('No token', res.data);
-            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `No token after spinning up agent ${profile.agentId}`);
+            throw new ProtocolException(ProtocolErrorCode.INTERNAL_SERVER_ERROR, `No token after spinning up agent ${profile.agentId as string}`);
         }
         await this.secretsManger.append(profile.agentId, 'token', res.data.token);
         return res.data;
@@ -64,7 +64,7 @@ export class MultiAgentCaller implements ICaller {
         if (!profile) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No profile, agent has not been registered');
         }
-        const token = profile.token;
+        const token: string = profile.token;
         if (!token) {
             throw new ProtocolException(ProtocolErrorCode.INVALID_PARAMS, 'No token, agent has not been initialized');
         }
@@ -77,7 +77,7 @@ export class MultiAgentCaller implements ICaller {
             data,
             headers: {
                 'x-api-key': adminApiKey,
-                'authorization': 'Bearer ' + token
+                'authorization': `Bearer ${token}`
             },
         };
 
@@ -94,9 +94,9 @@ export class MultiAgentCaller implements ICaller {
             }
             Logger.warn(`Agent call failed to ${url} with ${JSON.stringify(data)}`, e);
             if (process.env.NODE_ENV === Constants.PROD) {
-                throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent call failed`);
+                throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, 'Agent call failed');
             }
-            throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message}`, { agentRoute: route, ex: e.details });
+            throw new ProtocolException(ProtocolErrorCode.AGENT_CALL_FAILED, `Agent: ${e.message as string}`, { agentRoute: route, ex: e.details });
         }
     }
 
