@@ -8,5 +8,5 @@ export interface IAgentResponseHandler {
     // Note agentId is still used for caching
     // These TODOs are captured in this ticket https://kiva.atlassian.net/browse/PRO-3012
     handleAcapyWebhookMsg(agentUrl: string, agentId: string, adminApiKey: string,
-                          route: string, topic: string, body: any, token?: string): Promise<any>
+                          route: string, topic: string, body: any, token?: string): Promise<any>;
 }

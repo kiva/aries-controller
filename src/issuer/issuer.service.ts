@@ -46,7 +46,7 @@ export class IssuerService {
      */
     public async issueCredential(credDefProfilePath: string, connectionId: string, entityData: any): Promise<any> {
         const [credentialData, credDefAttributes, validation] = await this.getCredDefAndSchemaData(credDefProfilePath);
-        await this.validateEntityData(validation, entityData);
+        this.validateEntityData(validation, entityData);
         const attributes = this.formatEntityData(entityData, credDefAttributes);
 
         const ret = await this.issueCredentialSend(credentialData, connectionId, attributes);

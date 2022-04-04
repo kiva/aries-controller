@@ -13,7 +13,7 @@ import { ProfileModule } from '../profile/profile.module';
  export class CallerModule {
     static async registerAsync(): Promise<DynamicModule> {
         const agentCaller = (process.env.MULTI_AGENT === 'true') ? MultiAgentCaller : SingleAgentCaller;
-        const dynamicModule: DynamicModule = {
+        return {
             module: CallerModule,
             imports: [
                 ControllerHandlerModule.registerAsync(),
@@ -30,6 +30,5 @@ import { ProfileModule } from '../profile/profile.module';
                 CALLER
             ],
         };
-        return Promise.resolve(dynamicModule);
     }
  }

@@ -71,7 +71,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
         issuer credential_acked
     */
     public async handleAcapyWebhookMsg(
-        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: Body, token?: string
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         if (route !== 'topic' || topic !== 'issue_credential') {
             throw new ProtocolException(ProtocolErrorCode.AGENCY_GOVERNANCE,`${route}/${topic} is not valid.`);
@@ -89,10 +89,10 @@ export class IssueCredential extends BaseAgentResponseHandler {
 
         if (body.role === 'holder' && body.state === 'offer_received') {
             const action = 'send-request';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.credential_exchange_id}`;
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.credential_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
-            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to send-request ${req.url}`);
             const res = await this.http.requestWithRetry(req);
@@ -106,11 +106,11 @@ export class IssueCredential extends BaseAgentResponseHandler {
                 return;
             }
             const action = 'issue';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.credential_exchange_id}`;
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.credential_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const data = {
                 credential_preview: body.credential_offer_dict.credential_preview
             };
@@ -123,41 +123,19 @@ export class IssueCredential extends BaseAgentResponseHandler {
 
         if (body.role === 'holder' && body.state === 'credential_received') {
             const action = 'store';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.credential_exchange_id}`;
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.credential_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to save credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
 
-        Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
+        Logger.debug(
+            `doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role as string}': state '${body.state as string}'`);
         return;
-    }
-}
-
-interface Body {
-    credential_proposal_dict: object
-    role: string
-    initiator: string
-    thread_id: string
-    credential_offer: object
-    auto_issue: boolean
-    trace: boolean
-    connection_id: string
-    updated_at: string
-    credential_definition_id: string
-    state: string
-    auto_offer: boolean
-    auto_remove: boolean
-    credential_exchange_id: string
-    created_at: string
-    schema_id: string
-    credential_offer_dict: {
-        [index: string]: any
-        credential_preview: any
     }
 }

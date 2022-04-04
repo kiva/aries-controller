@@ -146,7 +146,6 @@ export class AgentGovernance {
     public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                                body: any, token?: string) : Promise<any> {
         let result = false;
-        // eslint-disable-next-line @typescript-eslint/no-for-in-array
         for (const index in this.callbacks) {
             const registration: Registration = this.callbacks[index];
             Logger.debug(`callback found topic: ${registration.topic} id: ${registration.id}`);

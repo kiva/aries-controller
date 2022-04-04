@@ -21,7 +21,7 @@ Happy linting! 💖
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "project": "tsconfig.json",
+        "project": "tsconfig.eslint.json",
         "sourceType": "module"
     },
     "plugins": [
@@ -73,7 +73,7 @@ Happy linting! 💖
             "error",
             {
                 "multiline": {
-                    "delimiter": "none",
+                    "delimiter": "semi",
                     "requireLast": true
                 },
                 "singleline": {
@@ -82,6 +82,7 @@ Happy linting! 💖
                 }
             }
         ],
+        "@typescript-eslint/require-await": "off",
         "@typescript-eslint/member-ordering": "off",
         "@typescript-eslint/naming-convention": "off",
         "@typescript-eslint/no-unsafe-assignment": "off",
@@ -95,6 +96,7 @@ Happy linting! 💖
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-parameter-properties": "off",
+        "@typescript-eslint/no-floating-promises": "off",
         "@typescript-eslint/no-shadow": [
             "error",
             {
@@ -107,6 +109,7 @@ Happy linting! 💖
         "@typescript-eslint/prefer-for-of": "error",
         "@typescript-eslint/prefer-function-type": "error",
         "@typescript-eslint/prefer-namespace-keyword": "error",
+        "@typescript-eslint/no-for-in-array": "off",
         "@typescript-eslint/quotes": [
             "error",
             "single"

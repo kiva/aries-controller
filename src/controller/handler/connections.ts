@@ -58,7 +58,7 @@ export class Connections extends BaseAgentResponseHandler {
         topic will be "connections"
     */
     public async handleAcapyWebhookMsg(
-        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: Body, token?: string
+        agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
         const readPermission = async (governanceKey: string, cacheKey: string) => {
             this.agentGovernance.readPermission('connections', governanceKey);
@@ -74,7 +74,7 @@ export class Connections extends BaseAgentResponseHandler {
         if (true === await this.agentGovernance.invokeHandler(agentUrl, agentId, adminApiKey, route, topic, body, token))
             return;
 
-        const templatedCacheKey = `${agentId}-${body.state}-${body.initiator}`;
+        const templatedCacheKey = `${agentId}-${body.state as string}-${body.initiator as string}`;
 
         // this webhook message indicates an agent received an connection
         // invitation and we want to tell them to accept it, if the policy allows
@@ -83,7 +83,7 @@ export class Connections extends BaseAgentResponseHandler {
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${Connections.CONNECTIONS_URL}/${body.connection_id}/${action}`;
+            const url: string = agentUrl + `/${Connections.CONNECTIONS_URL}/${body.connection_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
 
             Logger.info(`requesting agent to accept connection invite ${req.url}`);
@@ -98,7 +98,7 @@ export class Connections extends BaseAgentResponseHandler {
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${Connections.CONNECTIONS_URL}/${body.connection_id}/${action}`;
+            const url: string = agentUrl + `/${Connections.CONNECTIONS_URL}/${body.connection_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
 
             Logger.info(`requesting initiating agent to complete connection invite ${req.url}`);
@@ -107,21 +107,7 @@ export class Connections extends BaseAgentResponseHandler {
         }
 
 
-        Logger.debug(`doing nothing for '${agentId}': route '${route}'; topic '${topic}'; rfc23_state '${body.rfc23_state}';`, body);
+        Logger.debug(`doing nothing for '${agentId}': route '${route}'; topic '${topic}'; rfc23_state '${body.rfc23_state as string}';`, body);
         return;
     }
-}
-
-interface Body {
-    connection_id: string
-    their_role: string
-    state: string
-    invitation_key: string
-    routing_state: string
-    accept: string
-    created_at: string
-    rfc23_state: string
-    updated_at: string
-    invitation_mode: string
-    initiator: string
 }

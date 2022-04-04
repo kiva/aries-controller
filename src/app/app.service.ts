@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-/* eslint-disable @typescript-eslint/require-await */
 import { Injectable, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { json } from 'body-parser';
@@ -44,7 +42,8 @@ export class AppService {
             SwaggerModule.setup('api-docs', app, document, { customfavIcon: null });
         }
 
-        AppService.loadProfile();
+        // eslint-disable-next-line @typescript-eslint/await-thenable
+        await AppService.loadProfile();
     }
 
     /**
@@ -70,7 +69,7 @@ export class AppService {
      */
     public static async initAgent(app: INestApplication) {
         const agentService = await app.resolve(AgentService);
-        await agentService.initProfilesFromDisk();
+        agentService.initProfilesFromDisk();
         if (process.env.MULTI_CONTROLLER === 'true') {
             return;
         }
@@ -93,7 +92,7 @@ export class AppService {
 
         // Shut down agent on controller shutdown
         // Note: attempted the nestjs method of using OnApplicationShutdown but it didn't work so manually tying into the shut down signals
-        process.on('SIGINT', async () => {
+        process.on('SIGINT', () => {
             agentService.spinDown().catch(e => {
                 Logger.error('Failed to spin down agent servce');
                 Logger.error(e.message);
