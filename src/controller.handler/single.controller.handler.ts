@@ -51,6 +51,6 @@ export class SingleControllerHandler implements IControllerHandler {
      * For single controllers the api key is saved as an env var
      */
     public async handleAdminApiKey(): Promise<string> {
-        return Promise.resolve(process.env.ADMIN_API_KEY);
+        return process.env.ADMIN_API_KEY;
     }
 }

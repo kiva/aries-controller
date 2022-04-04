@@ -14,7 +14,7 @@ import { SecretsManager } from '../profile/secrets.manager';
  export class ControllerHandlerModule {
     static async registerAsync(): Promise<DynamicModule> {
         const controllerHandler = (process.env.MULTI_CONTROLLER === 'true') ? MultiControllerHandler : SingleControllerHandler;
-        const dynamicModule: DynamicModule = {
+        return {
             module: ControllerHandlerModule,
             imports: [
                 GlobalCacheModule,
@@ -32,6 +32,5 @@ import { SecretsManager } from '../profile/secrets.manager';
                 CONTROLLER_HANDLER
             ],
         };
-        return Promise.resolve(dynamicModule);
     }
  }

@@ -61,9 +61,9 @@ export class IssuerService {
     /**
      * Record the issued credential using the external credential record service
      */
-    public async recordCredential(entityData: any, issuanceRecord: any): Promise<void> {
+    public async recordCredential(entityData: any, issuanceRecord: any) {
         const url = process.env.CREDENTIAL_RECORD_URL;
-        await this.callService('POST', url, {
+        this.callService('POST', url, {
             entityData,
             connection_id: issuanceRecord.connection_id,
             schema_id: issuanceRecord.schema_id,
@@ -392,7 +392,7 @@ export class IssuerService {
     public async recordRevocation(credential_exchange_id : string, returnData : any) {
         const url = process.env.CREDENTIAL_RECORD_URL + '/revoke/' + credential_exchange_id;
         const today = new Date();
-        await this.callService('POST', url, {
+        this.callService('POST', url, {
             revocation_reason: null, // TODO: add an optional reason field to revoke API request body
             revocation_date: today,
             revocation_id: null, // TODO: populate this field from the returned data (or by calling the issuer)
