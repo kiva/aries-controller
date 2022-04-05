@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Param, Get } from '@nestjs/common';
+import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { IssuerService } from './issuer.service';
 
@@ -14,6 +14,7 @@ export class IssuerController {
 
     /**
      * Creates a credential definition passed on the passed in data
+     *
      * @tothink we could restrict this just to profiles saved on the controller
      */
     @Post('cred-def')

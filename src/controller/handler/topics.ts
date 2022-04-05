@@ -3,11 +3,11 @@
  * These values must match what comes from acapy
  */
 export class Topics {
-    public static BASIC_MESSAGES: string = 'basicmessages';
-    public static CONNECTIONS: string = 'connections';
-    public static ISSUE_CREDENTIAL: string = 'issue_credential';
-    public static ISSUE_CRED_REV: string = 'issuer_cred_rev';
-    public static PRESENT_PROOF: string = 'present_proof';
-    public static PROBLEM_REPORT: string = 'problem_report';
-    public static REVOCATION_REGISTRY: string = 'revocation_registry';
+    public static BASIC_MESSAGES = 'basicmessages';
+    public static CONNECTIONS = 'connections';
+    public static ISSUE_CREDENTIAL = 'issue_credential';
+    public static ISSUE_CRED_REV = 'issuer_cred_rev';
+    public static PRESENT_PROOF = 'present_proof';
+    public static PROBLEM_REPORT = 'problem_report';
+    public static REVOCATION_REGISTRY = 'revocation_registry';
 }

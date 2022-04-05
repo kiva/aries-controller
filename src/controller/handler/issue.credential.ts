@@ -12,7 +12,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
     Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections
  */
 export class IssueCredential extends BaseAgentResponseHandler {
-    private static ISSUE_CREDENTIALS_URL: string = 'issue-credential';
+    private static ISSUE_CREDENTIALS_URL = 'issue-credential';
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
         super();
     }
@@ -89,10 +89,10 @@ export class IssueCredential extends BaseAgentResponseHandler {
 
         if (body.role === 'holder' && body.state === 'offer_received') {
             const action = 'send-request';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.credential_exchange_id}`;
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.credential_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
-            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to send-request ${req.url}`);
             const res = await this.http.requestWithRetry(req);
@@ -102,15 +102,15 @@ export class IssueCredential extends BaseAgentResponseHandler {
         // Not sure why, but sometimes the role for issuer comes back as undefined
         if ((body.role === 'issuer' || body.role === undefined) && body.state === 'request_received') {
             if (body.auto_issue === true) {
-                Logger.info(`Not requesting issuer to issue credential, because auto_issue is true`);
+                Logger.info('Not requesting issuer to issue credential, because auto_issue is true');
                 return;
             }
             const action = 'issue';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.credential_exchange_id}`;
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.credential_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const data = {
                 credential_preview: body.credential_offer_dict.credential_preview
             };
@@ -123,18 +123,19 @@ export class IssueCredential extends BaseAgentResponseHandler {
 
         if (body.role === 'holder' && body.state === 'credential_received') {
             const action = 'store';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.credential_exchange_id}`;
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.credential_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to save credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
 
-        Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
+        Logger.debug(
+            `doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role as string}': state '${body.state as string}'`);
         return;
     }
 }

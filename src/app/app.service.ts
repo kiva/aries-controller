@@ -42,11 +42,13 @@ export class AppService {
             SwaggerModule.setup('api-docs', app, document, { customfavIcon: null });
         }
 
+        // eslint-disable-next-line @typescript-eslint/await-thenable
         await AppService.loadProfile();
     }
 
     /**
      * Find a give profile JSON and load values into env vars (note: generic controllers won't have profiles)
+     *
      * @tothink there are a few different ways we could handle these profiles: files, loaded in code directly, database, etc
      */
     public static loadProfile() {
@@ -75,12 +77,12 @@ export class AppService {
         try {
             await agentService.init();
         } catch (e) {
-            Logger.log(`Failed to start agent, retrying... ${e.message}`, e);
+            Logger.log(`Failed to start agent, retrying... ${e.message as string}`, e);
             try {
                 await ProtocolUtility.delay(1000);
                 await agentService.init();
             } catch (e2) {
-                Logger.log(`Failed to start agent, exiting... ${e2.message}`, e2);
+                Logger.log(`Failed to start agent, exiting... ${e2.message as string}`, e2);
                 if (process.env.NODE_ENV !== Constants.LOCAL) {
                     // For non-local envs we want k8s to restart, locally we leave it up so we can investigate
                     process.exit(1);
@@ -90,12 +92,18 @@ export class AppService {
 
         // Shut down agent on controller shutdown
         // Note: attempted the nestjs method of using OnApplicationShutdown but it didn't work so manually tying into the shut down signals
-        process.on('SIGINT', async function onSigint() {
-            agentService.spinDown();
+        process.on('SIGINT', () => {
+            agentService.spinDown().catch(e => {
+                Logger.error('Failed to spin down agent servce');
+                Logger.error(e.message);
+            });
         });
 
-        process.on('SIGTERM', function onSigterm() {
-            agentService.spinDown();
+        process.on('SIGTERM', () => {
+            agentService.spinDown().catch(e => {
+                Logger.error('Failed to spin down agent servce');
+                Logger.error(e.message);
+            });
         });
     }
 }

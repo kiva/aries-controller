@@ -3,7 +3,6 @@ import { ProfileModule } from '../profile/profile.module';
 import { GlobalCacheModule } from '../app/global.cache.module';
 import { MultiControllerHandler } from '../controller.handler/multi.controller.handler';
 import { SingleControllerHandler } from '../controller.handler/single.controller.handler';
-import { ProfileManager } from '../profile/profile.manager';
 import { CONTROLLER_HANDLER } from './controller.handler.interface';
 import { AgentContext } from '../utility/agent.context';
 import { SecretsManager } from '../profile/secrets.manager';
