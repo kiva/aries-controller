@@ -30,7 +30,8 @@ export class AppController {
     }
 
     /**
-     * For the uptime statists report
+     * Called by the protocol-services-support service
+     * for uptime statistics reporting "engine".
      */
     @Get('stats')
     generateStatsReport() : ServiceReportDto {
