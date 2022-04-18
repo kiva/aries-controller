@@ -10,12 +10,15 @@ import { HttpConstants } from 'protocol-common/http-context/http.constants';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
+import { ServiceReportDto } from './dtos/service.report.dto';
 
 /**
  * All external traffic will be routed through gateway so no need for things like rate-limiting here
  */
 @Injectable()
 export class AppService {
+
+    private static startedAt: Date;
 
     /**
      * Sets up app in a way that can be used by main.ts and e2e tests
@@ -29,6 +32,8 @@ export class AppService {
 
         // Increase json parse size to handle encoded images
         app.use(json({ limit: HttpConstants.JSON_LIMIT }));
+
+        AppService.startedAt = new Date();
 
         // Load swagger docs and display
         if (process.env.NODE_ENV === Constants.LOCAL) {
@@ -44,6 +49,18 @@ export class AppService {
 
         // eslint-disable-next-line @typescript-eslint/await-thenable
         await AppService.loadProfile();
+    }
+
+    public generateStatsReport(): ServiceReportDto {
+        const report: ServiceReportDto = new ServiceReportDto();
+        report.serviceName = process.env.SERVICE_NAME;
+        report.startedAt = AppService.startedAt.toDateString();
+        report.currentTime = new Date().toDateString();
+        report.versions = ['none'];
+
+        // TODO: once we determine which items we want to check versions on
+        // TODO: we will add the version checks here
+        return report;
     }
 
     /**
