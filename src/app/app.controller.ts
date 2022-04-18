@@ -33,7 +33,7 @@ export class AppController {
      * For the uptime statists report
      */
     @Get('stats')
-    generateStatsReport() : Promise<ServiceReportDto> {
+    generateStatsReport() : ServiceReportDto {
         return this.service.generateStatsReport();
     }
 
