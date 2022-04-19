@@ -1,4 +1,4 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
@@ -8,6 +8,7 @@ import { ICaller } from './caller.interface';
 import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 import { Constants } from 'protocol-common/constants';
+import { HttpService } from '@nestjs/axios';
 
 /**
  * Caller for a single agent

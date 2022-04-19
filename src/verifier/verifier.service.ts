@@ -1,4 +1,4 @@
-import { Injectable, HttpService, CacheStore, CACHE_MANAGER, Inject } from '@nestjs/common';
+import { Injectable, CacheStore, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { Logger } from 'protocol-common/logger';
@@ -9,6 +9,7 @@ import { AgentService } from '../agent/agent.service';
 import { Services } from '../utility/services';
 import { CALLER, ICaller } from '../caller/caller.interface';
 import { ProfileManager } from '../profile/profile.manager';
+import { HttpService } from '@nestjs/axios';
 
 /**
  * TODO maybe more of the kyc logic should be moved in here

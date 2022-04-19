@@ -1,10 +1,11 @@
-import { Injectable, HttpService, Inject, CACHE_MANAGER, CacheStore } from '@nestjs/common';
+import { Injectable, Inject, CACHE_MANAGER, CacheStore } from '@nestjs/common';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
 import { ProtocolException } from 'protocol-common/protocol.exception';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 import { AgentGovernance } from './agent.governance';
 import { HandlersFactory } from './handler/handlers.factory';
 import { SecretsManager } from '../profile/secrets.manager';
+import { HttpService } from '@nestjs/axios';
 
 /**
  * Handler for ACAPY "webhook" endpoints, which allows agents to automatically respond to agent messages

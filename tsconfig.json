@@ -8,6 +8,7 @@
     "noImplicitAny": false,
     "removeComments": true,
     "noLib": false,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -18,11 +19,9 @@
     "esModuleInterop": true
   },
   "include": [
-    "src/**/*",
-    "implementations/**/*"
+    "src/**/*"
   ],
   "exclude": [
-    "node_modules",
-    "**/*.spec.ts"
+    "node_modules"
   ]
 }

@@ -1,4 +1,4 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { Logger } from 'protocol-common/logger';
 import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
@@ -13,6 +13,7 @@ import { Validator } from 'jsonschema';
 import fileType from 'file-type';
 import { ProfileManager } from '../profile/profile.manager';
 import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
+import { HttpService } from '@nestjs/axios';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in

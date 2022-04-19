@@ -16,6 +16,10 @@ export class AgentContext {
         @Inject(REQUEST) protected readonly req: Request,
     ) { }
 
+    private static forbiddenException(msg: string) {
+        return new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, msg, null, 403)
+    }
+
     /**
      * An environment variable can be passed in to either pull the agentId from the auth header (for remote)
      * or from a test header called 'agent' (for local testing)
@@ -34,12 +38,12 @@ export class AgentContext {
     public getAgentIdFromAuth(): string {
         const authHeader = this.req.headers.authorization;
         if (!authHeader) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: No auth header', null, 403);
+            throw AgentContext.forbiddenException('AgentContext: No auth header');
         }
 
         const token = authHeader.slice(7, authHeader.length);
         if (!token) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: No token in auth header', null, 403);
+            throw AgentContext.forbiddenException( 'AgentContext: No token in auth header');
         }
 
         let metaData;
@@ -49,13 +53,13 @@ export class AgentContext {
                 throw new Error();
             }
         } catch (e) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: Failed to decode JWT', null, 403);
+            throw AgentContext.forbiddenException('AgentContext: Failed to decode JWT');
         }
 
         // Custom claims on a OIDC-compliant requires a URI namespace, for generic protocol metadata in Auth0 we use https://protocol.kiva.org/
         const agentId: string = metaData['https://protocol.kiva.org/agent'];
         if (!agentId) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: No agent attribute in token metadata', null, 403);
+            throw AgentContext.forbiddenException('AgentContext: No agent attribute in token metadata');
         }
 
         return agentId;
@@ -65,9 +69,12 @@ export class AgentContext {
      * For local testing, instead of needing a JWT you can just pass the agentId through the 'agent' header
      */
     public getAgentIdFromLocalHeader(): string {
-        const agentHeader = this.req.headers.agent;
+        const agentHeader: string | string[] = this.req.headers.agent;
         if (!agentHeader) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentContext: No agent header', null, 403);
+            throw AgentContext.forbiddenException('AgentContext: No agent header');
+        }
+        if (Array.isArray(agentHeader)) {
+            throw AgentContext.forbiddenException('AgentContext: Agent header can only have 1 value');
         }
         return agentHeader;
     }
