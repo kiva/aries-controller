@@ -6,7 +6,7 @@ import { AgentGovernance } from '../src/controller/agent.governance';
 import { ControllerCallback } from '../src/controller/agent.governance';
 import { AgentGovernanceFactory } from '../src/controller/agent.governance.factory';
 
-describe('Governance tests', () => {
+describe.skip('Governance tests', () => {
     let app: INestApplication;
 
 

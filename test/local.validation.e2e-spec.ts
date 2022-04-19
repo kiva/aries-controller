@@ -10,7 +10,7 @@ import { IssuerService } from '../src/issuer/issuer.service';
  * Local test for validation on the issuerService
  * The function throws an error when validation fails so tests are written to either expect exceptions or not
  */
-describe('Tests input validation against cred def validation schemas', () => {
+describe.skip('Tests input validation against cred def validation schemas', () => {
     let issuerService: IssuerService;
 
     beforeAll(async () => {
