@@ -17,7 +17,7 @@ export class AgentContext {
     ) { }
 
     private static forbiddenException(msg: string) {
-        return new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, msg, null, 403)
+        return new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, msg, null, 403);
     }
 
     /**
