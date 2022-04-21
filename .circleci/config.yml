@@ -15,14 +15,25 @@ commands:
               echo 'Version is updated.'
               cat scripts/check_aries_controller_version.sh >> $BASH_ENV
             fi
+  install-node:
+    description: Install node and npm
+    steps:
+      - run:
+          name: node npm setup
+          command: |
+            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
+            nvm install v14.15.1
+            nvm alias default v14.15.1
+            npm install
 
 jobs:
   build-and-test:
-    executor:
-      name: node/default
-      tag: '14.15.1'
+    machine:
+      docker_layer_caching: true
+      image: ubuntu-2004:202201-02
     steps:
       - checkout
+      - install-node
       - run: npm install
       - run: npm run build
       - run: npm run lint
@@ -34,17 +45,10 @@ jobs:
       image: ubuntu-2004:202201-02
     steps:
       - checkout
+      - install-node
       - run:
-          name: setup shell environment
-          command: |
-            touch .env
-            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run:
-          name: node npm setup
-          command: |
-              nvm install v14.15.1
-              nvm alias default v14.15.1
-              npm install
+          name: setup environment
+          command: touch .env
       - run:
           name: setup docker environments
           command: |
@@ -79,13 +83,7 @@ jobs:
           command: |
             ./scripts/setup_env.sh
             echo $AUTH0_ENV | base64 --decode >> .env
-            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run:
-          name: Node npm setup
-          command: |
-            nvm install v14.15.1
-            node -v
-            nvm alias default v14.15.1
+      - install-node
       - run:
           name: Get ACAPy
           command: docker pull bcgovimages/aries-cloudagent:py36-1.16-1_0.7.1
@@ -122,13 +120,7 @@ jobs:
       image: ubuntu-2004:202201-02
     steps:
       - checkout
-      - run:
-          name: Node npm setup
-          command: |
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            nvm install v14.15.1
-            node -v
-            nvm alias default v14.15.1
+      - install-node
       - check-aries-controller-version
       - docker/check
       - docker/build:

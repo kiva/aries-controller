@@ -6,9 +6,8 @@ import { AgentGovernance } from '../src/controller/agent.governance';
 import { ControllerCallback } from '../src/controller/agent.governance';
 import { AgentGovernanceFactory } from '../src/controller/agent.governance.factory';
 
-describe.skip('Governance tests', () => {
+describe('Governance tests', () => {
     let app: INestApplication;
-
 
     beforeAll(async () => {
         const moduleFixture = await Test.createTestingModule({
