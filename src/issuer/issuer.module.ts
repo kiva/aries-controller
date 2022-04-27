@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { IssuerService } from './issuer.service';
-import { IssuerController } from './issuer.controller';
-import { GlobalCacheModule } from '../app/global.cache.module';
-import { AgentService } from '../agent/agent.service';
-import { CallerModule } from '../caller/caller.module';
-import { ProfileModule } from '../profile/profile.module';
-import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
-import { HttpModule } from '@nestjs/axios';
+import { IssuerService } from './issuer.service.js';
+import { IssuerController } from './issuer.controller.js';
+import { GlobalCacheModule } from '../app/global.cache.module.js';
+import { AgentService } from '../agent/agent.service.js';
+import { CallerModule } from '../caller/caller.module.js';
+import { ProfileModule } from '../profile/profile.module.js';
+import { ControllerHandlerModule } from '../controller.handler/controller.handler.module.js';
+import { ProtocolHttpModule } from 'protocol-common';
 
 /**
  *
  */
 @Module({
     imports: [
-        HttpModule,
+        ProtocolHttpModule,
         GlobalCacheModule,
         CallerModule.registerAsync(),
         ControllerHandlerModule.registerAsync(),

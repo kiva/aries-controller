@@ -1,10 +1,14 @@
+/* eslint-disable import/extensions */
+/**
+ * Disabling import/extensions because this runs against typescript
+ */
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import { AppService } from '../src/app/app.service';
-import { AppController } from '../src/app/app.controller';
-import { AgentGovernance } from '../src/controller/agent.governance';
-import { ControllerCallback } from '../src/controller/agent.governance';
-import { AgentGovernanceFactory } from '../src/controller/agent.governance.factory';
+import { AppService } from '../dist/app/app.service';
+import { AppController } from '../dist/app/app.controller';
+import { AgentGovernance } from '../dist/controller/agent.governance';
+import { ControllerCallback } from '../dist/controller/agent.governance';
+import { AgentGovernanceFactory } from '../dist/controller/agent.governance.factory';
 
 describe('Governance tests', () => {
     let app: INestApplication;
@@ -20,7 +24,7 @@ describe('Governance tests', () => {
     });
 
     it('Governance installed data is valid', () => {
-        const agentGovernance: AgentGovernance = new AgentGovernance('doesnt_matter');
+        new AgentGovernance('doesnt_matter');
     });
 
     it('Governance isValidValue detects invalid value', () => {
@@ -65,12 +69,10 @@ describe('Governance tests', () => {
     it('factory returns previously created instance', async () => {
         const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
         let count = 0;
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                count ++;
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            count ++;
+            return undefined;
+        };
         agentGovernance.registerHandler('1','something', customHandler);
 
         const agentGovernance2 = AgentGovernanceFactory.useFactory();
@@ -82,12 +84,10 @@ describe('Governance tests', () => {
     it('factory returns new instance', async () => {
         const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
         let count = 0;
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                count ++;
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            count ++;
+            return undefined;
+        };
         agentGovernance.registerHandler('2','something', customHandler);
 
         const policyName = process.env.POLICY_NAME;
@@ -101,33 +101,27 @@ describe('Governance tests', () => {
 
     it('Can add custom handler successfully', () =>{
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            return undefined;
+        };
 
         agentGovernance.registerHandler('3','bob', customHandler);
     });
 
     it('Can add second handler with same key successfully', () =>{
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            return undefined;
+        };
 
         agentGovernance.registerHandler('4','bob', customHandler);
     });
 
     it('Can additional handler successfully', () =>{
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            return undefined;
+        };
 
         agentGovernance.registerHandler('5','bob2', customHandler);
     });
@@ -135,12 +129,10 @@ describe('Governance tests', () => {
     it('Invoke custom handler successfully', async () =>{
         let sum = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum ++;
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            sum ++;
+            return undefined;
+        };
 
         agentGovernance.registerHandler('6','bob', customHandler);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
@@ -150,12 +142,10 @@ describe('Governance tests', () => {
     it('No handler handled successfully', async() =>{
         let sum = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum ++;
-                return undefined;
-            };
+        const customHandler: ControllerCallback = (): Promise<any> => {
+            sum ++;
+            return undefined;
+        };
 
         agentGovernance.registerHandler('7','bob', customHandler);
         await agentGovernance.invokeHandler('', '', '', '', 'not-bob', '');
@@ -167,24 +157,18 @@ describe('Governance tests', () => {
         let sum2 = 0;
         let sum3 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler1: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum1 ++;
-                return undefined;
-            };
-        const customHandler2: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum2 ++;
-                return undefined;
-            };
-        const customHandler3: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum3 ++;
-                return undefined;
-            };
+        const customHandler1: ControllerCallback = (): Promise<any> => {
+            sum1 ++;
+            return undefined;
+        };
+        const customHandler2: ControllerCallback = (): Promise<any> => {
+            sum2 ++;
+            return undefined;
+        };
+        const customHandler3: ControllerCallback = (): Promise<any> => {
+            sum3 ++;
+            return undefined;
+        };
 
         agentGovernance.registerHandler('8','bob', customHandler1);
         agentGovernance.registerHandler('9','bob', customHandler2);
@@ -198,12 +182,10 @@ describe('Governance tests', () => {
     it('Register same callback id twice successfully', async() => {
         let sum1 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler1: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum1 ++;
-                return undefined;
-            };
+        const customHandler1: ControllerCallback = (): Promise<any> => {
+            sum1 ++;
+            return undefined;
+        };
 
         agentGovernance.registerHandler('8','bob', customHandler1);
         agentGovernance.registerHandler('8','bob', customHandler1);
@@ -215,18 +197,14 @@ describe('Governance tests', () => {
         let sum1 = 0;
         let sum2 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler1: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum1++;
-                return undefined;
-            };
-        const customHandler2: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum2++;
-                return undefined;
-            };
+        const customHandler1: ControllerCallback = (): Promise<any> => {
+            sum1++;
+            return undefined;
+        };
+        const customHandler2: ControllerCallback = (): Promise<any> => {
+            sum2++;
+            return undefined;
+        };
 
         agentGovernance.registerHandler('8', 'bob', customHandler1);
         agentGovernance.registerHandler('9', 'bob', customHandler2);
@@ -241,24 +219,18 @@ describe('Governance tests', () => {
         let sum2 = 0;
         let sum3 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const customHandler1: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum1++;
-                return undefined;
-            };
-        const customHandler2: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum2++;
-                return undefined;
-            };
-        const customHandler3: ControllerCallback =
-            (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
-             body: any, token?: string): Promise<any> => {
-                sum3 ++;
-                return undefined;
-            };
+        const customHandler1: ControllerCallback = (): Promise<any> => {
+            sum1++;
+            return undefined;
+        };
+        const customHandler2: ControllerCallback = (): Promise<any> => {
+            sum2++;
+            return undefined;
+        };
+        const customHandler3: ControllerCallback = (): Promise<any> => {
+            sum3 ++;
+            return undefined;
+        };
 
         agentGovernance.registerHandler('8', 'bob', customHandler1);
         agentGovernance.registerHandler('9', 'bob', customHandler2);

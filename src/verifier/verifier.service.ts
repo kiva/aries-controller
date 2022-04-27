@@ -1,15 +1,10 @@
 import { Injectable, CacheStore, CACHE_MANAGER, Inject } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
-import { AgentService } from '../agent/agent.service';
-import { Services } from '../utility/services';
-import { CALLER, ICaller } from '../caller/caller.interface';
-import { ProfileManager } from '../profile/profile.manager';
-import { HttpService } from '@nestjs/axios';
+import { ProtocolHttpService, Logger, ProtocolException, ProtocolErrorCode, ProtocolUtility } from 'protocol-common';
+import { AgentService } from '../agent/agent.service.js';
+import { Services } from '../utility/services.js';
+import { CALLER, ICaller } from '../caller/caller.interface.js';
+import { ProfileManager } from '../profile/profile.manager.js';
 
 /**
  * TODO maybe more of the kyc logic should be moved in here
@@ -17,17 +12,13 @@ import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class VerifierService {
 
-    private readonly http: ProtocolHttpService;
-
     constructor(
         private readonly agentService: AgentService,
-        httpService: HttpService,
+        private readonly http: ProtocolHttpService,
         @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
         private readonly profileManager: ProfileManager,
-    ) {
-        this.http = new ProtocolHttpService(httpService);
-    }
+    ) {}
 
     public async verify(proofProfilePath: string, connectionId: string): Promise<any> {
         const proofProfile = await this.profileManager.get(proofProfilePath);

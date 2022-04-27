@@ -1,10 +1,12 @@
 /* eslint-disable max-len */
+/* eslint-disable import/extensions */
 /**
  * Disabling max-len for this file because photo~attach values be long, bro
+ * Disabling import/extensions because this runs against typescript
  */
 import { Test } from '@nestjs/testing';
-import { IssuerModule } from '../src/issuer/issuer.module';
-import { IssuerService } from '../src/issuer/issuer.service';
+import { IssuerModule } from '../dist/issuer/issuer.module';
+import { IssuerService } from '../dist/issuer/issuer.service';
 
 /**
  * Local test for validation on the issuerService

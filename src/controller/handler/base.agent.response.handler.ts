@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import { IAgentResponseHandler } from './agent.response.handler';
+import { IAgentResponseHandler } from './agent.response.handler.js';
 
 /*
     This class contains functions found in derived classes.  This class should never

@@ -2,8 +2,7 @@ import { Inject } from '@nestjs/common';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { ProtocolException, ProtocolErrorCode } from 'protocol-common';
 
 /**
  * To authenticate with a given agent there needs to be an agentId specified

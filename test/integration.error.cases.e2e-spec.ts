@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { ProtocolUtility } from 'protocol-common';
 
 /**
  * This test executes some common error cases

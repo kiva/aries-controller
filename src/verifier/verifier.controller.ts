@@ -1,7 +1,7 @@
 import { Controller, Body, Post, Param, Get, Ip } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Logger } from 'protocol-common/logger';
-import { VerifierService } from './verifier.service';
+import { Logger } from 'protocol-common';
+import { VerifierService } from './verifier.service.js';
 
 /**
  * Routes to support the verifier role

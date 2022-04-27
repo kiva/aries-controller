@@ -1,11 +1,11 @@
 import { Module, DynamicModule } from '@nestjs/common';
-import { ProfileModule } from '../profile/profile.module';
-import { GlobalCacheModule } from '../app/global.cache.module';
-import { MultiControllerHandler } from '../controller.handler/multi.controller.handler';
-import { SingleControllerHandler } from '../controller.handler/single.controller.handler';
-import { CONTROLLER_HANDLER } from './controller.handler.interface';
-import { AgentContext } from '../utility/agent.context';
-import { SecretsManager } from '../profile/secrets.manager';
+import { ProfileModule } from '../profile/profile.module.js';
+import { GlobalCacheModule } from '../app/global.cache.module.js';
+import { MultiControllerHandler } from './multi.controller.handler.js';
+import { SingleControllerHandler } from './single.controller.handler.js';
+import { CONTROLLER_HANDLER } from './controller.handler.interface.js';
+import { AgentContext } from '../utility/agent.context.js';
+import { SecretsManager } from '../profile/secrets.manager.js';
 
 /**
  * Assembles the controller handler module based on single-controller multi-controller

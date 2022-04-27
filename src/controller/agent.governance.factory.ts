@@ -1,4 +1,4 @@
-import { AgentGovernance } from './agent.governance';
+import { AgentGovernance } from './agent.governance.js';
 
 
 const governanceMap = new Map<string, AgentGovernance>();

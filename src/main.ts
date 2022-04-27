@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { INestApplication } from '@nestjs/common';
-import { Logger } from 'protocol-common/logger';
-import { AppModule } from './app/app.module';
-import { AppService } from './app/app.service';
+import { Logger } from 'protocol-common';
+import { AppModule } from './app/app.module.js';
+import { AppService } from './app/app.service.js';
 
 let app: INestApplication;
 const bootstrap = async () => {

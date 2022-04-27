@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { IControllerHandler } from './controller.handler.interface';
-import { ProfileManager } from '../profile/profile.manager';
-import { AgentContext } from '../utility/agent.context';
+import { ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { IControllerHandler } from './controller.handler.interface.js';
+import { ProfileManager } from '../profile/profile.manager.js';
+import { AgentContext } from '../utility/agent.context.js';
 
 /**
  * Single controllers can fetch all values from env vars

@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { ProtocolUtility } from 'protocol-common';
 
 /**
  * This test goes over the 4 combinations of single/multi agent/controller and ensures the basic functionality works

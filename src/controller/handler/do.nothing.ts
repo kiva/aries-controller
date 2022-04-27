@@ -1,8 +1,7 @@
 import { CacheStore } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { Logger } from 'protocol-common/logger';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { AgentGovernance } from '../agent.governance';
+import { Logger, ProtocolHttpService } from 'protocol-common';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
+import { AgentGovernance } from '../agent.governance.js';
 
 /**
  * This handler is for any topics that don't require any special handling

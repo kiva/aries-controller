@@ -1,11 +1,8 @@
 import { CacheStore } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { Logger } from 'protocol-common/logger';
-import { AgentGovernance } from '../agent.governance';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode, Logger } from 'protocol-common';
+import { AgentGovernance } from '../agent.governance.js';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
 
 export class Proofs extends BaseAgentResponseHandler {
     private static PROOFS_URL = 'present-proof';

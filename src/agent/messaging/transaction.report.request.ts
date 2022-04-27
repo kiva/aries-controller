@@ -1,4 +1,4 @@
-import { VerificationItem } from './verification.item';
+import { VerificationItem } from './verification.item.js';
 
 /**
  *  Used between TDC and TRO to build a report (such as a credit report) The report is requested from FSP (FSP

@@ -1,17 +1,14 @@
 import { CacheStore } from '@nestjs/common';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { Logger } from 'protocol-common/logger';
-import { IAgentResponseHandler } from './agent.response.handler';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { Connections } from './connections';
-import { AgentGovernance } from '../agent.governance';
-import { Proofs } from './proof';
-import { IssueCredential } from './issue.credential';
-import { ProblemReport } from './problem.report';
-import { DoNothing } from './do.nothing';
-import { BasicMessage } from './basic.message';
-import { Topics } from './topics';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { Logger, ProtocolException,ProtocolErrorCode, ProtocolHttpService } from 'protocol-common';
+import { IAgentResponseHandler } from './agent.response.handler.js';
+import { Connections } from './connections.js';
+import { AgentGovernance } from '../agent.governance.js';
+import { Proofs } from './proof.js';
+import { IssueCredential } from './issue.credential.js';
+import { ProblemReport } from './problem.report.js';
+import { DoNothing } from './do.nothing.js';
+import { BasicMessage } from './basic.message.js';
+import { Topics } from './topics.js';
 
 /*
     @TODO we want to replace this factory with nestjs injection at some point

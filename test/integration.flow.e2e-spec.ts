@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { ProtocolUtility } from 'protocol-common';
 
 /**
  * This test goes through the simplified flow of registering an agent, creating schemas, issuing and verifying credentials,etc

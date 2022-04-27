@@ -1,11 +1,8 @@
 import { AxiosRequestConfig } from 'axios';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { AgentGovernance } from '../agent.governance';
+import { Logger, ProtocolHttpService, ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
+import { AgentGovernance } from '../agent.governance.js';
 import { CacheStore } from '@nestjs/common';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 /*
     Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections

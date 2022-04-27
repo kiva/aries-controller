@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CALLER, ICaller } from '../caller/caller.interface';
+import { CALLER, ICaller } from '../caller/caller.interface.js';
 
 /**
  *

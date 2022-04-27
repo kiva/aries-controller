@@ -1,11 +1,8 @@
 import { Injectable, Inject, CACHE_MANAGER, CacheStore } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { AgentGovernance } from './agent.governance';
-import { HandlersFactory } from './handler/handlers.factory';
-import { SecretsManager } from '../profile/secrets.manager';
-import { HttpService } from '@nestjs/axios';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { AgentGovernance } from './agent.governance.js';
+import { HandlersFactory } from './handler/handlers.factory.js';
+import { SecretsManager } from '../profile/secrets.manager.js';
 
 /**
  * Handler for ACAPY "webhook" endpoints, which allows agents to automatically respond to agent messages
@@ -14,15 +11,12 @@ import { HttpService } from '@nestjs/axios';
 @Injectable()
 export class AgentControllerService {
 
-    private readonly http: ProtocolHttpService;
-
     constructor(
-        httpService: HttpService,
+        private readonly http: ProtocolHttpService,
         private readonly secretsManager: SecretsManager,
         @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
-        @Inject('AGENT_GOVERNANCE') private readonly agentGovernance: AgentGovernance) {
-        this.http = new ProtocolHttpService(httpService);
-    }
+        @Inject('AGENT_GOVERNANCE') private readonly agentGovernance: AgentGovernance
+    ) {}
 
     /**
      * TODO right now I'm duplicating a lot of the multi/single agent/controller logic because I don't want to refactor the HandlersFactory yet

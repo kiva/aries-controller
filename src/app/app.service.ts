@@ -1,16 +1,10 @@
 import { Injectable, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { json } from 'body-parser';
-import { ProtocolExceptionFilter } from 'protocol-common/protocol.exception.filter';
-import { Logger } from 'protocol-common/logger';
-import { DatadogLogger } from 'protocol-common/datadog.logger';
-import { traceware } from 'protocol-common/tracer';
-import { Constants } from 'protocol-common/constants';
-import { HttpConstants } from 'protocol-common/http-context/http.constants';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
-import { AgentService } from '../agent/agent.service';
-import { Services } from '../utility/services';
-import { ServiceReportDto } from './dtos/service.report.dto';
+import bodyParser from 'body-parser';
+import { Logger, ProtocolExceptionFilter, DatadogLogger, traceware, Constants, HttpConstants, ProtocolUtility } from 'protocol-common';
+import { AgentService } from '../agent/agent.service.js';
+import { Services } from '../utility/services.js';
+import { ServiceReportDto } from './dtos/service.report.dto.js';
 
 /**
  * All external traffic will be routed through gateway so no need for things like rate-limiting here
@@ -31,7 +25,7 @@ export class AppService {
         app.useGlobalFilters(new ProtocolExceptionFilter());
 
         // Increase json parse size to handle encoded images
-        app.use(json({ limit: HttpConstants.JSON_LIMIT }));
+        app.use(bodyParser.json({ limit: HttpConstants.JSON_LIMIT }));
 
         AppService.startedAt = new Date();
 
