@@ -8,7 +8,7 @@ import { BaseAgentResponseHandler } from './base.agent.response.handler';
 import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 export class Proofs extends BaseAgentResponseHandler {
-    private static PROOFS_URL: string = 'present-proof';
+    private static PROOFS_URL = 'present-proof';
 
     constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
         super();
@@ -143,12 +143,12 @@ export class Proofs extends BaseAgentResponseHandler {
         };
 
         if (body.role === 'verifier' && body.state === 'presentation_received') {
-            const action: string = 'verify-presentation';
-            const templatedCacheKey = `${agentId}-${body.role}-${body.presentation_exchange_id}`;
+            const action = 'verify-presentation';
+            const templatedCacheKey = `${agentId}-${body.role as string}-${body.presentation_exchange_id as string}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
-            const url: string = agentUrl + `/${Proofs.PROOFS_URL}/records/${body.presentation_exchange_id}/${action}`;
+            const url: string = agentUrl + `/${Proofs.PROOFS_URL}/records/${body.presentation_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             Logger.info(`requesting holder to present proof ${req.url}`);
             const res = await this.http.requestWithRetry(req);
@@ -157,8 +157,8 @@ export class Proofs extends BaseAgentResponseHandler {
 
         if (body.role === 'prover' && body.state === 'request_received') {
             const presentationExchangeId: string = body.presentation_exchange_id;
-            const action: string = 'send-presentation';
-            const templatedCacheKey = `${agentId}-${body.role}-${presentationExchangeId}`;
+            const action = 'send-presentation';
+            const templatedCacheKey = `${agentId}-${body.role as string}-${presentationExchangeId}`;
             await this.checkPolicyForAction(action, templatedCacheKey);
             await readPermission(action, templatedCacheKey);
 
@@ -169,7 +169,7 @@ export class Proofs extends BaseAgentResponseHandler {
             // Handle no matching credentials case
             if (Object.keys(credentials).length === 0) {
                 Logger.warn('No matching credentials for proof request, sending problem-report');
-                url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/problem-report`;
+                url = agentUrl + `/present-proof/records/${body.presentation_exchange_id as string}/problem-report`;
                 const problemReportReq: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
                 // We send JSON encoded code & message to allow easily throwing a protocol exception
                 problemReportReq.data = {
@@ -207,14 +207,15 @@ export class Proofs extends BaseAgentResponseHandler {
             }
 
             const reply = { trace: false, requested_predicates, requested_attributes, self_attested_attributes };
-            url = agentUrl + `/present-proof/records/${body.presentation_exchange_id}/${action}`;
+            url = agentUrl + `/present-proof/records/${body.presentation_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             req.data = reply;
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
 
-        Logger.debug(`doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role}': state '${body.state}'`);
+        Logger.debug(
+            `doing nothing for '${agentId}': route '${route}': topic '${topic}': role '${body.role as string}': state '${body.state as string}'`);
         return;
     }
 }

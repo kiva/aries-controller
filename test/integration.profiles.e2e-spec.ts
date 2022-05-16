@@ -1,6 +1,4 @@
 import request from 'supertest';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
  * This test goes over the 4 combinations of single/multi agent/controller and ensures the basic functionality works
@@ -12,13 +10,13 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     const sascUrl = 'http://localhost:3030';
     const profile1 = {
-        "testKey": "testValue1"
+        'testKey': 'testValue1'
     };
     const profile2 = {
-        "testKey": "testValue2"
+        'testKey': 'testValue2'
     };
 
-    beforeAll(async () => {
+    beforeAll(() => {
         jest.setTimeout(20000);
     });
 
@@ -33,9 +31,9 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Add profile 1', async () => {
         const data = {
-            "profileName": "profile1.json",
-            "profile": profile1
-        }
+            'profileName': 'profile1.json',
+            'profile': profile1
+        };
         return request(sascUrl)
             .post('/v2/api/profiles')
             .send(data)
@@ -46,9 +44,9 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Add profile 2', async () => {
         const data = {
-            "profileName": "profile2.json",
-            "profile": profile2
-        }
+            'profileName': 'profile2.json',
+            'profile': profile2
+        };
         return request(sascUrl)
             .post('/v2/api/profiles')
             .send(data)

@@ -47,7 +47,7 @@ export class AgentControllerService {
         if (process.env.MULTI_AGENT === 'true') {
             agentUrl = process.env.MULTITENANT_URL;
         } else {
-            const adminPort = ((profile && profile.adminApiPort) ? profile.adminApiPort : process.env.AGENT_ADMIN_PORT);
+            const adminPort: string = ((profile && profile.adminApiPort) ? profile.adminApiPort : process.env.AGENT_ADMIN_PORT);
             // @tothink http/https?  should this be from the env?
             agentUrl = `http://${agentId}:${adminPort}`;
         }

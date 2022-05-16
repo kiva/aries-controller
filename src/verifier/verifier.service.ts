@@ -50,7 +50,7 @@ export class VerifierService {
             // Check proof exchange
             const res = await this.checkPresEx(presExId);
             if (res.error_msg) {
-                await this.handleErrorMsg(res.error_msg);
+                this.handleErrorMsg(res.error_msg);
             }
             if (res.state === 'verified') {
                 Logger.log('Proof record state verified');
@@ -66,7 +66,7 @@ export class VerifierService {
      * In aca-py 0.7 the problem report webhook doesn't trigger, instead there's an error_msg field on the presentation
      * Also, aca-py can add it's own custom strings to the front of the error msgs, so we have to parse those out to get to our JSON error
      */
-    private async handleErrorMsg(errorMsg: string) {
+    private handleErrorMsg(errorMsg: string) {
         let exception;
         if (errorMsg) {
             try {
@@ -99,7 +99,7 @@ export class VerifierService {
      public async checkPresEx(presExId: string): Promise<any> {
         const res = await this.agentCaller.callAgent('GET', `present-proof/records/${presExId}`);
         if (res.error_msg) {
-            await this.handleErrorMsg(res.error_msg);
+            this.handleErrorMsg(res.error_msg);
         }
         return res;
     }
@@ -125,7 +125,7 @@ export class VerifierService {
 
         Logger.log('Accepted connection invitation');
         // TODO the ping is not really needed and can be removed eventually - useful for seeing where things are failing
-        const pingRes = await this.agentService.sendPing(connectionId);
+        await this.agentService.sendPing(connectionId);
         Logger.log('Ping sent');
         const requestRes = await this.verify(proofProfilePath, connectionId);
         Logger.log('Verify proof send');

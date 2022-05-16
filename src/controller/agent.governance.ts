@@ -13,7 +13,7 @@ import data from '../config/governence.json';
 export type ControllerCallback =
     (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string) => Promise<boolean>;
 
-type Registration = { id: string, topic: string, func: ControllerCallback, exceptionCount: number};
+type Registration = { id: string; topic: string; func: ControllerCallback; exceptionCount: number};
 
 /**
  * AgentGovernance manages the governance policy initialization and access control
@@ -25,7 +25,7 @@ export class AgentGovernance {
     public static PERMISSION_ALWAYS = 'always';
     private static ALL_KEY = 'all';
     private static COMMENT_SECTION = 'comment';
-    public policyName: string = '';
+    public policyName = '';
     private readonly policies = { };
     private readonly callbacks = new Array<Registration>();
 
@@ -67,7 +67,7 @@ export class AgentGovernance {
         }
         const all = AgentGovernance.ALL_KEY in this.policies;
         if (all === undefined) {
-            Logger.warn(`default section may not be structured correctly.`);
+            Logger.warn('default section may not be structured correctly.');
             this.policies[AgentGovernance.ALL_KEY] = AgentGovernance.PERMISSION_DENY;
         }
     }
@@ -145,8 +145,7 @@ export class AgentGovernance {
      */
     public async invokeHandler(agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
                                body: any, token?: string) : Promise<any> {
-        let result: boolean = false;
-        // tslint:disable-next-line:forin
+        let result = false;
         for (const index in this.callbacks) {
             const registration: Registration = this.callbacks[index];
             Logger.debug(`callback found topic: ${registration.topic} id: ${registration.id}`);

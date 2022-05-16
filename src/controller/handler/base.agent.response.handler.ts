@@ -1,5 +1,4 @@
 import { AxiosRequestConfig } from 'axios';
-import { ProtocolException } from 'protocol-common/protocol.exception';
 import { IAgentResponseHandler } from './agent.response.handler';
 
 /*

@@ -15,6 +15,7 @@ export class DoNothing extends BaseAgentResponseHandler {
     }
 
     public async handleAcapyWebhookMsg(
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string, body: any, token?: string
     ): Promise<any> {
             Logger.debug(`Doing nothing for ${topic} for '${agentId}': ${JSON.stringify(body)}`);

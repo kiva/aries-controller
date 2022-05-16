@@ -1,5 +1,4 @@
 import request from 'supertest';
-import { Logger } from 'protocol-common/logger';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
@@ -18,23 +17,23 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     let samcInvitation;
     let mascInvitation;
     let mamcInvitation;
-    let sascConnectionId;
-    let samcConnectionId;
-    let mascConnectionId;
-    let mamcConnectionId;
+    let sascConnectionId: string;
+    let samcConnectionId: string;
+    let mascConnectionId: string;
+    let mamcConnectionId: string;
 
-    beforeAll(async () => {
+    beforeAll(() => {
         jest.setTimeout(20000);
     });
 
     it('Register single agent in multi controller', async () => {
         const data = {
-            "seed": "0000000000000000000000000Random1",
-            "label": "Single agent multi controller",
-            "useTailsServer": false,
-            "adminApiKey": "samcAdminApiKey"
-        }
-        return request(samcUrl)
+            'seed': '0000000000000000000000000Random1',
+            'label': 'Single agent multi controller',
+            'useTailsServer': false,
+            'adminApiKey': 'samcAdminApiKey'
+        };
+        return await request(samcUrl)
             .post('/v1/agent/register')
             .set('agent', 'samcagent')
             .send(data)
@@ -47,8 +46,8 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     it('Register multi agent in multi controller', async () => {
         // Note that multi agents don't need seed, useTailsServer or adminApiKey
         const data = {
-            "label": "Multi agent multi controller",
-        }
+            'label': 'Multi agent multi controller',
+        };
         return request(mamcUrl)
             .post('/v1/agent/register')
             .set('agent', 'mamcagent')
@@ -82,7 +81,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     });
 
     it('Init connection with multi agent single controller', async () => {
-        await ProtocolUtility.delay(1000)
+        await ProtocolUtility.delay(1000);
         return request(mascUrl)
             .post('/v2/api/connection')
             .expect((res) => {
@@ -107,7 +106,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             alias: 'samc',
             invitation: samcInvitation,
-        }
+        };
         return request(sascUrl)
             .post('/v1/agent/accept-connection')
             .send(data)
@@ -122,7 +121,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             alias: 'masc',
             invitation: mascInvitation,
-        }
+        };
         return request(samcUrl)
             .post('/v1/agent/accept-connection')
             .set('agent', 'samcagent')
@@ -138,7 +137,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             alias: 'mamc',
             invitation: mamcInvitation,
-        }
+        };
         return request(mascUrl)
             .post('/v1/agent/accept-connection')
             .send(data)
@@ -157,7 +156,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
                 alias: 'sasc'
             },
             data: sascInvitation
-        }
+        };
         return request(mamcUrl)
             .post('/v2/api/agent')
             .set('agent', 'mamcagent')
@@ -170,7 +169,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     });
 
     it('sasc checks connection status', async () => {
-        await ProtocolUtility.delay(3000)
+        await ProtocolUtility.delay(3000);
         return request(sascUrl)
             .get(`/v2/api/connection/${sascConnectionId}`)
             .expect((res) => {
@@ -202,9 +201,9 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             method: 'GET',
             route: `connections/${mamcConnectionId}`
-        }
+        };
         return request(mamcUrl)
-            .post(`/v2/api/agent`)
+            .post('/v2/api/agent')
             .set('agent', 'mamcagent')
             .send(data)
             .expect((res) => {

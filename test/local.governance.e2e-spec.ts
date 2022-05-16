@@ -63,7 +63,7 @@ describe('Governance tests', () => {
         expect(agentGovernance.readPermission('Permissive', 'invitation') === 'deny');
     });
 
-    it('factory returns previously created instance', () => {
+    it('factory returns previously created instance', async () => {
         const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
         let count = 0;
         const customHandler: ControllerCallback =
@@ -75,12 +75,12 @@ describe('Governance tests', () => {
         agentGovernance.registerHandler('1','something', customHandler);
 
         const agentGovernance2 = AgentGovernanceFactory.useFactory();
-        agentGovernance2.invokeHandler('', '', '', '', 'something', '');
+        await agentGovernance2.invokeHandler('', '', '', '', 'something', '');
         expect(count === 1);
 
     });
 
-    it('factory returns new instance', () => {
+    it('factory returns new instance', async () => {
         const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
         let count = 0;
         const customHandler: ControllerCallback =
@@ -94,14 +94,13 @@ describe('Governance tests', () => {
         const policyName = process.env.POLICY_NAME;
         process.env.POLICY_NAME = 'bob';
         const agentGovernance2 = AgentGovernanceFactory.useFactory();
-        agentGovernance2.invokeHandler('', '', '', '', 'something', '');
+        await agentGovernance2.invokeHandler('', '', '', '', 'something', '');
         expect(count === 0);
         process.env.POLICY_NAME = policyName;
 
     });
 
     it('Can add custom handler successfully', () =>{
-        //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -113,7 +112,6 @@ describe('Governance tests', () => {
     });
 
     it('Can add second handler with same key successfully', () =>{
-        //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -125,7 +123,6 @@ describe('Governance tests', () => {
     });
 
     it('Can additional handler successfully', () =>{
-        //
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -137,7 +134,7 @@ describe('Governance tests', () => {
     });
 
     it('Invoke custom handler successfully', async () =>{
-        let sum: number = 0;
+        let sum = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -152,9 +149,8 @@ describe('Governance tests', () => {
     });
 
     it('No handler handled successfully', async() =>{
-        let sum: number = 0;
+        let sum = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        // @ts-ignore
         const customHandler: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
              body: any, token?: string): Promise<any> => {
@@ -168,9 +164,9 @@ describe('Governance tests', () => {
     });
 
     it('Both handler for same topic called successfully', async() =>{
-        let sum1: number = 0;
-        let sum2: number = 0;
-        let sum3: number = 0;
+        let sum1 = 0;
+        let sum2 = 0;
+        let sum3 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -201,7 +197,7 @@ describe('Governance tests', () => {
     });
 
     it('Register same callback id twice successfully', async() => {
-        let sum1: number = 0;
+        let sum1 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -217,8 +213,8 @@ describe('Governance tests', () => {
     });
 
     it('Register same callback id twice end of array successfully', async() => {
-        let sum1: number = 0;
-        let sum2: number = 0;
+        let sum1 = 0;
+        let sum2 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,
@@ -242,9 +238,9 @@ describe('Governance tests', () => {
     });
 
     it('Register same callback id twice with new callback end of array successfully', async() => {
-        let sum1: number = 0;
-        let sum2: number = 0;
-        let sum3: number = 0;
+        let sum1 = 0;
+        let sum2 = 0;
+        let sum3 = 0;
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback =
             (agentUrl: string, agentId: string, adminApiKey: string, route: string, topic: string,

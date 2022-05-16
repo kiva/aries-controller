@@ -18,6 +18,7 @@ export class AgentGuard implements CanActivate {
      * The validation of the agent metadata on the token takes place in AgentContext
      * This guard just ensures that for single controllers it matches the configured value
      */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     canActivate(context: ExecutionContext): boolean {
         const guardEnabled = !(process.env.AGENT_GUARD_ENABLED === 'false');
         if (!guardEnabled) {
@@ -28,7 +29,12 @@ export class AgentGuard implements CanActivate {
         const agentId = this.agentContext.getAgentId(guardEnabled);
 
         if (process.env.MULTI_CONTROLLER !== 'true' && agentId !== process.env.AGENT_ID) {
-            throw new ProtocolException(ProtocolErrorCode.FORBIDDEN_EXCEPTION, 'AgentGuard: agent doesn\'t match configured agent for single controller', null, 403);
+            throw new ProtocolException(
+                ProtocolErrorCode.FORBIDDEN_EXCEPTION,
+                'AgentGuard: agent doesn\'t match configured agent for single controller',
+                null,
+                403
+            );
         }
 
         return true;

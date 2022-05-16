@@ -1,5 +1,4 @@
-import request, { agent } from 'supertest';
-import { Logger } from 'protocol-common/logger';
+import request from 'supertest';
 import { ProtocolUtility } from 'protocol-common/protocol.utility';
 
 /**
@@ -14,12 +13,12 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     let walletId: string;
     let walletKey: string;
 
-    beforeAll(async () => {
+    beforeAll(() => {
         jest.setTimeout(20000);
     });
 
     it('Init connection with single agent single controller (sanity check)', async () => {
-        return request(sascUrl)
+        return await request(sascUrl)
             .post('/v2/api/connection')
             .expect((res) => {
                 expect(res.status).toBe(201);
@@ -31,7 +30,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         const data = {
             agentId: 'sascagent'
         };
-        return request(agencyUrl)
+        return await request(agencyUrl)
             .delete('/v1/manager')
             .send(data)
             .expect((res) => {
@@ -41,7 +40,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Init connection with single agent single controller (ensure restarted)', async () => {
         await ProtocolUtility.delay(500);
-        return request(sascUrl)
+        return await request(sascUrl)
             .post('/v2/api/connection')
             .expect((res) => {
                 expect(res.status).toBe(201);
@@ -51,10 +50,10 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Register multi agent in multi controller', async () => {
         const data = {
-            "label": "Multi agent multi controller",
-            "agentId": "mamcagent2",
-        }
-        return request(mamcUrl)
+            'label': 'Multi agent multi controller',
+            'agentId': 'mamcagent2',
+        };
+        return await request(mamcUrl)
             .post('/v1/agent/register')
             .set('agent', 'mamcagent2')
             .send(data)
@@ -67,7 +66,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     });
 
     it('Init connection with multi agent multi controller (sanity check)', async () => {
-        return request(mamcUrl)
+        return await request(mamcUrl)
             .post('/v2/api/connection')
             .set('agent', 'mamcagent2')
             .expect((res) => {
@@ -78,10 +77,10 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Unregister agent with agency', async () => {
         const data = {
-            "walletName": walletId,
-            "walletKey": walletKey,
-        }
-        return request(agencyUrl)
+            'walletName': walletId,
+            walletKey,
+        };
+        return await request(agencyUrl)
             .delete('/v2/multitenant')
             .send(data)
             .expect((res) => {
@@ -91,7 +90,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
 
     it('Init connection with multi agent multi controller (ensure restarted)', async () => {
         await ProtocolUtility.delay(500);
-        return request(mamcUrl)
+        return await request(mamcUrl)
             .post('/v2/api/connection')
             .set('agent', 'mamcagent2')
             .expect((res) => {
@@ -99,5 +98,5 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
                 expect(res.body.invitation).toBeDefined();
             });
     });
-   
+
 });
