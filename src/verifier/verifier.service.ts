@@ -1,4 +1,4 @@
-import { Injectable, CacheStore, CACHE_MANAGER, Inject, Logger } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { ProtocolHttpService, ProtocolException, ProtocolErrorCode, ProtocolUtility } from 'protocol-common';
 import { AgentService } from '../agent/agent.service.js';
@@ -16,7 +16,6 @@ export class VerifierService {
         private readonly agentService: AgentService,
         private readonly http: ProtocolHttpService,
         @Inject(CALLER) private readonly agentCaller: ICaller,
-        @Inject(CACHE_MANAGER) private readonly cache: CacheStore,
         private readonly profileManager: ProfileManager,
     ) {}
 

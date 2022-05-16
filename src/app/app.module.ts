@@ -10,8 +10,7 @@ import { StewardModule } from '../steward/steward.module.js';
 import { VerifierModule } from '../verifier/verifier.module.js';
 import { ApiModule } from '../api/api.module.js';
 
-// This ts-ignore is because assertions are currently required when importing json: https://nodejs.org/docs/latest-v16.x/api/esm.html#json-modules
-// @ts-ignore
+// @ts-ignore: assertions are currently required when importing json: https://nodejs.org/docs/latest-v16.x/api/esm.html#json-modules
 import data from '../config/env.json' assert { type: 'json'};
 
 

@@ -15,8 +15,9 @@
     "hyperledger"
   ],
   "author": "protocol-services",
-  "exports": "./dist/main.js",
-  "types": "main.d.ts",
+  "exports": {
+    ".": "./index.js"
+  },
   "files": [
     "*"
   ],
@@ -24,13 +25,14 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "rm -rf dist && npm run build:js && npm run build:dts && cp package.json dist/",
+    "build:js": "tsc",
+    "build:dts": "dts-bundle-generator --config dts.json",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "rm -rf dist/ && tsc && node -r dotenv/config --experimental-json-modules dist/main.js",
+    "start": "rm -rf dist/ && tsc && node -r dotenv/config --experimental-json-modules dist/app.js",
     "start:debug": "NODE_ENV=LOCAL nodemon --legacy-watch",
     "prestart:prod": "rimraf dist && tsc",
-    "start:prod": "node main.js",
-    "start:hmr": "node server",
+    "start:prod": "node app.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "test": "NODE_ENV=LOCAL node -r dotenv/config node_modules/.bin/jest --runInBand",
@@ -107,6 +109,6 @@
     "ignore": [
       "src/**/*.spec.ts"
     ],
-    "exec": "tsc && node -r dotenv/config --experimental-modules dist/main.js"
+    "exec": "tsc && node -r dotenv/config --experimental-modules dist/app.js"
   }
 }

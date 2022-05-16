@@ -5,15 +5,15 @@
  * Disabling import/extensions because this runs against typescript
  */
 import { Test } from '@nestjs/testing';
-import { IssuerModule } from '../dist/issuer/issuer.module';
-import { IssuerService } from '../dist/issuer/issuer.service';
+import { IssuerModule } from '../dist/issuer/issuer.module.js';
+import { IssuerService } from '../dist/issuer/issuer.service.js';
 
 /**
  * Local test for validation on the issuerService
  * The function throws an error when validation fails so tests are written to either expect exceptions or not
  */
 describe('Tests input validation against cred def validation schemas', () => {
-    let issuerService: IssuerService;
+    let issuerService;
 
     beforeAll(async () => {
         const moduleFixture = await Test.createTestingModule({

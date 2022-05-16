@@ -11,7 +11,7 @@ import { BasicMessage } from './basic.message.js';
 import { Topics } from './topics.js';
 
 /*
-    @TODO we want to replace this factory with nestjs injection at some point
+ * @TODO we want to replace this factory with nestjs injection at some point
  */
 export class HandlersFactory {
     /**
@@ -32,12 +32,12 @@ export class HandlersFactory {
             case Topics.ISSUE_CREDENTIAL:
                 return new IssueCredential(agentGovernance, http, cache);
             case Topics.PROBLEM_REPORT:
-                return new ProblemReport(agentGovernance, http, cache);
+                return new ProblemReport(agentGovernance, cache);
             case Topics.BASIC_MESSAGES:
-                return new BasicMessage(agentGovernance, http, cache);
+                return new BasicMessage(agentGovernance);
             case Topics.REVOCATION_REGISTRY:
             case Topics.ISSUE_CRED_REV:
-                return new DoNothing(agentGovernance, http, cache);
+                return new DoNothing();
             default:
                 Logger.debug(`unhandled topic ${topic}`);
                 break;

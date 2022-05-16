@@ -1,7 +1,5 @@
-import { CacheStore, Logger } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common';
+import { Logger } from '@nestjs/common';
 import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
-import { AgentGovernance } from '../agent.governance.js';
 
 /**
  * This handler is for any topics that don't require any special handling
@@ -9,7 +7,7 @@ import { AgentGovernance } from '../agent.governance.js';
  */
 
 export class DoNothing extends BaseAgentResponseHandler {
-    constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+    constructor() {
         super();
     }
 

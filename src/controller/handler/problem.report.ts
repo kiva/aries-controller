@@ -1,5 +1,4 @@
 import { CacheStore, Logger } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common';
 import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
 import { AgentGovernance } from '../agent.governance.js';
 
@@ -8,7 +7,7 @@ import { AgentGovernance } from '../agent.governance.js';
  * We cache problem reports by thread id so that other processes can react to them if needed
 */
 export class ProblemReport extends BaseAgentResponseHandler {
-    constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+    constructor(private readonly agentGovernance: AgentGovernance, private readonly cache: CacheStore) {
         super();
     }
 

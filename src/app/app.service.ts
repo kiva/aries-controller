@@ -16,7 +16,7 @@ export class AppService {
     private static startedAt: Date;
 
     /**
-     * Sets up app in a way that can be used by main.ts and e2e tests
+     * Sets up app in a way that can be used by app.ts and e2e tests
      */
     public static async setup(app: INestApplication): Promise<void> {
         app.useLogger(app.get(ProtocolLogger));

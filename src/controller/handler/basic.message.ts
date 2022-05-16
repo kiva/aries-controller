@@ -1,5 +1,5 @@
-import { CacheStore, Logger } from '@nestjs/common';
-import { ProtocolHttpService, ProtocolErrorCode, ProtocolException } from 'protocol-common';
+import { Logger } from '@nestjs/common';
+import { ProtocolErrorCode, ProtocolException } from 'protocol-common';
 import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
 import { AgentGovernance } from '../agent.governance.js';
 
@@ -9,7 +9,7 @@ import { AgentGovernance } from '../agent.governance.js';
 export class BasicMessage extends BaseAgentResponseHandler {
     private static BASIC_MESSAGE = 'basic-message';
     private static GOVERNANCE_KEY = 'all';
-    constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+    constructor(private readonly agentGovernance: AgentGovernance) {
         super();
     }
 

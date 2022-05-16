@@ -1,4 +1,3 @@
-/* eslint-disable import/extensions */
 /**
  * Disabling import/extensions because this runs against typescript
  */
@@ -6,9 +5,9 @@ import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { AppService } from '../dist/app/app.service';
 import { AppController } from '../dist/app/app.controller';
-import { AgentGovernance } from '../dist/controller/agent.governance';
-import { ControllerCallback } from '../dist/controller/agent.governance';
-import { AgentGovernanceFactory } from '../dist/controller/agent.governance.factory';
+import { AgentGovernance } from '../dist/controller/agent.governance.js';
+import { ControllerCallback } from '../dist';
+import { AgentGovernanceFactory } from '../dist/controller/agent.governance.factory.js';
 
 describe('Governance tests', () => {
     let app: INestApplication;
@@ -28,13 +27,13 @@ describe('Governance tests', () => {
     });
 
     it('Governance isValidValue detects invalid value', () => {
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const result = agentGovernance.isValidValue('bob');
         expect(result).toBe(false);
     });
 
     it('Governance validates correctly adjusts invalid value', () => {
-        const data = {
+        const data: any = {
             default : {
                 all: 'deny'
             },
@@ -44,27 +43,27 @@ describe('Governance tests', () => {
                 }
             }
         };
-        const agentGovernance: AgentGovernance = new AgentGovernance('somethingWrong', data);
+        const agentGovernance = new AgentGovernance('somethingWrong', data);
         const result = agentGovernance.readPermission('invalidTopic', 'invalidPermission');
         expect(result).toBe('deny');
     });
 
     it('Governance validate correctly adds all', () => {
-        const data = {
+        const data: any = {
             somethingWrong : {
                 invalidTopic : {
                     invalidPermission: 'jibberish'
                 }
             }
         };
-        const agentGovernance: AgentGovernance = new AgentGovernance('somethingWrong', data);
+        const agentGovernance = new AgentGovernance('somethingWrong', data);
         // all, all doesn't exist so it should return default of deny
         const result = agentGovernance.readPermission('all','all');
         expect(result).toBe('deny');
     });
 
     it('Governance changes once permission to deny on use', () => {
-        const agentGovernance: AgentGovernance = new AgentGovernance('SingleConnection');
+        const agentGovernance = new AgentGovernance('SingleConnection');
         const firstResult = agentGovernance.readPermission('connections', 'accept-invitation');
         expect(firstResult).toBe('once');
         const secondResult = agentGovernance.readPermission('connections', 'accept-invitation');
@@ -72,7 +71,7 @@ describe('Governance tests', () => {
     });
 
     it('factory returns previously created instance', async () => {
-        const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
+        const agentGovernance = AgentGovernanceFactory.useFactory();
         let count = 0;
         const customHandler: ControllerCallback = (): Promise<any> => {
             count ++;
@@ -87,7 +86,7 @@ describe('Governance tests', () => {
     });
 
     it('factory returns new instance', async () => {
-        const agentGovernance: AgentGovernance = AgentGovernanceFactory.useFactory();
+        const agentGovernance = AgentGovernanceFactory.useFactory();
         let count = 0;
         const customHandler: ControllerCallback = (): Promise<any> => {
             count ++;
@@ -105,7 +104,7 @@ describe('Governance tests', () => {
     });
 
     it('Can add custom handler successfully', () =>{
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback = (): Promise<any> => {
             return undefined;
         };
@@ -114,7 +113,7 @@ describe('Governance tests', () => {
     });
 
     it('Can add second handler with same key successfully', () =>{
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback = (): Promise<any> => {
             return undefined;
         };
@@ -123,7 +122,7 @@ describe('Governance tests', () => {
     });
 
     it('Can additional handler successfully', () =>{
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback = (): Promise<any> => {
             return undefined;
         };
@@ -133,7 +132,7 @@ describe('Governance tests', () => {
 
     it('Invoke custom handler successfully', async () =>{
         let sum = 0;
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback = (): Promise<any> => {
             sum ++;
             return undefined;
@@ -146,7 +145,7 @@ describe('Governance tests', () => {
 
     it('No handler handled successfully', async() =>{
         let sum = 0;
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler: ControllerCallback = (): Promise<any> => {
             sum ++;
             return undefined;
@@ -161,7 +160,7 @@ describe('Governance tests', () => {
         let sum1 = 0;
         let sum2 = 0;
         let sum3 = 0;
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback = (): Promise<any> => {
             sum1 ++;
             return undefined;
@@ -186,7 +185,7 @@ describe('Governance tests', () => {
 
     it('Register same callback id twice successfully', async() => {
         let sum1 = 0;
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback = (): Promise<any> => {
             sum1 ++;
             return undefined;
@@ -201,7 +200,7 @@ describe('Governance tests', () => {
     it('Register same callback id twice end of array successfully', async() => {
         let sum1 = 0;
         let sum2 = 0;
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback = (): Promise<any> => {
             sum1++;
             return undefined;
@@ -223,7 +222,7 @@ describe('Governance tests', () => {
         let sum1 = 0;
         let sum2 = 0;
         let sum3 = 0;
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
+        const agentGovernance = new AgentGovernance('permissive');
         const customHandler1: ControllerCallback = (): Promise<any> => {
             sum1++;
             return undefined;
