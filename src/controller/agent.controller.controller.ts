@@ -1,6 +1,5 @@
-import { Controller, Post, Param, Body } from '@nestjs/common';
+import { Controller, Post, Param, Body, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Logger } from 'protocol-common';
 import { AgentControllerService } from './agent.controller.service.js';
 
 /**

@@ -1,6 +1,5 @@
-import { Controller, Body, Post, Param, Get, Ip } from '@nestjs/common';
+import { Controller, Body, Post, Param, Get, Ip, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Logger } from 'protocol-common';
 import { VerifierService } from './verifier.service.js';
 
 /**

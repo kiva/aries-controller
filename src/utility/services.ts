@@ -1,6 +1,7 @@
-import { ProtocolUtility, Logger } from 'protocol-common';
+import { ProtocolUtility } from 'protocol-common';
 import { readdirSync, readFileSync } from 'fs';
 import { ICaller } from '../caller/caller.interface.js';
+import { Logger } from '@nestjs/common';
 
 export class Services {
 

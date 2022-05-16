@@ -39,7 +39,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test simple string and number validation: Exception', async () => {
@@ -59,7 +58,7 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
         try {
             await issuerService.validateEntityData(entityData, validation);
-            expect(true).toBe(false);
+            fail();
         } catch(e) {
             expect(e.code).toBe('ValidationException');
         }
@@ -79,7 +78,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test photo validation png base64 encoded: Pass', async () => {
@@ -96,7 +94,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test photo validation jpeg base64 encoded: Pass', async () => {
@@ -113,7 +110,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test photo validation: Fail', async () => {
@@ -131,7 +127,7 @@ describe('Tests input validation against cred def validation schemas', () => {
 
         try {
             await issuerService.validateEntityData(entityData, validation);
-            expect(true).toBe(false);
+            fail();
         } catch(e) {
             expect(e.code).toBe('ValidationException');
         }

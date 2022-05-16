@@ -1,6 +1,6 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import { Logger, ProtocolHttpService, ProtocolException, ProtocolErrorCode, ProtocolUtility } from 'protocol-common';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode, ProtocolUtility } from 'protocol-common';
 import { AgentService } from '../agent/agent.service.js';
 import { Services } from '../utility/services.js';
 import { CALLER, ICaller } from '../caller/caller.interface.js';

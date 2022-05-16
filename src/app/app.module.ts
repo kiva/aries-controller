@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule, LoggingInterceptor } from 'protocol-common';
+import { ConfigModule, LoggingInterceptor, ProtocolLoggerModule } from 'protocol-common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { AppService } from './app.service.js';
 import { AppController } from './app.controller.js';
@@ -21,6 +21,7 @@ import data from '../config/env.json' assert { type: 'json'};
 @Module({
     imports: [
         ConfigModule.init(data),
+        ProtocolLoggerModule,
         AgentModule,
         AgentControllerModule,
         IssuerModule,

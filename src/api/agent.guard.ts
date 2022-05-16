@@ -1,5 +1,5 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
-import { Logger, ProtocolErrorCode, ProtocolException } from 'protocol-common';
+import { Injectable, CanActivate, ExecutionContext, Logger } from '@nestjs/common';
+import { ProtocolErrorCode, ProtocolException } from 'protocol-common';
 import { AgentContext } from '../utility/agent.context.js';
 
 /**

@@ -1,7 +1,8 @@
 import { Injectable, INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import bodyParser from 'body-parser';
-import { Logger, ProtocolExceptionFilter, DatadogLogger, traceware, Constants, HttpConstants, ProtocolUtility } from 'protocol-common';
+import { ProtocolExceptionFilter, traceware, Constants, HttpConstants, ProtocolUtility, ProtocolLogger } from 'protocol-common';
+import { Logger } from '@nestjs/common';
 import { AgentService } from '../agent/agent.service.js';
 import { Services } from '../utility/services.js';
 import { ServiceReportDto } from './dtos/service.report.dto.js';
@@ -18,8 +19,7 @@ export class AppService {
      * Sets up app in a way that can be used by main.ts and e2e tests
      */
     public static async setup(app: INestApplication): Promise<void> {
-        const logger = new Logger(DatadogLogger.getLogger());
-        app.useLogger(logger);
+        app.useLogger(app.get(ProtocolLogger));
         app.use(traceware(process.env.SERVICE_NAME));
 
         app.useGlobalFilters(new ProtocolExceptionFilter());

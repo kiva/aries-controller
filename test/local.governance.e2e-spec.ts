@@ -29,7 +29,8 @@ describe('Governance tests', () => {
 
     it('Governance isValidValue detects invalid value', () => {
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        expect(false === agentGovernance.isValidValue('bob'));
+        const result = agentGovernance.isValidValue('bob');
+        expect(result).toBe(false);
     });
 
     it('Governance validates correctly adjusts invalid value', () => {
@@ -44,7 +45,8 @@ describe('Governance tests', () => {
             }
         };
         const agentGovernance: AgentGovernance = new AgentGovernance('somethingWrong', data);
-        expect(agentGovernance.readPermission('invalidTopic', 'invalidPermission') === 'deny');
+        const result = agentGovernance.readPermission('invalidTopic', 'invalidPermission');
+        expect(result).toBe('deny');
     });
 
     it('Governance validate correctly adds all', () => {
@@ -56,14 +58,17 @@ describe('Governance tests', () => {
             }
         };
         const agentGovernance: AgentGovernance = new AgentGovernance('somethingWrong', data);
-        // all, all doesnt exist so it should return default of deny
-        expect(agentGovernance.readPermission('all','all') === 'deny');
+        // all, all doesn't exist so it should return default of deny
+        const result = agentGovernance.readPermission('all','all');
+        expect(result).toBe('deny');
     });
 
     it('Governance changes once permission to deny on use', () => {
         const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        expect(agentGovernance.readPermission('Permissive', 'invitation') === 'once');
-        expect(agentGovernance.readPermission('Permissive', 'invitation') === 'deny');
+        const firstResult = agentGovernance.readPermission('Permissive', 'invitation');
+        expect(firstResult).toBe('once');
+        const secondResult = agentGovernance.readPermission('Permissive', 'invitation');
+        expect(secondResult).toBe('deny');
     });
 
     it('factory returns previously created instance', async () => {
@@ -77,7 +82,7 @@ describe('Governance tests', () => {
 
         const agentGovernance2 = AgentGovernanceFactory.useFactory();
         await agentGovernance2.invokeHandler('', '', '', '', 'something', '');
-        expect(count === 1);
+        expect(count).toBe(1);
 
     });
 
@@ -94,7 +99,7 @@ describe('Governance tests', () => {
         process.env.POLICY_NAME = 'bob';
         const agentGovernance2 = AgentGovernanceFactory.useFactory();
         await agentGovernance2.invokeHandler('', '', '', '', 'something', '');
-        expect(count === 0);
+        expect(count).toBe(0);
         process.env.POLICY_NAME = policyName;
 
     });
@@ -136,7 +141,7 @@ describe('Governance tests', () => {
 
         agentGovernance.registerHandler('6','bob', customHandler);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
-        expect(sum === 1);
+        expect(sum).toBe(1);
     });
 
     it('No handler handled successfully', async() =>{
@@ -149,7 +154,7 @@ describe('Governance tests', () => {
 
         agentGovernance.registerHandler('7','bob', customHandler);
         await agentGovernance.invokeHandler('', '', '', '', 'not-bob', '');
-        expect(sum === 0);
+        expect(sum).toBe(0);
     });
 
     it('Both handler for same topic called successfully', async() =>{
@@ -174,9 +179,9 @@ describe('Governance tests', () => {
         agentGovernance.registerHandler('9','bob', customHandler2);
         agentGovernance.registerHandler('10','not-bob', customHandler3);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
-        expect(sum1 === 1);
-        expect(sum2 === 1);
-        expect(sum3 === 0);
+        expect(sum1).toBe(1);
+        expect(sum2).toBe(1);
+        expect(sum3).toBe(0);
     });
 
     it('Register same callback id twice successfully', async() => {
@@ -190,7 +195,7 @@ describe('Governance tests', () => {
         agentGovernance.registerHandler('8','bob', customHandler1);
         agentGovernance.registerHandler('8','bob', customHandler1);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
-        expect(sum1 === 1);
+        expect(sum1).toBe(1);
     });
 
     it('Register same callback id twice end of array successfully', async() => {
@@ -210,8 +215,8 @@ describe('Governance tests', () => {
         agentGovernance.registerHandler('9', 'bob', customHandler2);
         agentGovernance.registerHandler('9', 'bob', customHandler2);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
-        expect(sum1 === 1);
-        expect(sum2 === 1);
+        expect(sum1).toBe(1);
+        expect(sum2).toBe(1);
     });
 
     it('Register same callback id twice with new callback end of array successfully', async() => {
@@ -236,8 +241,8 @@ describe('Governance tests', () => {
         agentGovernance.registerHandler('9', 'bob', customHandler2);
         agentGovernance.registerHandler('9', 'bob', customHandler3);
         await agentGovernance.invokeHandler('', '', '', '', 'bob', '');
-        expect(sum1 === 1);
-        expect(sum2 === 0);
-        expect(sum3 === 1);
+        expect(sum1).toBe(1);
+        expect(sum2).toBe(0);
+        expect(sum3).toBe(1);
     });
 });

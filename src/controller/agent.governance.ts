@@ -1,5 +1,4 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from 'protocol-common';
+import { Injectable, Logger } from '@nestjs/common';
 
 // This ts-ignore is because assertions are currently required when importing json: https://nodejs.org/docs/latest-v16.x/api/esm.html#json-modules
 // @ts-ignore

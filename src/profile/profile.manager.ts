@@ -1,5 +1,4 @@
-import { CacheStore, CACHE_MANAGER, Inject, Injectable } from '@nestjs/common';
-import { Logger } from 'protocol-common';
+import { CacheStore, CACHE_MANAGER, Inject, Injectable, Logger } from '@nestjs/common';
 import { Services } from '../utility/services.js';
 
 /**
