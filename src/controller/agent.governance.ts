@@ -27,14 +27,16 @@ export class AgentGovernance {
     public static PERMISSION_ALWAYS = 'always';
     private static ALL_KEY = 'all';
     private static COMMENT_SECTION = 'comment';
-    public policyName = '';
-    private readonly policies = { };
-    private readonly callbacks = new Array<Registration>();
+
+    public policyName;
+    private readonly policies;
+    private readonly callbacks;
 
     constructor(policyName: string, source: any = data) {
         // flatten out the data between default and the named policy into a single policy
         this.policyName = policyName;
         this.policies = {...source.default, ...source[policyName]};
+        this.callbacks = new Array<Registration>();
         this.validate();
     }
 
@@ -67,8 +69,8 @@ export class AgentGovernance {
                 }
             }
         }
-        const all = AgentGovernance.ALL_KEY in this.policies;
-        if (all === undefined) {
+        const allKeyIsPresent = AgentGovernance.ALL_KEY in this.policies;
+        if (!allKeyIsPresent) {
             Logger.warn('default section may not be structured correctly.');
             this.policies[AgentGovernance.ALL_KEY] = AgentGovernance.PERMISSION_DENY;
         }
@@ -108,7 +110,7 @@ export class AgentGovernance {
             if (permission === undefined) {
                 return this.policies[AgentGovernance.ALL_KEY];
             }
-            // Here's how we enforce "once", change it to deny once its been read
+            // Here's how we enforce "once", change it to deny once it has been read
             // @tothink: this might create some problems because permissions are
             // per agent, not global
             if (permission === AgentGovernance.PERMISSION_ONCE) {

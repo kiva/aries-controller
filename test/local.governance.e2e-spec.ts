@@ -64,10 +64,10 @@ describe('Governance tests', () => {
     });
 
     it('Governance changes once permission to deny on use', () => {
-        const agentGovernance: AgentGovernance = new AgentGovernance('permissive');
-        const firstResult = agentGovernance.readPermission('Permissive', 'invitation');
+        const agentGovernance: AgentGovernance = new AgentGovernance('SingleConnection');
+        const firstResult = agentGovernance.readPermission('connections', 'accept-invitation');
         expect(firstResult).toBe('once');
-        const secondResult = agentGovernance.readPermission('Permissive', 'invitation');
+        const secondResult = agentGovernance.readPermission('connections', 'accept-invitation');
         expect(secondResult).toBe('deny');
     });
 
