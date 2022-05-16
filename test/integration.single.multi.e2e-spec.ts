@@ -26,14 +26,14 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         jest.setTimeout(20000);
     });
 
-    it('Register single agent in multi controller', async () => {
+    it('Register single agent in multi controller', () => {
         const data = {
             'seed': '0000000000000000000000000Random1',
             'label': 'Single agent multi controller',
             'useTailsServer': false,
             'adminApiKey': 'samcAdminApiKey'
         };
-        return await request(samcUrl)
+        return request(samcUrl)
             .post('/v1/agent/register')
             .set('agent', 'samcagent')
             .send(data)
@@ -43,7 +43,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Register multi agent in multi controller', async () => {
+    it('Register multi agent in multi controller', () => {
         // Note that multi agents don't need seed, useTailsServer or adminApiKey
         const data = {
             'label': 'Multi agent multi controller',
@@ -69,7 +69,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Init connection with single agent multi controller', async () => {
+    it('Init connection with single agent multi controller', () => {
         return request(samcUrl)
             .post('/v2/api/connection')
             .set('agent', 'samcagent')
@@ -91,7 +91,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Init connection with multi agent multi controller', async () => {
+    it('Init connection with multi agent multi controller', () => {
         return request(mamcUrl)
             .post('/v2/api/connection')
             .set('agent', 'mamcagent')
@@ -102,7 +102,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('sasc accepts invitation from samc', async () => {
+    it('sasc accepts invitation from samc', () => {
         const data = {
             alias: 'samc',
             invitation: samcInvitation,
@@ -117,7 +117,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('samc accepts invitation from masc', async () => {
+    it('samc accepts invitation from masc', () => {
         const data = {
             alias: 'masc',
             invitation: mascInvitation,
@@ -133,7 +133,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('masc accepts invitation from mamc', async () => {
+    it('masc accepts invitation from mamc', () => {
         const data = {
             alias: 'mamc',
             invitation: mamcInvitation,
@@ -148,7 +148,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('mamc accepts invitation from sasc (using agent call endpoint)', async () => {
+    it('mamc accepts invitation from sasc (using agent call endpoint)', () => {
         const data = {
             method: 'POST',
             route: 'connections/receive-invitation',
@@ -178,7 +178,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('samc checks connection status', async () => {
+    it('samc checks connection status', () => {
         return request(samcUrl)
             .get(`/v2/api/connection/${samcConnectionId}`)
             .set('agent', 'samcagent')
@@ -188,7 +188,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('masc checks connection status', async () => {
+    it('masc checks connection status', () => {
         return request(mascUrl)
             .get(`/v2/api/connection/${mascConnectionId}`)
             .expect((res) => {
@@ -197,7 +197,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('mamc checks connection status (using agent call endpoint)', async () => {
+    it('mamc checks connection status (using agent call endpoint)', () => {
         const data = {
             method: 'GET',
             route: `connections/${mamcConnectionId}`

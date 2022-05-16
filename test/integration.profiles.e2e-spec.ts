@@ -29,7 +29,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         });
     });
 
-    it('Add profile 1', async () => {
+    it('Add profile 1', () => {
         const data = {
             'profileName': 'profile1.json',
             'profile': profile1
@@ -42,7 +42,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Add profile 2', async () => {
+    it('Add profile 2', () => {
         const data = {
             'profileName': 'profile2.json',
             'profile': profile2
@@ -55,7 +55,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Fetch profiles', async () => {
+    it('Fetch profiles', () => {
         return request(sascUrl)
             .get('/v2/api/profiles')
             .expect((res) => {
@@ -65,7 +65,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Delete profile 1', async () => {
+    it('Delete profile 1', () => {
         return request(sascUrl)
             .delete('/v2/api/profiles/profile1.json')
             .expect((res) => {
@@ -73,7 +73,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Fetch profiles', async () => {
+    it('Fetch profiles', () => {
         return request(sascUrl)
             .get('/v2/api/profiles')
             .expect((res) => {
