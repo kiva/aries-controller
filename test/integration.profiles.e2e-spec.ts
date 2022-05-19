@@ -1,5 +1,7 @@
 import request from 'supertest';
 
+jest.setTimeout(20000);
+
 /**
  * This test goes over the 4 combinations of single/multi agent/controller and ensures the basic functionality works
  * This test depends on the docker-compose.yml with the 4 combinations and the agency docker compose
@@ -15,10 +17,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     const profile2 = {
         'testKey': 'testValue2'
     };
-
-    beforeAll(() => {
-        jest.setTimeout(20000);
-    });
 
     it('Returns profiles from disk', () => {
         return request(sascUrl)

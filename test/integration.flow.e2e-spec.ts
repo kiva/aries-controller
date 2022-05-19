@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { ProtocolUtility } from 'protocol-common';
 
+jest.setTimeout(60000);
+
 /**
  * This test goes through the simplified flow of registering an agent, creating schemas, issuing and verifying credentials,etc
  */
@@ -12,10 +14,6 @@ describe('Tests simplified example flow', () => {
     let connectionId: string;
     let schemaId: string;
     let presentationExchangeId: string;
-
-    beforeAll(() => {
-        jest.setTimeout(60000);
-    });
 
     it('Register multi agent in multi controller', () => {
         const data = {

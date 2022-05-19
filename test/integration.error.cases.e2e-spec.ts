@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { ProtocolUtility } from 'protocol-common';
 
+jest.setTimeout(20000);
+
 /**
  * This test executes some common error cases
  * Specifically when a single agent or multi agent goes down, that we restart it on agent call
@@ -12,10 +14,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     const agencyUrl = 'http://localhost:3010';
     let walletId: string;
     let walletKey: string;
-
-    beforeAll(() => {
-        jest.setTimeout(20000);
-    });
 
     it('Init connection with single agent single controller (sanity check)', () => {
         return request(sascUrl)

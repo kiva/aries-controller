@@ -1,6 +1,8 @@
 import request from 'supertest';
 import { ProtocolUtility } from 'protocol-common';
 
+jest.setTimeout(20000);
+
 /**
  * This test goes over the 4 combinations of single/multi agent/controller and ensures the basic functionality works
  * This test depends on the docker-compose.yml with the 4 combinations and the agency docker compose
@@ -21,10 +23,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
     let samcConnectionId: string;
     let mascConnectionId: string;
     let mamcConnectionId: string;
-
-    beforeAll(() => {
-        jest.setTimeout(20000);
-    });
 
     it('Register single agent in multi controller', () => {
         const data = {

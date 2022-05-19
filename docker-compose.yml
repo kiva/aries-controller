@@ -24,10 +24,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: npm run start:debug
         image: sa-sc-controller
         container_name: sa-sc-controller
-        working_dir: /www
         ports:
             - "3030:3030"
         volumes:
@@ -46,10 +44,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: npm run start:debug
         image: sa-mc-controller
         container_name: sa-mc-controller
-        working_dir: /www
         ports:
             - "3031:3031"
         volumes:
@@ -71,10 +67,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: npm run start:debug
         image: ma-sc-controller
         container_name: ma-sc-controller
-        working_dir: /www
         ports:
             - "3032:3032"
         volumes:
@@ -94,10 +88,8 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-        command: npm run start:debug
         image: ma-mc-controller
         container_name: ma-mc-controller
-        working_dir: /www
         ports:
             - "3033:3033"
         volumes:

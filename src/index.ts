@@ -46,6 +46,7 @@ export * from './controller/handler/handlers.factory.js';
 export * from './controller/handler/issue.credential.js';
 export * from './controller/handler/problem.report.js';
 export * from './controller/handler/proof.js';
+export * from './controller/handler/topics.js';
 export * from './controller/agent.controller.controller.js';
 export * from './controller/agent.controller.module.js';
 export * from './controller/agent.controller.service.js';
