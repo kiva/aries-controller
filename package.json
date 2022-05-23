@@ -111,6 +111,6 @@
     "ignore": [
       "src/**/*.spec.ts"
     ],
-    "exec": "tsc && node -r dotenv/config --experimental-modules dist/app.js"
+    "exec": "tsc && node -r dotenv/config --experimental-json-modules dist/app.js"
   }
 }
