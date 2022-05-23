@@ -17,13 +17,17 @@ commands:
             fi
   install-node:
     description: Install node and npm
+    parameters:
+      version:
+        type: string
+        default: v16.14.2
     steps:
       - run:
           name: node npm setup
           command: |
             echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-            nvm install v14.15.1
-            nvm alias default v14.15.1
+            nvm install << parameters.version >>
+            nvm alias default << parameters.version >>
             npm install
 
 jobs:
@@ -34,16 +38,6 @@ jobs:
     steps:
       - checkout
       - install-node
-      - run: npm install
-      - run: npm run build
-      - run: npm run lint
-      - run: npm run test:local
-
-  build-and-test16:
-    docker:
-      - image: cimg/node:16.14.2
-    steps:
-      - checkout
       - run: npm install
       - run: npm run build
       - run: npm run lint
@@ -81,47 +75,9 @@ jobs:
               exit 1;
             fi
 
-  integration-test16:
-    machine:
-      docker_layer_caching: true
-      image: ubuntu-2004:202201-02
-    steps:
-      - checkout
-      - run:
-          name: setup shell environment
-          command: |
-            touch .env
-            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run:
-          name: node npm setup
-          command: |
-              nvm install v16.14.2
-              nvm alias default v16.14.2
-              npm install
-      - run:
-          name: setup docker environments
-          command: |
-            docker pull bcgovimages/aries-cloudagent:py36-1.16-1_0.7.1
-      - run:
-          name: Start docker compose and wait for readiness
-          command: |
-            docker-compose -f docker-compose.dep.yml build
-            docker-compose -f docker-compose.dep.yml up -d
-            sleep 40
-            docker-compose up -d
-            sleep 70
-      - run:
-          name: Run tests
-          command: |
-            if ! npm run test:integration ; then
-              echo "Tests failed. Server logs:";
-              docker-compose -f docker-compose.dep.yml logs
-              docker-compose logs;
-              exit 1;
-            fi
-
   protocol-integration-tests:
     machine:
+      docker_layer_caching: true
       image: ubuntu-2004:202201-02
     steps:
       - run:
@@ -133,56 +89,6 @@ jobs:
             ./scripts/setup_env.sh
             echo $AUTH0_ENV | base64 --decode >> .env
       - install-node
-      - run:
-          name: Get ACAPy
-          command: docker pull bcgovimages/aries-cloudagent:py36-1.16-1_0.7.1
-      - run:
-          name: Override for gateway image
-          command: ./scripts/setup_override.sh -r aries-controller -s demo-controller -f docker-compose.demo.yml
-      - run:
-          name: Start docker compose and wait for readiness
-          command: |
-            docker system prune -f
-            docker-compose -f docker-compose.yml build --no-cache
-            docker-compose -f docker-compose.yml up -d
-            sleep 20
-            docker-compose -f docker-compose.yml logs
-      - run:
-          name: Healthcheck services
-          command: ./scripts/healthstack.sh
-      - run:
-          name: Setup integration tests
-          command: |
-            npm install
-            ./scripts/setup_fixtures.sh
-      - run:
-          name: Running integration tests
-          command: |
-            if ! npm run test ; then
-              echo "Tests failed. Server logs:";
-              docker-compose -f docker-compose.yml logs;
-              exit 1;
-            fi
-
-  protocol-integration-tests16:
-    machine:
-      image: ubuntu-2004:202201-02
-    steps:
-      - run:
-          name: Pull protocol-integration-tests
-          command: git clone https://github.com/kiva/protocol-integration-tests ./
-      - run:
-          name: Setup environment
-          command: |
-            ./scripts/setup_env.sh
-            echo $AUTH0_ENV | base64 --decode >> .env
-            echo ' [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> $BASH_ENV
-      - run:
-          name: Node npm setup
-          command: |
-            nvm install v16.14.2
-            node -v
-            nvm alias default v16.14.2
       - run:
           name: Get ACAPy
           command: docker pull bcgovimages/aries-cloudagent:py36-1.16-1_0.7.1
@@ -257,19 +163,9 @@ workflows:
           filters: # run for all branches AND tags
             tags:
               only: /.*/
-      - build-and-test16:
-          filters: # run for all branches AND tags
-            tags:
-              only: /.*/
       - integration-test:
           requires:
             - build-and-test
-          filters: # run for all branches AND tags
-            tags:
-              only: /.*/
-      - integration-test16:
-          requires:
-            - build-and-test16
           filters: # run for all branches AND tags
             tags:
               only: /.*/
@@ -281,22 +177,12 @@ workflows:
           filters: # only run on main
             branches:
               only: main
-      - protocol-integration-tests16:
-          context:
-            - integration-test-context
-          requires:
-            - build-and-test16
-          filters: # only run on main
-            branches:
-              only: main
       - publish-packages-and-push-to-dev:
           context:
             - continuous-deployment-dev
           requires:
             - integration-test
             - protocol-integration-tests
-            - integration-test16
-            - protocol-integration-tests16
           filters: # only run on main
             branches:
               only: main
