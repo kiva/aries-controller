@@ -45,7 +45,6 @@ jobs:
 
   integration-test:
     machine:
-      docker_layer_caching: true
       image: ubuntu-2004:202201-02
     steps:
       - checkout
@@ -77,7 +76,6 @@ jobs:
 
   protocol-integration-tests:
     machine:
-      docker_layer_caching: true
       image: ubuntu-2004:202201-02
     steps:
       - run:
@@ -164,8 +162,8 @@ workflows:
             tags:
               only: /.*/
       - integration-test:
-          requires:
-            - build-and-test
+          #requires:
+          #  - build-and-test
           filters: # run for all branches AND tags
             tags:
               only: /.*/
