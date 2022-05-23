@@ -4,4 +4,4 @@ WORKDIR www/
 ADD package.json package-lock.json ./
 RUN npm install
 ADD . .
-CMD [ "npm", "run", "start" ]
+CMD [ "npm", "run", "start:debug" ]
