@@ -162,8 +162,8 @@ workflows:
             tags:
               only: /.*/
       - integration-test:
-          #requires:
-          #  - build-and-test
+          requires:
+            - build-and-test
           filters: # run for all branches AND tags
             tags:
               only: /.*/
