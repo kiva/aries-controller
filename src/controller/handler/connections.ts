@@ -1,11 +1,8 @@
 import { AxiosRequestConfig } from 'axios';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { AgentGovernance } from '../agent.governance';
-import { CacheStore } from '@nestjs/common';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
+import { AgentGovernance } from '../agent.governance.js';
+import { CacheStore, Logger } from '@nestjs/common';
 
 /*
     Acapy webhooks handler for input received from the url [webhookurl]/v1/webhook/topic/connections
@@ -86,7 +83,7 @@ export class Connections extends BaseAgentResponseHandler {
             const url: string = agentUrl + `/${Connections.CONNECTIONS_URL}/${body.connection_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
 
-            Logger.info(`requesting agent to accept connection invite ${req.url}`);
+            Logger.log(`requesting agent to accept connection invite ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
@@ -101,7 +98,7 @@ export class Connections extends BaseAgentResponseHandler {
             const url: string = agentUrl + `/${Connections.CONNECTIONS_URL}/${body.connection_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
 
-            Logger.info(`requesting initiating agent to complete connection invite ${req.url}`);
+            Logger.log(`requesting initiating agent to complete connection invite ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }

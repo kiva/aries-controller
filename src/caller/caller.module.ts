@@ -1,9 +1,10 @@
-import { Module, HttpModule, DynamicModule } from '@nestjs/common';
-import { MultiAgentCaller } from './multi.agent.caller';
-import { SingleAgentCaller } from './single.agent.caller';
-import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
-import { CALLER } from './caller.interface';
-import { ProfileModule } from '../profile/profile.module';
+import { Module, DynamicModule } from '@nestjs/common';
+import { MultiAgentCaller } from './multi.agent.caller.js';
+import { SingleAgentCaller } from './single.agent.caller.js';
+import { ControllerHandlerModule } from '../controller.handler/controller.handler.module.js';
+import { CALLER } from './caller.interface.js';
+import { ProfileModule } from '../profile/profile.module.js';
+import { ProtocolHttpModule } from 'protocol-common';
 
 /**
  * Assembles the caller module based on whether we're configured for multi-agent or single-agent
@@ -17,7 +18,7 @@ import { ProfileModule } from '../profile/profile.module';
             module: CallerModule,
             imports: [
                 ControllerHandlerModule.registerAsync(),
-                HttpModule,
+                ProtocolHttpModule,
                 ProfileModule
             ],
             providers: [

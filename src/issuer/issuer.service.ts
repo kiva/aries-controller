@@ -1,18 +1,14 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { AgentService } from '../agent/agent.service';
-import { Services } from '../utility/services';
-import { CALLER, ICaller } from '../caller/caller.interface';
-import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode, ProtocolUtility } from 'protocol-common';
+import { AgentService } from '../agent/agent.service.js';
+import { Services } from '../utility/services.js';
+import { CALLER, ICaller } from '../caller/caller.interface.js';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface.js';
 import { Validator } from 'jsonschema';
 import fileType from 'file-type';
-import { ProfileManager } from '../profile/profile.manager';
-import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
+import { ProfileManager } from '../profile/profile.manager.js';
+import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto.js';
 
 /**
  * TODO it may be better to have the IssuerService extend the Agent/General Service rather than passing it in
@@ -25,18 +21,15 @@ import { SchemaCredDefReqDto } from '../api/dtos/schema.cred.def.req.dto';
 @Injectable()
 export class IssuerService {
 
-    private readonly http: ProtocolHttpService;
-
     private readonly validator: Validator;
 
     constructor(
         public readonly agentService: AgentService,
         @Inject(CALLER) private readonly agentCaller: ICaller,
         @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
-        httpService: HttpService,
+        private readonly http: ProtocolHttpService,
         private readonly profileManager: ProfileManager,
     ) {
-        this.http = new ProtocolHttpService(httpService);
         this.validator = new Validator();
         this.validator.customFormats.photo = this.validatePhoto;
     }

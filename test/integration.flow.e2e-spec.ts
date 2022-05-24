@@ -1,5 +1,7 @@
 import request from 'supertest';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
+import { ProtocolUtility } from 'protocol-common';
+
+jest.setTimeout(60000);
 
 /**
  * This test goes through the simplified flow of registering an agent, creating schemas, issuing and verifying credentials,etc
@@ -13,15 +15,11 @@ describe('Tests simplified example flow', () => {
     let schemaId: string;
     let presentationExchangeId: string;
 
-    beforeAll(() => {
-        jest.setTimeout(60000);
-    });
-
-    it('Register multi agent in multi controller', async () => {
+    it('Register multi agent in multi controller', () => {
         const data = {
             'label': 'Multi agent multi controller',
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v2/api/agent/register')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -31,11 +29,11 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('Publicize steward DID on sasc', async () => {
+    it('Publicize steward DID on sasc', () => {
         const data = {
             did: 'Th7MpTaRZVRYnPiabds81Y'
         };
-        return await request(sascUrl)
+        return request(sascUrl)
             .post('/v1/agent/publicize-did')
             .send(data)
             .expect((res) => {
@@ -44,8 +42,8 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('Request mamc be registered as endorser', async () => {
-        return await request(mamcUrl)
+    it('Request mamc be registered as endorser', () => {
+        return request(mamcUrl)
             .post('/v2/api/endorser/request')
             .set('agent', 'mamcagent3')
             .expect((res) => {
@@ -54,7 +52,7 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('Create schema and cred def', async () => {
+    it('Create schema and cred def', () => {
         const data = {
             schemaName: 'TestSchema1',
             attributes: [
@@ -62,7 +60,7 @@ describe('Tests simplified example flow', () => {
                 'attr2'
             ]
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v2/api/schema-cred-def')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -74,7 +72,7 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('Create cred def using existing schema', async () => {
+    it('Create cred def using existing schema', () => {
         const data = {
             schemaName: 'TestSchema',
             schemaId,
@@ -84,7 +82,7 @@ describe('Tests simplified example flow', () => {
                 'attr2'
             ]
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v2/api/schema-cred-def')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -95,8 +93,8 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('Init connection from sasc to mamc3', async () => {
-        return await request(sascUrl)
+    it('Init connection from sasc to mamc3', () => {
+        return request(sascUrl)
             .post('/v2/api/connection')
             .expect((res) => {
                 expect(res.status).toBe(201);
@@ -105,12 +103,12 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('mamc3 accepts invitation from sasc', async () => {
+    it('mamc3 accepts invitation from sasc', () => {
         const data = {
             alias: 'sasc',
             invitation,
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v1/agent/accept-connection')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -131,7 +129,7 @@ describe('Tests simplified example flow', () => {
                 attr2: 'value2'
             }
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v2/api/issue')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -142,7 +140,7 @@ describe('Tests simplified example flow', () => {
             });
     });
 
-    it('mamc3 saves a proof request profile', async () => {
+    it('mamc3 saves a proof request profile', () => {
         const data = {
             'profileName': 'test.proof.request.json',
             'profile': {
@@ -164,7 +162,7 @@ describe('Tests simplified example flow', () => {
                 }
             }
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v2/api/profiles')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -179,7 +177,7 @@ describe('Tests simplified example flow', () => {
             connectionId,
             profile: 'test.proof.request.json',
         };
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .post('/v2/api/verify')
             .set('agent', 'mamcagent3')
             .send(data)
@@ -192,7 +190,7 @@ describe('Tests simplified example flow', () => {
 
     it('mamc3 verifies verify request', async () => {
         await ProtocolUtility.delay(3000);
-        return await request(mamcUrl)
+        return request(mamcUrl)
             .get('/v2/api/verify/' + presentationExchangeId)
             .set('agent', 'mamcagent3')
             .expect((res) => {

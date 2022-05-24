@@ -1,5 +1,7 @@
 import request from 'supertest';
 
+jest.setTimeout(20000);
+
 /**
  * This test goes over the 4 combinations of single/multi agent/controller and ensures the basic functionality works
  * This test depends on the docker-compose.yml with the 4 combinations and the agency docker compose
@@ -16,10 +18,6 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         'testKey': 'testValue2'
     };
 
-    beforeAll(() => {
-        jest.setTimeout(20000);
-    });
-
     it('Returns profiles from disk', () => {
         return request(sascUrl)
         .get('/v2/api/profiles')
@@ -29,7 +27,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
         });
     });
 
-    it('Add profile 1', async () => {
+    it('Add profile 1', () => {
         const data = {
             'profileName': 'profile1.json',
             'profile': profile1
@@ -42,7 +40,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Add profile 2', async () => {
+    it('Add profile 2', () => {
         const data = {
             'profileName': 'profile2.json',
             'profile': profile2
@@ -55,7 +53,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Fetch profiles', async () => {
+    it('Fetch profiles', () => {
         return request(sascUrl)
             .get('/v2/api/profiles')
             .expect((res) => {
@@ -65,7 +63,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Delete profile 1', async () => {
+    it('Delete profile 1', () => {
         return request(sascUrl)
             .delete('/v2/api/profiles/profile1.json')
             .expect((res) => {
@@ -73,7 +71,7 @@ describe('Set of tests for single vs multi agent and single vs multi controller'
             });
     });
 
-    it('Fetch profiles', async () => {
+    it('Fetch profiles', () => {
         return request(sascUrl)
             .get('/v2/api/profiles')
             .expect((res) => {

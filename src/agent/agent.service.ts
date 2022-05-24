@@ -1,12 +1,9 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { LOWER_CASE_LETTERS, NUMBERS, randomString } from 'protocol-common/random.string.generator';
-import { CALLER, ICaller } from '../caller/caller.interface';
-import { CONTROLLER_HANDLER, IControllerHandler } from '../controller.handler/controller.handler.interface';
-import { ProfileManager } from '../profile/profile.manager';
-import { SecretsManager } from '../profile/secrets.manager';
+import { Inject, Injectable, Logger } from '@nestjs/common';
+import { ProtocolException, ProtocolErrorCode, LOWER_CASE_LETTERS, NUMBERS, randomString } from 'protocol-common';
+import { CALLER, ICaller } from '../caller/caller.interface.js';
+import { CONTROLLER_HANDLER, IControllerHandler } from '../controller.handler/controller.handler.interface.js';
+import { ProfileManager } from '../profile/profile.manager.js';
+import { SecretsManager } from '../profile/secrets.manager.js';
 
 /**
  * TODO abstract out a base service that includes things like making connections

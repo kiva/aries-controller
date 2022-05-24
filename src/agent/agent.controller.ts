@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Param, Get } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AgentService } from './agent.service';
+import { AgentService } from './agent.service.js';
 
 /**
  * General calls to make to an agent

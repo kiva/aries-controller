@@ -1,11 +1,8 @@
-import { CacheStore } from '@nestjs/common';
+import { CacheStore, Logger } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { Logger } from 'protocol-common/logger';
-import { AgentGovernance } from '../agent.governance';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { AgentGovernance } from '../agent.governance.js';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
 
 export class Proofs extends BaseAgentResponseHandler {
     private static PROOFS_URL = 'present-proof';
@@ -150,7 +147,7 @@ export class Proofs extends BaseAgentResponseHandler {
 
             const url: string = agentUrl + `/${Proofs.PROOFS_URL}/records/${body.presentation_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
-            Logger.info(`requesting holder to present proof ${req.url}`);
+            Logger.log(`requesting holder to present proof ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }

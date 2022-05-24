@@ -1,15 +1,13 @@
-import { CacheStore } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { Logger } from 'protocol-common/logger';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { AgentGovernance } from '../agent.governance';
+import { CacheStore, Logger } from '@nestjs/common';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
+import { AgentGovernance } from '../agent.governance.js';
 
 /*
  * Allows an agent to report a problem back to aries-guardianship-agency so that we can log it
  * We cache problem reports by thread id so that other processes can react to them if needed
 */
 export class ProblemReport extends BaseAgentResponseHandler {
-    constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+    constructor(private readonly agentGovernance: AgentGovernance, private readonly cache: CacheStore) {
         super();
     }
 

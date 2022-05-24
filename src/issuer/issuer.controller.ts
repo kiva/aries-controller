@@ -1,6 +1,6 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { IssuerService } from './issuer.service';
+import { IssuerService } from './issuer.service.js';
 
 /**
  * Endpoints related to the issuer's role

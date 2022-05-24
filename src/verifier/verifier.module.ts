@@ -1,12 +1,13 @@
-import { Module, HttpModule } from '@nestjs/common';
-import { VerifierService } from './verifier.service';
-import { VerifierController } from './verifier.controller';
-import { AgentModule } from '../agent/agent.module';
-import { AgentService } from '../agent/agent.service';
-import { GlobalCacheModule } from '../app/global.cache.module';
-import { CallerModule } from '../caller/caller.module';
-import { ProfileModule } from '../profile/profile.module';
-import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
+import { Module } from '@nestjs/common';
+import { VerifierService } from './verifier.service.js';
+import { VerifierController } from './verifier.controller.js';
+import { AgentModule } from '../agent/agent.module.js';
+import { AgentService } from '../agent/agent.service.js';
+import { GlobalCacheModule } from '../app/global.cache.module.js';
+import { CallerModule } from '../caller/caller.module.js';
+import { ProfileModule } from '../profile/profile.module.js';
+import { ControllerHandlerModule } from '../controller.handler/controller.handler.module.js';
+import { ProtocolHttpModule } from 'protocol-common';
 
 /**
  *
@@ -14,7 +15,7 @@ import { ControllerHandlerModule } from '../controller.handler/controller.handle
 @Module({
     imports: [
         AgentModule,
-        HttpModule,
+        ProtocolHttpModule,
         GlobalCacheModule,
         CallerModule.registerAsync(),
         ControllerHandlerModule.registerAsync(),

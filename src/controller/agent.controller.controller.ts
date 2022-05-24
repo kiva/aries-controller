@@ -1,7 +1,6 @@
-import { Controller, Post, Param, Body } from '@nestjs/common';
+import { Controller, Post, Param, Body, Logger } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { Logger } from 'protocol-common/logger';
-import { AgentControllerService } from './agent.controller.service';
+import { AgentControllerService } from './agent.controller.service.js';
 
 /**
  * TODO will change the name to webhook in this ticket: https://kiva.atlassian.net/browse/PRO-3014

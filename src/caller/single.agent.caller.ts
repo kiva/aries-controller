@@ -1,13 +1,8 @@
-import { Injectable, HttpService, Inject } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
+import { Injectable, Inject, Logger } from '@nestjs/common';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode, ProtocolUtility, Constants } from 'protocol-common';
 import { AxiosRequestConfig } from 'axios';
-import { Logger } from 'protocol-common/logger';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { ICaller } from './caller.interface';
-import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface';
-import { ProtocolUtility } from 'protocol-common/protocol.utility';
-import { Constants } from 'protocol-common/constants';
+import { ICaller } from './caller.interface.js';
+import { IControllerHandler, CONTROLLER_HANDLER } from '../controller.handler/controller.handler.interface.js';
 
 /**
  * Caller for a single agent
@@ -15,14 +10,10 @@ import { Constants } from 'protocol-common/constants';
 @Injectable()
 export class SingleAgentCaller implements ICaller {
 
-    private readonly http: ProtocolHttpService;
-
     constructor(
-        httpService: HttpService,
+        private readonly http: ProtocolHttpService,
         @Inject(CONTROLLER_HANDLER) private readonly controllerHandler: IControllerHandler,
-    ) {
-        this.http = new ProtocolHttpService(httpService);
-    }
+    ) {}
 
     /**
      * Makes a call to the agency to spin up an agent

@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
-import { IControllerHandler } from './controller.handler.interface';
-import { AgentContext } from '../utility/agent.context';
-import { SecretsManager } from '../profile/secrets.manager';
+import { ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { IControllerHandler } from './controller.handler.interface.js';
+import { AgentContext } from '../utility/agent.context.js';
+import { SecretsManager } from '../profile/secrets.manager.js';
 
 /**
  * The handler for multi-controllers

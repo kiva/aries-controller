@@ -1,17 +1,16 @@
-import { Module, HttpModule } from '@nestjs/common';
-import { AgentService } from './agent.service';
-import { AgentController } from './agent.controller';
-import { GlobalCacheModule } from '../app/global.cache.module';
-import { CallerModule } from '../caller/caller.module';
-import { ProfileModule } from '../profile/profile.module';
-import { ControllerHandlerModule } from '../controller.handler/controller.handler.module';
+import { Module } from '@nestjs/common';
+import { AgentService } from './agent.service.js';
+import { AgentController } from './agent.controller.js';
+import { GlobalCacheModule } from '../app/global.cache.module.js';
+import { CallerModule } from '../caller/caller.module.js';
+import { ProfileModule } from '../profile/profile.module.js';
+import { ControllerHandlerModule } from '../controller.handler/controller.handler.module.js';
 
 /**
  *
  */
 @Module({
     imports: [
-        HttpModule,
         GlobalCacheModule,
         CallerModule.registerAsync(),
         ControllerHandlerModule.registerAsync(),

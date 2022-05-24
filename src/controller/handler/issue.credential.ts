@@ -1,11 +1,8 @@
-import { Logger } from 'protocol-common/logger';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { AgentGovernance } from '../agent.governance';
-import { CacheStore } from '@nestjs/common';
+import { ProtocolHttpService, ProtocolException, ProtocolErrorCode } from 'protocol-common';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
+import { AgentGovernance } from '../agent.governance.js';
+import { CacheStore, Logger } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 
 
 /*
@@ -94,7 +91,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
             await readPermission(action, templatedCacheKey);
             const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
-            Logger.info(`requesting holder to send-request ${req.url}`);
+            Logger.log(`requesting holder to send-request ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
@@ -102,7 +99,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
         // Not sure why, but sometimes the role for issuer comes back as undefined
         if ((body.role === 'issuer' || body.role === undefined) && body.state === 'request_received') {
             if (body.auto_issue === true) {
-                Logger.info('Not requesting issuer to issue credential, because auto_issue is true');
+                Logger.log('Not requesting issuer to issue credential, because auto_issue is true');
                 return;
             }
             const action = 'issue';
@@ -116,7 +113,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
             };
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
             req.data = data;
-            Logger.info(`requesting issuer to issue credential ${req.url}`);
+            Logger.log(`requesting issuer to issue credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }
@@ -129,7 +126,7 @@ export class IssueCredential extends BaseAgentResponseHandler {
 
             const url: string = agentUrl + `/${IssueCredential.ISSUE_CREDENTIALS_URL}/records/${body.credential_exchange_id as string}/${action}`;
             const req: AxiosRequestConfig = super.createHttpRequest(url, adminApiKey, token);
-            Logger.info(`requesting holder to save credential ${req.url}`);
+            Logger.log(`requesting holder to save credential ${req.url}`);
             const res = await this.http.requestWithRetry(req);
             return res.data;
         }

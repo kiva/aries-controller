@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from 'protocol-common/config.module';
+import { ConfigModule, LoggingInterceptor, ProtocolLoggerModule } from 'protocol-common';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from 'protocol-common/logging.interceptor';
-import { AppService } from './app.service';
-import { AppController } from './app.controller';
-import data from '../config/env.json';
-import { AgentModule } from '../agent/agent.module';
-import { AgentControllerModule } from '../controller/agent.controller.module';
-import { IssuerModule } from '../issuer/issuer.module';
-import { StewardModule } from '../steward/steward.module';
-import { VerifierModule } from '../verifier/verifier.module';
-import { ApiModule } from '../api/api.module';
+import { AppService } from './app.service.js';
+import { AppController } from './app.controller.js';
+import { AgentModule } from '../agent/agent.module.js';
+import { AgentControllerModule } from '../controller/agent.controller.module.js';
+import { IssuerModule } from '../issuer/issuer.module.js';
+import { StewardModule } from '../steward/steward.module.js';
+import { VerifierModule } from '../verifier/verifier.module.js';
+import { ApiModule } from '../api/api.module.js';
+
+// @ts-ignore: assertions are currently required when importing json: https://nodejs.org/docs/latest-v16.x/api/esm.html#json-modules
+import data from '../config/env.json' assert { type: 'json'};
 
 
 /**
@@ -19,6 +20,7 @@ import { ApiModule } from '../api/api.module';
 @Module({
     imports: [
         ConfigModule.init(data),
+        ProtocolLoggerModule,
         AgentModule,
         AgentControllerModule,
         IssuerModule,

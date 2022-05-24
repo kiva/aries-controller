@@ -1,5 +1,5 @@
 # Spins up all the external dependencies to test the aries-controller
-# This requires varies HL Aries compoenets: indy pool, wallets db, multitenant agent, tails server; plus our own component the agency
+# This requires varies HL Aries components: indy pool, wallets db, multitenant agent, tails server; our agency
 #
 version: '3.5'
 
@@ -94,7 +94,7 @@ services:
         ports:
           - "3020:3020"
           - "3021:3021"
-        expose: 
+        expose:
           - "3020"
           - "3021"
         volumes:

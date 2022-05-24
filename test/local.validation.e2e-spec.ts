@@ -1,17 +1,19 @@
 /* eslint-disable max-len */
+/* eslint-disable import/extensions */
 /**
  * Disabling max-len for this file because photo~attach values be long, bro
+ * Disabling import/extensions because this runs against typescript
  */
 import { Test } from '@nestjs/testing';
-import { IssuerModule } from '../src/issuer/issuer.module';
-import { IssuerService } from '../src/issuer/issuer.service';
+import { IssuerModule } from '../dist/issuer/issuer.module.js';
+import { IssuerService } from '../dist/issuer/issuer.service.js';
 
 /**
  * Local test for validation on the issuerService
  * The function throws an error when validation fails so tests are written to either expect exceptions or not
  */
 describe('Tests input validation against cred def validation schemas', () => {
-    let issuerService: IssuerService;
+    let issuerService;
 
     beforeAll(async () => {
         const moduleFixture = await Test.createTestingModule({
@@ -37,7 +39,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test simple string and number validation: Exception', async () => {
@@ -57,7 +58,7 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
         try {
             await issuerService.validateEntityData(entityData, validation);
-            expect(true).toBe(false);
+            fail();
         } catch(e) {
             expect(e.code).toBe('ValidationException');
         }
@@ -77,7 +78,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test photo validation png base64 encoded: Pass', async () => {
@@ -94,7 +94,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test photo validation jpeg base64 encoded: Pass', async () => {
@@ -111,7 +110,6 @@ describe('Tests input validation against cred def validation schemas', () => {
         };
 
         await issuerService.validateEntityData(entityData, validation);
-        expect(true).toBe(true);
     });
 
     it('Test photo validation: Fail', async () => {
@@ -129,7 +127,7 @@ describe('Tests input validation against cred def validation schemas', () => {
 
         try {
             await issuerService.validateEntityData(entityData, validation);
-            expect(true).toBe(false);
+            fail();
         } catch(e) {
             expect(e.code).toBe('ValidationException');
         }

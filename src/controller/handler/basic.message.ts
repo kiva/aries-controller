@@ -1,10 +1,7 @@
-import { CacheStore } from '@nestjs/common';
-import { ProtocolHttpService } from 'protocol-common/protocol.http.service';
-import { ProtocolException } from 'protocol-common/protocol.exception';
-import { Logger } from 'protocol-common/logger';
-import { BaseAgentResponseHandler } from './base.agent.response.handler';
-import { AgentGovernance } from '../agent.governance';
-import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
+import { Logger } from '@nestjs/common';
+import { ProtocolErrorCode, ProtocolException } from 'protocol-common';
+import { BaseAgentResponseHandler } from './base.agent.response.handler.js';
+import { AgentGovernance } from '../agent.governance.js';
 
 /**
  * ResponseHandler for basic messages (aries RFC compliant). For now, bubbles up to consumers.
@@ -12,7 +9,7 @@ import { ProtocolErrorCode } from 'protocol-common/protocol.errorcode';
 export class BasicMessage extends BaseAgentResponseHandler {
     private static BASIC_MESSAGE = 'basic-message';
     private static GOVERNANCE_KEY = 'all';
-    constructor(private readonly agentGovernance: AgentGovernance, private readonly http: ProtocolHttpService, private readonly cache: CacheStore) {
+    constructor(private readonly agentGovernance: AgentGovernance) {
         super();
     }
 
