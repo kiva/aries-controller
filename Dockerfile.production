@@ -5,7 +5,7 @@ RUN npm install --production
 
 FROM node:16.14.2-alpine3.15 as dist
 WORKDIR /tmp/
-COPY package.json package-lock.json tsconfig.json ./
+COPY package.json package-lock.json tsconfig.json dts.json ./
 RUN npm install
 COPY src/ src/
 RUN npm run build
