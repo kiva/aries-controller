@@ -92,8 +92,10 @@ jobs:
           command: docker pull bcgovimages/aries-cloudagent:py36-1.16-1_0.7.1
       - run:
           name: Override for demo-controller image
+          command: ./scripts/setup_override.sh -r aries-controller -s demo-controller -f docker-compose.demo.yml
+      - run:
+          name: Temporary clean up after CI script
           command: |
-            ./scripts/setup_override.sh -r aries-controller -s demo-controller -f docker-compose.demo.yml
             rm -rf tmp
             echo "$services" | awk '{
               split($0,arr,",");
