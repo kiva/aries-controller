@@ -97,7 +97,7 @@ jobs:
           name: Temporary clean up after CI script
           command: |
             rm -rf tmp
-            echo "$services" | awk '{
+            echo "demo-controller" | awk '{
               split($0,arr,",");
               for (i=1; i<=length(arr); i++) {
                 key=toupper(arr[i])
