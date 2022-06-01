@@ -94,29 +94,6 @@ jobs:
           name: Override for demo-controller image
           command: ./scripts/setup_override.sh -r aries-controller -s demo-controller -f docker-compose.demo.yml
       - run:
-          name: Temporary clean up after CI script
-          command: |
-            rm -rf tmp
-            echo "demo-controller" | awk '{
-              split($0,arr,",");
-              for (i=1; i<=length(arr); i++) {
-                key=toupper(arr[i])
-                gsub("-", "_", key);
-                print key"_IMAGE="arr[i]":latest"
-              }
-            }' > override.env
-            awk '
-              NF && !/^#/ {
-                gsub("="," ",$0);
-                envvar[$1]=$2;
-              } END {
-                for(key in envvar) {
-                  print key"="envvar[key]
-                }
-              }
-            ' dummy.env override.env > .env
-            rm override.env
-      - run:
           name: Start docker compose and wait for readiness
           command: |
             docker system prune -f
