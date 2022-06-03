@@ -1,6 +1,6 @@
 {
   "name": "aries-controller",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Generic controller for aries agents",
   "license": "Apache-2.0",
   "type": "module",
@@ -16,7 +16,8 @@
   ],
   "author": "protocol-services",
   "exports": {
-    ".": "./index.js"
+    ".": "./index.js",
+    "./config/env.json": "./config/env.json"
   },
   "files": [
     "*"
