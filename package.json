@@ -50,7 +50,7 @@
     "cache-manager": "^3.4.0",
     "cache-manager-fs-hash": "^0.0.9",
     "class-transformer": "^0.4.0",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.14.0",
     "crypto-js": "^4.0.0",
     "crypto-random-string": "^3.3.1",
     "file-type": "12.4.2",
